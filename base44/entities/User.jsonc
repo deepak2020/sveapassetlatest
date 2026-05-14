@@ -1,0 +1,56 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "description": "The role of the user in the app",
+      "enum": [
+        "admin",
+        "user"
+      ]
+    },
+    "sfi_level": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "Current SFI course level"
+    },
+    "goal": {
+      "type": "string",
+      "description": "User's main learning goal"
+    },
+    "daily_goal_minutes": {
+      "type": "number",
+      "description": "Daily study goal in minutes",
+      "default": 10
+    },
+    "xp_total": {
+      "type": "number",
+      "description": "Total XP earned",
+      "default": 0
+    },
+    "streak_days": {
+      "type": "number",
+      "description": "Current consecutive day streak",
+      "default": 0
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last date the user completed an activity"
+    },
+    "onboarding_complete": {
+      "type": "boolean",
+      "description": "Whether the user has completed onboarding",
+      "default": false
+    }
+  },
+  "required": [
+    "role"
+  ]
+}

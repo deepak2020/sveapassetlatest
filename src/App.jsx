@@ -13,6 +13,8 @@ import CivicTopics from './pages/CivicTopics';
 import TopicDetail from './pages/TopicDetail';
 import Progress from './pages/Progress';
 import LanguageTest from './pages/LanguageTest';
+import Dashboard from './pages/Dashboard';
+import Onboarding from './pages/Onboarding';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -40,8 +42,10 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/onboarding" element={<Onboarding />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/language" element={<LanguageLessons />} />
         <Route path="/language/:id" element={<LessonDetail />} />
         <Route path="/civic" element={<CivicTopics />} />

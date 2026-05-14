@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
+import { awardXP, XP_REWARDS } from "@/lib/xp";
 
 export default function QuizRunner({ questions, quizType, sourceId, sourceTitle, onComplete }) {
   const [currentQ, setCurrentQ] = useState(0);
@@ -25,13 +26,13 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
   const question = questions[currentQ];
   const isCorrect = selected === question.correct_index;
 
-  const handleSelect = (index) => {
+  const handleSelect = async (index) => {
     if (answered) return;
     setSelected(index);
     setAnswered(true);
-    if (index === question.correct_index) {
-      setScore(score + 1);
-    }
+    const correct = index === question.correct_index;
+    if (correct) setScore(score + 1);
+    await awardXP(base44, correct ? XP_REWARDS.quiz_correct : 0);
   };
 
   const handleNext = async () => {

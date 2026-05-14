@@ -1,22 +1,41 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
-import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User, FlaskConical } from "lucide-react";
-import { useState } from "react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User, FlaskConical, Flame, Zap, LayoutDashboard } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/language", label: "Language", icon: BookOpen },
   { path: "/language-test", label: "Tests", icon: FlaskConical },
-  { path: "/civic", label: "Civic Test", icon: Landmark },
+  { path: "/civic", label: "Civic", icon: Landmark },
   { path: "/progress", label: "Progress", icon: BarChart3 },
 ];
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+
+  const { data: userProfile } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => base44.auth.me(),
+    enabled: isAuthenticated,
+  });
+
+  // Redirect new users to onboarding
+  useEffect(() => {
+    if (userProfile && !userProfile.onboarding_complete && location.pathname !== "/onboarding") {
+      navigate("/onboarding");
+    }
+  }, [userProfile, location.pathname]);
+
+  const xp = userProfile?.xp_total || 0;
+  const streak = userProfile?.streak_days || 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,10 +81,14 @@ export default function Layout() {
             <div className="hidden md:flex items-center gap-2">
               {isAuthenticated ? (
                 <>
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <User className="w-4 h-4" />
-                    {user?.full_name || user?.email}
-                  </span>
+                  {streak > 0 && (
+                    <div className="flex items-center gap-1 text-sm font-semibold text-orange-500 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-lg">
+                      <Flame className="w-4 h-4" /> {streak}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 text-sm font-semibold text-primary bg-primary/5 border border-primary/20 px-2.5 py-1 rounded-lg">
+                    <Zap className="w-4 h-4" /> {xp.toLocaleString()} XP
+                  </div>
                   <Button variant="ghost" size="sm" onClick={() => logout()} className="gap-2">
                     <LogOut className="w-4 h-4" />
                     Log out
