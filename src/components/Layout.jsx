@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User, FlaskConical, Flame, Zap, LayoutDashboard } from "lucide-react";
+import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User, FlaskConical, Flame, Zap, LayoutDashboard, Dumbbell } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/AuthContext";
@@ -10,9 +10,18 @@ const navItems = [
   { path: "/", label: "Home", icon: Home },
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/language", label: "Language", icon: BookOpen },
-  { path: "/language-test", label: "Tests", icon: FlaskConical },
   { path: "/civic", label: "Civic", icon: Landmark },
+  { path: "/gym", label: "Gym", icon: Dumbbell },
   { path: "/progress", label: "Progress", icon: BarChart3 },
+  { path: "/profile", label: "Profile", icon: User },
+];
+
+const bottomTabItems = [
+  { path: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { path: "/language", label: "Learn", icon: BookOpen },
+  { path: "/civic", label: "Civic", icon: Landmark },
+  { path: "/gym", label: "Gym", icon: Dumbbell },
+  { path: "/profile", label: "Profile", icon: User },
 ];
 
 export default function Layout() {
@@ -161,8 +170,28 @@ export default function Layout() {
         <Outlet />
       </main>
 
+      {/* Bottom tab bar (mobile) */}
+      {isAuthenticated && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/50">
+          <div className="flex items-center justify-around px-2 py-2">
+            {bottomTabItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path ||
+                (item.path !== "/dashboard" && location.pathname.startsWith(item.path));
+              return (
+                <Link key={item.path} to={item.path}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+                  <Icon className="w-5 h-5" />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+
       {/* Footer */}
-      <footer className="border-t border-border/50 bg-card/50 mt-20">
+      <footer className="border-t border-border/50 bg-card/50 mt-20 mb-16 md:mb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">

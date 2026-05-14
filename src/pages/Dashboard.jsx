@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
-import { Flame, Zap, BookOpen, Landmark, FlaskConical, BarChart3, Trophy, Star } from "lucide-react";
+import { Flame, Zap, BookOpen, Landmark, FlaskConical, BarChart3, Trophy, Star, Dumbbell, Target } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getLevelProgress, getNextLevel } from "@/lib/xp";
@@ -32,6 +32,14 @@ export default function Dashboard() {
     queryFn: () => base44.entities.QuizResult.list("-created_date", 3),
     initialData: [],
   });
+
+  const { data: srsCards = [] } = useQuery({
+    queryKey: ["srs-cards"],
+    queryFn: () => base44.entities.UserSRSCard.list(),
+  });
+
+  const today = new Date().toISOString().split("T")[0];
+  const dueCount = srsCards.filter(c => c.due_date <= today && c.status !== "mastered").length;
 
   if (!user) return null;
 
@@ -94,6 +102,25 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
+      {/* Daily goal */}
+      {user.daily_goal_minutes && (
+        <Card className="border-border/50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Target className="w-4 h-4 text-primary" />
+                Daily goal
+              </div>
+              <span className="text-xs text-muted-foreground">{user.daily_goal_minutes} min target</span>
+            </div>
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-secondary rounded-full w-0 transition-all" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Complete activities to fill your daily goal</p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Quick paths */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Link to="/language" className="group">
@@ -135,6 +162,30 @@ export default function Dashboard() {
           </Card>
         </Link>
       </div>
+
+      {/* Gym card */}
+      <Link to="/gym" className="group">
+        <Card className="border-border/50 hover:border-violet-400 hover:shadow-md transition-all duration-200">
+          <CardContent className="p-5 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                <Dumbbell className="w-5 h-5 text-violet-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Practice Gym</h3>
+                <p className="text-sm text-muted-foreground">High-volume cloze sentence practice</p>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              {dueCount > 0 ? (
+                <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{dueCount} due</span>
+              ) : (
+                <span className="text-xs text-primary font-medium group-hover:underline">Start →</span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
 
       {/* Recent activity */}
       {quizResults.length > 0 && (

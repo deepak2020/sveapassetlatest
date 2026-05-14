@@ -1,0 +1,49 @@
+{
+  "name": "UserSRSCard",
+  "type": "object",
+  "properties": {
+    "cloze_sentence_id": {
+      "type": "string",
+      "description": "ID of the ClozeSentence"
+    },
+    "interval_days": {
+      "type": "number",
+      "description": "Days until next review",
+      "default": 1
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Next review date"
+    },
+    "ease_factor": {
+      "type": "number",
+      "description": "SRS ease factor (1.3\u20132.5)",
+      "default": 2.5
+    },
+    "times_seen": {
+      "type": "number",
+      "default": 0
+    },
+    "times_correct": {
+      "type": "number",
+      "default": 0
+    },
+    "last_answer_correct": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "learning",
+        "review",
+        "mastered"
+      ],
+      "default": "new"
+    }
+  },
+  "required": [
+    "cloze_sentence_id"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "name": "ClozeSentence",
+  "type": "object",
+  "properties": {
+    "sentence_sv": {
+      "type": "string",
+      "description": "Swedish sentence with ___ for the blank"
+    },
+    "sentence_en": {
+      "type": "string",
+      "description": "English translation with ___ for the blank"
+    },
+    "answer": {
+      "type": "string",
+      "description": "The correct missing word"
+    },
+    "distractors": {
+      "type": "array",
+      "description": "3 wrong answer options",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sfi_level": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "SFI level"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Topic/category this sentence belongs to"
+    },
+    "word_frequency_rank": {
+      "type": "number",
+      "description": "1-1000, lower = more common"
+    },
+    "grammar_note": {
+      "type": "string",
+      "description": "Optional grammar explanation"
+    }
+  },
+  "required": [
+    "sentence_sv",
+    "answer",
+    "sfi_level"
+  ]
+}
