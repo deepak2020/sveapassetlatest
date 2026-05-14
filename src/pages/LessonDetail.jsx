@@ -1,18 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import LevelBadge from "../components/shared/LevelBadge";
 import CategoryBadge from "../components/shared/CategoryBadge";
 import WordPairCard from "../components/lesson/WordPairCard";
+import FillInBlanks from "../components/lesson/FillInBlanks";
+import WritingExercise from "../components/lesson/WritingExercise";
+import SpeakingPractice from "../components/lesson/SpeakingPractice";
 import QuizRunner from "../components/shared/QuizRunner";
 import ReactMarkdown from "react-markdown";
 
 export default function LessonDetail() {
-  const urlParams = new URLSearchParams(window.location.search);
   const pathParts = window.location.pathname.split("/");
   const lessonId = pathParts[pathParts.length - 1];
 
@@ -48,6 +50,14 @@ export default function LessonDetail() {
     );
   }
 
+  // Build tabs dynamically based on what content exists
+  const tabs = [{ value: "content", label: "📚 Lesson" }];
+  if (lesson.fill_in_blanks?.length) tabs.push({ value: "blanks", label: `🧩 Fill-in (${lesson.fill_in_blanks.length})` });
+  if (lesson.writing_prompts?.length) tabs.push({ value: "writing", label: `✍️ Writing (${lesson.writing_prompts.length})` });
+  if (lesson.speaking_phrases?.length) tabs.push({ value: "speaking", label: `🗣️ Speaking (${lesson.speaking_phrases.length})` });
+  if (lesson.word_pairs?.length) tabs.push({ value: "vocabulary", label: `📝 Words (${lesson.word_pairs.length})` });
+  if (lesson.quiz_questions?.length) tabs.push({ value: "quiz", label: `🎯 Quiz (${lesson.quiz_questions.length})` });
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Back navigation */}
@@ -59,7 +69,7 @@ export default function LessonDetail() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
           <LevelBadge level={lesson.level} />
-          <CategoryBadge category={lesson.category} />
+          <CategoryBadge category={lesson.skill || lesson.category} />
         </div>
         <h1 className="font-display text-3xl font-bold text-foreground">{lesson.title}</h1>
         {lesson.title_sv && (
@@ -69,14 +79,10 @@ export default function LessonDetail() {
 
       {/* Content Tabs */}
       <Tabs defaultValue="content" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="content">Lesson</TabsTrigger>
-          {lesson.word_pairs?.length > 0 && (
-            <TabsTrigger value="vocabulary">Vocabulary ({lesson.word_pairs.length})</TabsTrigger>
-          )}
-          {lesson.quiz_questions?.length > 0 && (
-            <TabsTrigger value="quiz">Quiz ({lesson.quiz_questions.length})</TabsTrigger>
-          )}
+        <TabsList className="flex-wrap h-auto gap-1">
+          {tabs.map(t => (
+            <TabsTrigger key={t.value} value={t.value} className="text-sm">{t.label}</TabsTrigger>
+          ))}
         </TabsList>
 
         <TabsContent value="content">
@@ -89,26 +95,34 @@ export default function LessonDetail() {
           )}
         </TabsContent>
 
-        {lesson.word_pairs?.length > 0 && (
-          <TabsContent value="vocabulary">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {lesson.word_pairs.map((pair, index) => (
-                <WordPairCard key={index} pair={pair} index={index} />
-              ))}
-            </div>
-          </TabsContent>
-        )}
+        <TabsContent value="blanks">
+          <FillInBlanks exercises={lesson.fill_in_blanks} />
+        </TabsContent>
 
-        {lesson.quiz_questions?.length > 0 && (
-          <TabsContent value="quiz">
-            <QuizRunner
-              questions={lesson.quiz_questions}
-              quizType="language"
-              sourceId={lesson.id}
-              sourceTitle={lesson.title}
-            />
-          </TabsContent>
-        )}
+        <TabsContent value="writing">
+          <WritingExercise prompts={lesson.writing_prompts} />
+        </TabsContent>
+
+        <TabsContent value="speaking">
+          <SpeakingPractice phrases={lesson.speaking_phrases} />
+        </TabsContent>
+
+        <TabsContent value="vocabulary">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {lesson.word_pairs?.map((pair, index) => (
+              <WordPairCard key={index} pair={pair} index={index} />
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="quiz">
+          <QuizRunner
+            questions={lesson.quiz_questions}
+            quizType="language"
+            sourceId={lesson.id}
+            sourceTitle={lesson.title}
+          />
+        </TabsContent>
       </Tabs>
     </div>
   );

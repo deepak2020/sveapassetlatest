@@ -17,9 +17,24 @@
         "grammar",
         "phrases",
         "pronunciation",
-        "reading"
+        "reading",
+        "writing",
+        "speaking",
+        "listening"
       ],
       "description": "Lesson category"
+    },
+    "skill": {
+      "type": "string",
+      "enum": [
+        "reading",
+        "writing",
+        "speaking",
+        "listening",
+        "vocabulary",
+        "grammar"
+      ],
+      "description": "Primary skill focus"
     },
     "level": {
       "type": "string",
@@ -50,6 +65,68 @@
             "type": "string"
           },
           "example_en": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fill_in_blanks": {
+      "type": "array",
+      "description": "Clozemaster-style fill-in-the-blank exercises",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sentence_sv": {
+            "type": "string",
+            "description": "Swedish sentence with ___ for the blank"
+          },
+          "sentence_en": {
+            "type": "string",
+            "description": "English translation"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "writing_prompts": {
+      "type": "array",
+      "description": "Short writing exercises",
+      "items": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "example_answer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "speaking_phrases": {
+      "type": "array",
+      "description": "Phrases to practice speaking aloud",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phrase_sv": {
+            "type": "string"
+          },
+          "phrase_en": {
+            "type": "string"
+          },
+          "pronunciation_tip": {
             "type": "string"
           }
         }
