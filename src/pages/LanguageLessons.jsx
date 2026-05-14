@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/lib/AuthContext";
 import { BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,8 @@ export default function LanguageLessons() {
   const [levelFilter, setLevelFilter] = useState("all");
   const [showGenerate, setShowGenerate] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["lessons"],
@@ -69,10 +72,12 @@ export default function LanguageLessons() {
           </div>
           <p className="text-muted-foreground ml-13">Practice reading, writing, speaking & more</p>
         </div>
-        <Button onClick={() => setShowGenerate(true)} className="gap-2 shrink-0">
-          <Sparkles className="w-4 h-4" />
-          Generate Lesson with AI
-        </Button>
+        {isAdmin && (
+          <Button onClick={() => setShowGenerate(true)} className="gap-2 shrink-0">
+            <Sparkles className="w-4 h-4" />
+            Generate Lesson with AI
+          </Button>
+        )}
       </div>
 
       {/* Skill track tabs */}

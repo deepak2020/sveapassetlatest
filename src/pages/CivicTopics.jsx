@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/lib/AuthContext";
 import { Landmark, ArrowRight, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +26,8 @@ export default function CivicTopics() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showGenerate, setShowGenerate] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
@@ -55,12 +58,14 @@ export default function CivicTopics() {
         </p>
       </div>
 
-      <div className="mb-8">
-        <Button onClick={() => setShowGenerate(true)} className="gap-2">
-          <Sparkles className="w-4 h-4" />
-          Generate Topic with AI
-        </Button>
-      </div>
+      {isAdmin && (
+        <div className="mb-8">
+          <Button onClick={() => setShowGenerate(true)} className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            Generate Topic with AI
+          </Button>
+        </div>
+      )}
 
       {/* Filters */}
       <Tabs value={categoryFilter} onValueChange={setCategoryFilter} className="mb-8">
