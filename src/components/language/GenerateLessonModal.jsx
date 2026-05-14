@@ -11,6 +11,7 @@ export default function GenerateLessonModal({ open, onClose, onCreated }) {
   const [topic, setTopic] = useState("");
   const [skill, setSkill] = useState("reading");
   const [level, setLevel] = useState("beginner");
+  const [sfiCourse, setSfiCourse] = useState("A");
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
@@ -56,6 +57,7 @@ Make all content practical for everyday life in Sweden.`,
       category: skill === "reading" ? "reading" : skill === "writing" ? "writing" : skill === "speaking" ? "speaking" : "vocabulary",
       skill,
       level,
+      sfi_course: sfiCourse,
       content: result.content,
       word_pairs: result.word_pairs || [],
       fill_in_blanks: result.fill_in_blanks || [],
@@ -89,6 +91,21 @@ Make all content practical for everyday life in Sweden.`,
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>SFI Course</Label>
+            <Select value={sfiCourse} onValueChange={setSfiCourse}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="A">Course A — Absolute Beginner</SelectItem>
+                <SelectItem value="B">Course B — Beginner</SelectItem>
+                <SelectItem value="C">Course C — Intermediate</SelectItem>
+                <SelectItem value="D">Course D — Advanced</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

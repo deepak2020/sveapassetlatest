@@ -10,6 +10,16 @@
       "type": "string",
       "description": "Swedish title"
     },
+    "sfi_course": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "SFI course level (A=absolute beginner, B=beginner, C=intermediate, D=advanced)"
+    },
     "category": {
       "type": "string",
       "enum": [
