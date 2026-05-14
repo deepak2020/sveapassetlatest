@@ -1,0 +1,89 @@
+{
+  "name": "Lesson",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the lesson"
+    },
+    "title_sv": {
+      "type": "string",
+      "description": "Swedish title"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "vocabulary",
+        "grammar",
+        "phrases",
+        "pronunciation",
+        "reading"
+      ],
+      "description": "Lesson category"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "description": "Difficulty level"
+    },
+    "content": {
+      "type": "string",
+      "description": "Lesson content in markdown"
+    },
+    "word_pairs": {
+      "type": "array",
+      "description": "Swedish-English word pairs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "swedish": {
+            "type": "string"
+          },
+          "english": {
+            "type": "string"
+          },
+          "example_sv": {
+            "type": "string"
+          },
+          "example_en": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "quiz_questions": {
+      "type": "array",
+      "description": "Quiz questions for this lesson",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_index": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "level"
+  ]
+}

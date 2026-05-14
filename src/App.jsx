@@ -5,7 +5,13 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import LanguageLessons from './pages/LanguageLessons';
+import LessonDetail from './pages/LessonDetail';
+import CivicTopics from './pages/CivicTopics';
+import TopicDetail from './pages/TopicDetail';
+import Progress from './pages/Progress';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -33,7 +39,14 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/language" element={<LanguageLessons />} />
+        <Route path="/language/:id" element={<LessonDetail />} />
+        <Route path="/civic" element={<CivicTopics />} />
+        <Route path="/civic/:id" element={<TopicDetail />} />
+        <Route path="/progress" element={<Progress />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

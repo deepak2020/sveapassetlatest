@@ -1,0 +1,39 @@
+{
+  "name": "QuizResult",
+  "type": "object",
+  "properties": {
+    "quiz_type": {
+      "type": "string",
+      "enum": [
+        "language",
+        "civic"
+      ],
+      "description": "Type of quiz"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID of the lesson or topic"
+    },
+    "source_title": {
+      "type": "string",
+      "description": "Title of the lesson or topic"
+    },
+    "score": {
+      "type": "number",
+      "description": "Number of correct answers"
+    },
+    "total": {
+      "type": "number",
+      "description": "Total number of questions"
+    },
+    "percentage": {
+      "type": "number",
+      "description": "Score percentage"
+    }
+  },
+  "required": [
+    "quiz_type",
+    "score",
+    "total"
+  ]
+}

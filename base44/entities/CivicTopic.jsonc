@@ -1,0 +1,70 @@
+{
+  "name": "CivicTopic",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Topic title"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "government",
+        "history",
+        "culture",
+        "rights_duties",
+        "society",
+        "geography"
+      ],
+      "description": "Topic category"
+    },
+    "content": {
+      "type": "string",
+      "description": "Topic content in markdown"
+    },
+    "key_facts": {
+      "type": "array",
+      "description": "Key facts to remember",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fact": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "quiz_questions": {
+      "type": "array",
+      "description": "Quiz questions for this topic",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_index": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}
