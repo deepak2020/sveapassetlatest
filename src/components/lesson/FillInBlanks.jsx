@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function FillInBlanks({ exercises }) {
+export default function FillInBlanks({ exercises, onComplete }) {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [answered, setAnswered] = useState(false);
@@ -28,6 +28,7 @@ export default function FillInBlanks({ exercises }) {
   const handleNext = () => {
     if (current + 1 >= exercises.length) {
       setFinished(true);
+      onComplete?.();
     } else {
       setCurrent(c => c + 1);
       setSelected(null);
