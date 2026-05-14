@@ -1,6 +1,6 @@
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, BookOpen, Landmark, Trophy, TrendingUp, Target } from "lucide-react";
+import { BarChart3, BookOpen, Landmark, Trophy, TrendingUp, Target, FlaskConical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import EmptyState from "../components/shared/EmptyState";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export default function Progress() {
   const { data: results = [], isLoading } = useQuery({
@@ -17,6 +18,17 @@ export default function Progress() {
 
   const languageResults = results.filter((r) => r.quiz_type === "language");
   const civicResults = results.filter((r) => r.quiz_type === "civic");
+
+  // SFI course breakdown
+  const sfiCourses = ["A", "B", "C", "D"];
+  const sfiBreakdown = sfiCourses.map((course) => {
+    const courseResults = languageResults.filter((r) => r.sfi_course === course);
+    return {
+      course,
+      count: courseResults.length,
+      avg: courseResults.length > 0 ? Math.round(courseResults.reduce((s, r) => s + (r.percentage || 0), 0) / courseResults.length) : null,
+    };
+  }).filter((c) => c.count > 0);
 
   const avgScore = (items) => {
     if (items.length === 0) return 0;
@@ -117,6 +129,33 @@ export default function Progress() {
                       <Bar dataKey="score" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* SFI Course Breakdown */}
+          {sfiBreakdown.length > 0 && (
+            <Card className="border-border/50 mb-10">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Language Tests by SFI Course</CardTitle>
+                <Link to="/language-test">
+                  <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-muted">
+                    <FlaskConical className="w-3 h-3" /> Take a test
+                  </Badge>
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {sfiBreakdown.map(({ course, count, avg }) => (
+                    <div key={course} className="p-4 rounded-xl bg-muted/50 text-center">
+                      <div className="text-2xl font-bold text-foreground mb-1">SFI {course}</div>
+                      <div className={`text-xl font-bold mb-1 ${avg >= 80 ? "text-emerald-600" : avg >= 60 ? "text-yellow-600" : "text-destructive"}`}>
+                        {avg}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">{count} test{count !== 1 ? "s" : ""}</div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

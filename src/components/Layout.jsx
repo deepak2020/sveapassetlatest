@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User, FlaskConical } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/AuthContext";
@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 const navItems = [
   { path: "/", label: "Home", icon: Home },
   { path: "/language", label: "Language", icon: BookOpen },
+  { path: "/language-test", label: "Tests", icon: FlaskConical },
   { path: "/civic", label: "Civic Test", icon: Landmark },
   { path: "/progress", label: "Progress", icon: BarChart3 },
 ];

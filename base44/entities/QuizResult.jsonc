@@ -18,6 +18,20 @@
       "type": "string",
       "description": "Title of the lesson or topic"
     },
+    "sfi_course": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "SFI course level this result belongs to"
+    },
+    "skill": {
+      "type": "string",
+      "description": "Skill category (vocabulary, grammar, reading, etc.)"
+    },
     "score": {
       "type": "number",
       "description": "Number of correct answers"

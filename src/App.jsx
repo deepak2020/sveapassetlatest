@@ -12,6 +12,7 @@ import LessonDetail from './pages/LessonDetail';
 import CivicTopics from './pages/CivicTopics';
 import TopicDetail from './pages/TopicDetail';
 import Progress from './pages/Progress';
+import LanguageTest from './pages/LanguageTest';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -46,6 +47,7 @@ const AuthenticatedApp = () => {
         <Route path="/civic" element={<CivicTopics />} />
         <Route path="/civic/:id" element={<TopicDetail />} />
         <Route path="/progress" element={<Progress />} />
+        <Route path="/language-test" element={<LanguageTest />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
