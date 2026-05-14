@@ -3,6 +3,8 @@ import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import { base44 } from "@/api/base44Client";
+import { awardXP, XP_REWARDS } from "@/lib/xp";
 
 export default function FillInBlanks({ exercises, onComplete }) {
   const [current, setCurrent] = useState(0);
@@ -18,11 +20,13 @@ export default function FillInBlanks({ exercises, onComplete }) {
   const ex = exercises[current];
   const isCorrect = selected === ex.answer;
 
-  const handleSelect = (option) => {
+  const handleSelect = async (option) => {
     if (answered) return;
     setSelected(option);
     setAnswered(true);
-    if (option === ex.answer) setScore(s => s + 1);
+    const correct = option === ex.answer;
+    if (correct) setScore(s => s + 1);
+    await awardXP(base44, correct ? XP_REWARDS.cloze_correct : XP_REWARDS.cloze_wrong);
   };
 
   const handleNext = () => {

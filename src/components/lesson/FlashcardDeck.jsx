@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle, RotateCcw, Trophy, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { base44 } from "@/api/base44Client";
+import { awardXP, XP_REWARDS } from "@/lib/xp";
 
 export default function FlashcardDeck({ wordPairs, onComplete }) {
   const [index, setIndex] = useState(0);
@@ -17,13 +19,15 @@ export default function FlashcardDeck({ wordPairs, onComplete }) {
   const card = wordPairs[index];
   const total = wordPairs.length;
 
-  const handleKnow = () => {
+  const handleKnow = async () => {
     setKnown(k => [...k, card]);
+    await awardXP(base44, XP_REWARDS.flashcard_good);
     advance();
   };
 
-  const handleLearning = () => {
+  const handleLearning = async () => {
     setLearning(l => [...l, card]);
+    await awardXP(base44, XP_REWARDS.flashcard_hard);
     advance();
   };
 
