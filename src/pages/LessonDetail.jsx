@@ -13,6 +13,7 @@ import FillInBlanks from "../components/lesson/FillInBlanks";
 import WritingExercise from "../components/lesson/WritingExercise";
 import SpeakingPractice from "../components/lesson/SpeakingPractice";
 import QuizRunner from "../components/shared/QuizRunner";
+import SentenceTranslation from "../components/lesson/SentenceTranslation";
 import LessonProgress from "../components/lesson/LessonProgress";
 import ReactMarkdown from "react-markdown";
 
@@ -60,6 +61,7 @@ export default function LessonDetail() {
   const hasQuiz = lesson.quiz_questions?.length > 0;
   const hasWriting = lesson.writing_prompts?.length > 0;
   const hasSpeaking = lesson.speaking_phrases?.length > 0;
+  const hasTranslate = lesson.word_pairs?.some(wp => wp.example_en && wp.example_sv);
 
   const allDone = completed.length >= 3 || (
     (!hasVocab || completed.includes("learn")) &&
@@ -134,6 +136,11 @@ export default function LessonDetail() {
               <Mic className="w-3.5 h-3.5" /> Speaking
             </TabsTrigger>
           )}
+          {hasTranslate && (
+            <TabsTrigger value="translate" className="gap-1.5 text-sm">
+              ✍️ Translate{completed.includes("translate") ? " ✓" : ""}
+            </TabsTrigger>
+          )}
           {hasQuiz && (
             <TabsTrigger value="quiz" className="gap-1.5 text-sm">
               🎯 Quiz{completed.includes("quiz") ? " ✓" : ` (${lesson.quiz_questions.length})`}
@@ -203,6 +210,20 @@ export default function LessonDetail() {
               <p className="text-sm text-muted-foreground">Read these phrases aloud to practice your pronunciation.</p>
             </div>
             <SpeakingPractice phrases={lesson.speaking_phrases} />
+          </TabsContent>
+        )}
+
+        {/* Sentence Translation */}
+        {hasTranslate && (
+          <TabsContent value="translate">
+            <div className="space-y-2 mb-4">
+              <h2 className="font-semibold text-lg">✍️ Translate to Swedish</h2>
+              <p className="text-sm text-muted-foreground">Read the English sentence and type the Swedish translation.</p>
+            </div>
+            <SentenceTranslation
+              wordPairs={lesson.word_pairs}
+              onComplete={() => markComplete("translate")}
+            />
           </TabsContent>
         )}
 
