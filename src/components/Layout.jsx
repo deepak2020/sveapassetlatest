@@ -1,7 +1,9 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { BookOpen, Landmark, BarChart3, Home, Menu, X } from "lucide-react";
+import { BookOpen, Landmark, BarChart3, Home, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/AuthContext";
+import { base44 } from "@/api/base44Client";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
@@ -13,6 +15,7 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,6 +57,27 @@ export default function Layout() {
               })}
             </nav>
 
+            {/* Auth buttons (desktop) */}
+            <div className="hidden md:flex items-center gap-2">
+              {isAuthenticated ? (
+                <>
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <User className="w-4 h-4" />
+                    {user?.full_name || user?.email}
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={() => logout()} className="gap-2">
+                    <LogOut className="w-4 h-4" />
+                    Log out
+                  </Button>
+                </>
+              ) : (
+                <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="gap-2">
+                  <LogIn className="w-4 h-4" />
+                  Sign in
+                </Button>
+              )}
+            </div>
+
             {/* Mobile menu button */}
             <Button
               variant="ghost"
@@ -91,6 +115,19 @@ export default function Layout() {
                 );
               })}
             </nav>
+            <div className="px-4 pb-3 pt-1 border-t border-border/50">
+              {isAuthenticated ? (
+                <Button variant="ghost" size="sm" onClick={() => logout()} className="w-full justify-start gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Log out ({user?.full_name || user?.email})
+                </Button>
+              ) : (
+                <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="w-full gap-2">
+                  <LogIn className="w-4 h-4" />
+                  Sign in / Create account
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </header>
