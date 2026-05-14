@@ -84,13 +84,13 @@ export default function LanguageTest() {
   // ── RESULTS SCREEN ───────────────────────────────────────────────
   if (testState === "results") {
     const emoji = percentage >= 80 ? "🎉" : percentage >= 60 ? "👍" : "💪";
-    const msg = percentage >= 80 ? "Excellent work!" : percentage >= 60 ? "Good job!" : "Keep practising!";
+    const msg = percentage >= 80 ? "Utmärkt jobbat!" : percentage >= 60 ? "Bra jobbat!" : "Fortsätt öva!";
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
           <div className="text-6xl mb-4">{emoji}</div>
           <h2 className="font-display text-3xl font-bold mb-2">{msg}</h2>
-          <p className="text-muted-foreground mb-8">{score} / {allQuestions.length} correct</p>
+          <p className="text-muted-foreground mb-8">{score} / {allQuestions.length} rätt</p>
           <div className="relative w-36 h-36 mx-auto mb-8">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
               <circle cx="18" cy="18" r="15.9" fill="none" stroke="hsl(var(--muted))" strokeWidth="3" />
@@ -102,8 +102,8 @@ export default function LanguageTest() {
             </div>
           </div>
           <div className="flex gap-3 justify-center">
-            <Button onClick={resetTest} variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" /> Try Again</Button>
-            <Button asChild className="gap-2"><Link to="/progress"><Trophy className="w-4 h-4" /> View Progress</Link></Button>
+            <Button onClick={resetTest} variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" /> Försök igen</Button>
+            <Button asChild className="gap-2"><Link to="/progress"><Trophy className="w-4 h-4" /> Visa framsteg</Link></Button>
           </div>
         </motion.div>
       </div>
@@ -117,10 +117,10 @@ export default function LanguageTest() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Button variant="ghost" size="sm" onClick={resetTest} className="gap-1">
-            <ChevronLeft className="w-4 h-4" /> Exit
+            <ChevronLeft className="w-4 h-4" /> Avsluta
           </Button>
           <span className="text-sm text-muted-foreground font-medium">
-            Question {currentQ + 1} of {allQuestions.length}
+            Fråga {currentQ + 1} av {allQuestions.length}
           </span>
           <Badge variant="outline">SFI {selectedCourse}</Badge>
         </div>
@@ -174,7 +174,7 @@ export default function LanguageTest() {
             {showFeedback && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Button className="w-full gap-2" onClick={handleNext}>
-                  {currentQ + 1 < allQuestions.length ? <>Next Question <ArrowRight className="w-4 h-4" /></> : <>See Results <Trophy className="w-4 h-4" /></>}
+                  {currentQ + 1 < allQuestions.length ? <>Nästa fråga <ArrowRight className="w-4 h-4" /></> : <>Visa resultat <Trophy className="w-4 h-4" /></>}
                 </Button>
               </motion.div>
             )}
@@ -192,14 +192,14 @@ export default function LanguageTest() {
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <FlaskConical className="w-5 h-5 text-primary" />
         </div>
-        <h1 className="font-display text-3xl font-bold text-foreground">Language Tests</h1>
+        <h1 className="font-display text-3xl font-bold text-foreground">Språktest</h1>
       </div>
-      <p className="text-muted-foreground mb-10">Test yourself by SFI course or individual lesson topic</p>
+      <p className="text-muted-foreground mb-10">Testa dig själv per SFI-kurs eller enskilt lektionsämne</p>
 
       {/* Course selector */}
       {!selectedCourse ? (
         <>
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Choose a Course</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Välj en kurs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {SFI_COURSES.map((course, i) => {
               const count = lessons.filter((l) => l.sfi_course === course.id && l.quiz_questions?.length > 0).length;
@@ -223,11 +223,11 @@ export default function LanguageTest() {
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {count > 0 ? `${count} lesson${count !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}` : "No lessons with quizzes yet"}
+                      {count > 0 ? `${count} lektion${count !== 1 ? "er" : ""} · ${qCount} fråga${qCount !== 1 ? "r" : ""}` : "Inga lektioner med quiz än"}
                     </p>
                     {count > 0 && (
                       <div className="flex items-center gap-1 mt-3 text-sm font-semibold text-foreground group-hover:gap-2 transition-all">
-                        Start Test <ArrowRight className="w-4 h-4" />
+                        Starta test <ArrowRight className="w-4 h-4" />
                       </div>
                     )}
                   </button>
@@ -239,7 +239,7 @@ export default function LanguageTest() {
       ) : (
         <>
           <button onClick={() => setSelectedCourse(null)} className="text-sm text-muted-foreground hover:text-foreground mb-6 flex items-center gap-1">
-            ← All Courses
+            ← Alla kurser
           </button>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -253,9 +253,9 @@ export default function LanguageTest() {
                   <FlaskConical className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground">Full Course {selectedCourse} Test</p>
+                  <p className="font-semibold text-foreground">Fullständigt test – Kurs {selectedCourse}</p>
                   <p className="text-sm text-muted-foreground">
-                    {courseLessons.flatMap((l) => l.quiz_questions || []).length} questions across all topics
+                    {courseLessons.flatMap((l) => l.quiz_questions || []).length} frågor från alla ämnen
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-primary ml-auto" />
@@ -263,7 +263,7 @@ export default function LanguageTest() {
             </Card>
           </div>
 
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Or choose a specific topic</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Eller välj ett specifikt ämne</h2>
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -274,8 +274,8 @@ export default function LanguageTest() {
           ) : courseLessons.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              <p>No quizzes available for this course yet.</p>
-              <Link to="/language" className="text-primary text-sm hover:underline mt-1 inline-block">Generate lessons first →</Link>
+              <p>Inga quiz tillgängliga för den här kursen än.</p>
+              <Link to="/language" className="text-primary text-sm hover:underline mt-1 inline-block">Skapa lektioner först →</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -290,7 +290,7 @@ export default function LanguageTest() {
                         <div>
                           <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{lesson.title}</p>
                           {lesson.title_sv && <p className="text-xs text-muted-foreground italic mt-0.5">{lesson.title_sv}</p>}
-                          <p className="text-xs text-muted-foreground mt-2">{lesson.quiz_questions.length} questions</p>
+                          <p className="text-xs text-muted-foreground mt-2">{lesson.quiz_questions.length} frågor</p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-primary shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
