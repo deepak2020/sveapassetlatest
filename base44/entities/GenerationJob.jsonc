@@ -1,0 +1,47 @@
+{
+  "name": "GenerationJob",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "SFI level"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Topic name"
+    },
+    "batch_number": {
+      "type": "number",
+      "description": "Batch index within this level+topic"
+    },
+    "sentences_generated": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "done",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if failed"
+    }
+  },
+  "required": [
+    "level",
+    "topic",
+    "batch_number"
+  ]
+}
