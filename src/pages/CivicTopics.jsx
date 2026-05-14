@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
-import { Landmark, ArrowRight } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Landmark, ArrowRight, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import CategoryBadge from "../components/shared/CategoryBadge";
 import EmptyState from "../components/shared/EmptyState";
 import { motion } from "framer-motion";
+import GenerateTopicModal from "../components/civic/GenerateTopicModal";
 
 const categoryIcons = {
   government: "🏛️",
@@ -21,6 +23,8 @@ const categoryIcons = {
 
 export default function CivicTopics() {
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [showGenerate, setShowGenerate] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
@@ -33,6 +37,11 @@ export default function CivicTopics() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <GenerateTopicModal
+        open={showGenerate}
+        onClose={() => setShowGenerate(false)}
+        onCreated={() => queryClient.invalidateQueries({ queryKey: ["civicTopics"] })}
+      />
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-2">
@@ -44,6 +53,13 @@ export default function CivicTopics() {
         <p className="text-muted-foreground mt-1">
           Learn about Swedish society, government, and culture
         </p>
+      </div>
+
+      <div className="mb-8">
+        <Button onClick={() => setShowGenerate(true)} className="gap-2">
+          <Sparkles className="w-4 h-4" />
+          Generate Topic with AI
+        </Button>
       </div>
 
       {/* Filters */}
