@@ -114,7 +114,10 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <h3 className="text-lg font-semibold text-foreground mb-5">{question.question}</h3>
+            <div className="mb-5">
+              <h3 className="text-lg font-semibold text-foreground mb-1">{question.question_sv}</h3>
+              <p className="text-sm text-muted-foreground italic">{question.question_en}</p>
+            </div>
             <div className="space-y-3">
               {question.options.map((option, index) => {
                 let optionStyle = "border-border/50 hover:border-primary/30 hover:bg-muted/50";
