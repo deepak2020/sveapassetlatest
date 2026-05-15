@@ -16,6 +16,7 @@ import SpeakingPractice from "../components/lesson/SpeakingPractice";
 import QuizRunner from "../components/shared/QuizRunner";
 import SentenceTranslation from "../components/lesson/SentenceTranslation";
 import LessonProgress from "../components/lesson/LessonProgress";
+import MatchingExercise from "../components/lesson/MatchingExercise";
 import ReactMarkdown from "react-markdown";
 
 export default function LessonDetail() {
@@ -75,6 +76,7 @@ export default function LessonDetail() {
   const hasWriting = lesson.writing_prompts?.length > 0;
   const hasSpeaking = lesson.speaking_phrases?.length > 0;
   const hasTranslate = lesson.word_pairs?.some(wp => wp.example_en && wp.example_sv);
+  const hasMatch = lesson.match_pairs?.length > 0;
 
   const allDone = completed.length >= 3 || (
     (!hasVocab || completed.includes("learn")) &&
@@ -155,6 +157,11 @@ export default function LessonDetail() {
               🧩 Practice{completed.includes("practice") ? " ✓" : ` (${lesson.fill_in_blanks.length})`}
             </TabsTrigger>
           )}
+          {hasMatch && (
+            <TabsTrigger value="match" className="gap-1.5 text-sm">
+              🔗 Match{completed.includes("match") ? " ✓" : ` (${lesson.match_pairs.length})`}
+            </TabsTrigger>
+          )}
           {hasWriting && (
             <TabsTrigger value="writing" className="gap-1.5 text-sm">
               <Pen className="w-3.5 h-3.5" /> Writing
@@ -221,6 +228,20 @@ export default function LessonDetail() {
             <FillInBlanks
               exercises={lesson.fill_in_blanks}
               onComplete={() => markComplete("practice")}
+            />
+          </TabsContent>
+        )}
+
+        {/* Matching Exercise */}
+        {hasMatch && (
+          <TabsContent value="match">
+            <div className="space-y-2 mb-4">
+              <h2 className="font-semibold text-lg">🔗 Match the Pairs</h2>
+              <p className="text-sm text-muted-foreground">Connect each Swedish word or phrase to its correct match.</p>
+            </div>
+            <MatchingExercise
+              pairs={lesson.match_pairs}
+              onComplete={() => markComplete("match")}
             />
           </TabsContent>
         )}

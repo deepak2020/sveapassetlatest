@@ -18,7 +18,7 @@
         "C",
         "D"
       ],
-      "description": "SFI course level (A=absolute beginner, B=beginner, C=intermediate, D=advanced)"
+      "description": "SFI course level"
     },
     "category": {
       "type": "string",
@@ -31,8 +31,7 @@
         "writing",
         "speaking",
         "listening"
-      ],
-      "description": "Lesson category"
+      ]
     },
     "skill": {
       "type": "string",
@@ -43,8 +42,7 @@
         "listening",
         "vocabulary",
         "grammar"
-      ],
-      "description": "Primary skill focus"
+      ]
     },
     "level": {
       "type": "string",
@@ -52,8 +50,7 @@
         "beginner",
         "intermediate",
         "advanced"
-      ],
-      "description": "Difficulty level"
+      ]
     },
     "content": {
       "type": "string",
@@ -61,7 +58,6 @@
     },
     "word_pairs": {
       "type": "array",
-      "description": "Swedish-English word pairs",
       "items": {
         "type": "object",
         "properties": {
@@ -82,17 +78,14 @@
     },
     "fill_in_blanks": {
       "type": "array",
-      "description": "Clozemaster-style fill-in-the-blank exercises",
       "items": {
         "type": "object",
         "properties": {
           "sentence_sv": {
-            "type": "string",
-            "description": "Swedish sentence with ___ for the blank"
+            "type": "string"
           },
           "sentence_en": {
-            "type": "string",
-            "description": "English translation"
+            "type": "string"
           },
           "answer": {
             "type": "string"
@@ -108,7 +101,6 @@
     },
     "writing_prompts": {
       "type": "array",
-      "description": "Short writing exercises",
       "items": {
         "type": "object",
         "properties": {
@@ -126,7 +118,6 @@
     },
     "speaking_phrases": {
       "type": "array",
-      "description": "Phrases to practice speaking aloud",
       "items": {
         "type": "object",
         "properties": {
@@ -144,7 +135,6 @@
     },
     "quiz_questions": {
       "type": "array",
-      "description": "Quiz questions for this lesson",
       "items": {
         "type": "object",
         "properties": {
@@ -180,6 +170,21 @@
           },
           "correct_index": {
             "type": "number"
+          }
+        }
+      }
+    },
+    "match_pairs": {
+      "type": "array",
+      "description": "Matching exercise pairs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string"
+          },
+          "right": {
+            "type": "string"
           }
         }
       }
