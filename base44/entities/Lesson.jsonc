@@ -163,6 +163,27 @@
         }
       }
     },
+    "review_questions": {
+      "type": "array",
+      "description": "Questions recycling vocabulary from previous lessons",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_index": {
+            "type": "number"
+          }
+        }
+      }
+    },
     "order": {
       "type": "number",
       "description": "Display order"
@@ -172,23 +193,5 @@
     "title",
     "category",
     "level"
-  ],
-  "rls": {
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "read": {},
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    }
-  }
+  ]
 }

@@ -59,6 +59,7 @@ export default function LessonDetail() {
   const hasVocab = lesson.word_pairs?.length > 0;
   const hasBlanks = lesson.fill_in_blanks?.length > 0;
   const hasQuiz = lesson.quiz_questions?.length > 0;
+  const hasReview = lesson.review_questions?.length > 0;
   const hasWriting = lesson.writing_prompts?.length > 0;
   const hasSpeaking = lesson.speaking_phrases?.length > 0;
   const hasTranslate = lesson.word_pairs?.some(wp => wp.example_en && wp.example_sv);
@@ -139,6 +140,11 @@ export default function LessonDetail() {
           {hasTranslate && (
             <TabsTrigger value="translate" className="gap-1.5 text-sm">
               ✍️ Translate{completed.includes("translate") ? " ✓" : ""}
+            </TabsTrigger>
+          )}
+          {hasReview && (
+            <TabsTrigger value="review" className="gap-1.5 text-sm">
+              🔁 Review{completed.includes("review") ? " ✓" : ` (${lesson.review_questions.length})`}
             </TabsTrigger>
           )}
           {hasQuiz && (
@@ -223,6 +229,23 @@ export default function LessonDetail() {
             <SentenceTranslation
               wordPairs={lesson.word_pairs}
               onComplete={() => markComplete("translate")}
+            />
+          </TabsContent>
+        )}
+
+        {/* Review — recycles vocabulary from earlier lessons */}
+        {hasReview && (
+          <TabsContent value="review">
+            <div className="space-y-2 mb-4">
+              <h2 className="font-semibold text-lg">🔁 Review Previous Lessons</h2>
+              <p className="text-sm text-muted-foreground">Warm up with questions from earlier lessons to reinforce what you already know.</p>
+            </div>
+            <QuizRunner
+              questions={lesson.review_questions}
+              quizType="language"
+              sourceId={lesson.id}
+              sourceTitle={`${lesson.title} — Review`}
+              onComplete={() => markComplete("review")}
             />
           </TabsContent>
         )}
