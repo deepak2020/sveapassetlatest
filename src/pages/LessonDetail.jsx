@@ -32,6 +32,17 @@ export default function LessonDetail() {
 
   const handleRegenerate = async () => {
     setRegenerating(true);
+    await base44.entities.Lesson.update(lessonId, {
+      content: null,
+      word_pairs: [],
+      fill_in_blanks: [],
+      quiz_questions: [],
+      review_questions: [],
+      writing_prompts: [],
+      speaking_phrases: [],
+      match_pairs: [],
+    });
+    await queryClient.invalidateQueries({ queryKey: ["lesson", lessonId] });
     await base44.functions.invoke("generateLessonContent", { lesson_id: lessonId });
     await queryClient.invalidateQueries({ queryKey: ["lesson", lessonId] });
     setRegenerating(false);
