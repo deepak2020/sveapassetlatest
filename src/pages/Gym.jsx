@@ -5,12 +5,18 @@ import { Link } from "react-router-dom";
 import { Dumbbell, Zap, Target, Play, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import GymSession from "@/components/gym/GymSession";
+import GymSessionV2 from "@/components/gym/GymSessionV2";
 
 const MODES = [
   { id: "word_bank", label: "Word Bank", desc: "Tap the correct word from 4 options", levels: ["A", "B"], icon: "🔤" },
   { id: "multiple_choice", label: "Multiple Choice", desc: "Choose from 4 options (A/B/C/D style)", levels: ["B", "C"], icon: "🅰️" },
   { id: "type", label: "Type Answer", desc: "Type the missing Swedish word", levels: ["C", "D"], icon: "⌨️" },
+];
+
+const LEVELS = [
+  { id: "beginner", label: "Beginner", desc: "1 word missing • Multiple choice", blanks: 1 },
+  { id: "intermediate", label: "Intermediate", desc: "2-3 words missing • Mixed input", blanks: 2 },
+  { id: "advanced", label: "Advanced", desc: "Complete sentence • Write it all", blanks: "all" },
 ];
 
 const COUNTS = [10, 25, 50];
@@ -20,6 +26,7 @@ export default function Gym() {
   const [mode, setMode] = useState("multiple_choice");
   const [count, setCount] = useState(10);
   const [levelFilter, setLevelFilter] = useState("all");
+  const [gymLevel, setGymLevel] = useState("beginner");
 
   const { data: sentences = [] } = useQuery({
     queryKey: ["cloze-sentences"],
@@ -40,9 +47,10 @@ export default function Gym() {
 
   if (session) {
     return (
-      <GymSession
+      <GymSessionV2
         sentences={filtered.slice(0, count)}
         mode={mode}
+        level={gymLevel}
         srsCards={srsCards}
         onFinish={() => setSession(null)}
       />
@@ -108,6 +116,23 @@ export default function Gym() {
                       <p className="text-xs text-muted-foreground">{m.desc} · SFI {m.levels.join("–")}</p>
                     </div>
                   </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Gym Level */}
+          <div>
+            <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Gym Level</h2>
+            <div className="space-y-2">
+              {LEVELS.map(lv => (
+                <button
+                  key={lv.id}
+                  onClick={() => setGymLevel(lv.id)}
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${gymLevel === lv.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"}`}
+                >
+                  <p className="font-semibold text-sm">{lv.label}</p>
+                  <p className="text-xs text-muted-foreground">{lv.desc}</p>
                 </button>
               ))}
             </div>
