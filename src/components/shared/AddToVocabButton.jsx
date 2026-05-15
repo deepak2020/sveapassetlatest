@@ -28,11 +28,11 @@ export default function AddToVocabButton({ swedish, english, lessonId, lessonTit
 
   return (
     <Button
-      size="sm"
+      size="lg"
       variant={added ? "default" : "outline"}
       onClick={handleAddToVocab}
       disabled={loading || added}
-      className="gap-1.5"
+      className="gap-1.5 w-full"
     >
       {added ? (
         <>
