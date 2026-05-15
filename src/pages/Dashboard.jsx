@@ -707,7 +707,10 @@ export default function Dashboard() {
                     <AlertDialogCancel>Avbryt</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      onClick={() => base44.auth.logout()}
+                      onClick={async () => {
+                        await base44.entities.User.delete(user.id);
+                        base44.auth.logout();
+                      }}
                     >
                       Ja, radera konto
                     </AlertDialogAction>

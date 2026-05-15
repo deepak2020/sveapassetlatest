@@ -1,11 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { BookOpen, Landmark, Home, Menu, X, LogIn, LogOut, User, FlaskConical, Flame, Zap, LayoutDashboard, Dumbbell } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import AddVocabDialog from "@/components/shared/AddVocabDialog";
+import { AnimatePresence, motion } from "framer-motion";
 
 const navItems = [
   { path: "/", label: "Hem", icon: Home },
@@ -22,11 +23,27 @@ const bottomTabItems = [
   { path: "/gym", label: "Träning", icon: Dumbbell },
 ];
 
+// Root path for each bottom tab
+const TAB_ROOTS = {
+  "/dashboard": "/dashboard",
+  "/language": "/language",
+  "/civic": "/civic",
+  "/gym": "/gym",
+};
+
+function getActiveTab(pathname) {
+  for (const root of Object.keys(TAB_ROOTS)) {
+    if (pathname === root || pathname.startsWith(root + "/")) return root;
+  }
+  return null;
+}
+
 export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const activeTab = getActiveTab(location.pathname);
 
   const { data: userProfile } = useQuery({
     queryKey: ["me"],
@@ -169,7 +186,17 @@ export default function Layout() {
 
       {/* Main Content */}
       <main>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.18, ease: "easeInOut" }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Global Add Vocab Dialog */}
@@ -184,11 +211,21 @@ export default function Layout() {
               const isActive = location.pathname === item.path ||
                 (item.path !== "/dashboard" && location.pathname.startsWith(item.path));
               return (
-                <Link key={item.path} to={item.path}
-                  className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    if (isActive) {
+                      // Already on this tab — reset to root
+                      navigate(item.path, { replace: true });
+                    } else {
+                      navigate(item.path);
+                    }
+                  }}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all no-select ${isActive ? "text-primary" : "text-muted-foreground"}`}
+                >
                   <Icon className="w-5 h-5" />
                   <span className="text-[10px] font-medium">{item.label}</span>
-                </Link>
+                </button>
               );
             })}
           </div>
