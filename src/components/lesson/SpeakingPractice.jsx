@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Volume2, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import SpeakButton from "@/components/shared/SpeakButton";
 
 export default function SpeakingPractice({ phrases }) {
   const [expanded, setExpanded] = useState(null);
@@ -26,9 +27,10 @@ export default function SpeakingPractice({ phrases }) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
-                    <Volume2 className="w-4 h-4 text-green-600" />
-                  </div>
+                  <SpeakButton
+                    text={phrase.phrase_sv}
+                    className="w-9 h-9 rounded-xl bg-green-100 text-green-600 hover:bg-green-200 shrink-0"
+                  />
                   <div className="min-w-0">
                     <p className="font-semibold text-foreground text-base leading-snug">{phrase.phrase_sv}</p>
                     <p className="text-sm text-muted-foreground">{phrase.phrase_en}</p>

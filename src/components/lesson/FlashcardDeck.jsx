@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, RotateCcw, Trophy, Volume2 } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { awardXP, XP_REWARDS } from "@/lib/xp";
+import SpeakButton from "@/components/shared/SpeakButton";
 
 export default function FlashcardDeck({ wordPairs, onComplete }) {
   const [index, setIndex] = useState(0);
@@ -43,12 +44,6 @@ export default function FlashcardDeck({ wordPairs, onComplete }) {
 
   const restart = () => {
     setIndex(0); setFlipped(false); setKnown([]); setLearning([]); setFinished(false);
-  };
-
-  const speak = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "sv-SE";
-    window.speechSynthesis.speak(utterance);
   };
 
   if (finished) {
@@ -100,12 +95,11 @@ export default function FlashcardDeck({ wordPairs, onComplete }) {
               {flipped ? "English" : "Swedish"}
             </span>
 
-            <button
-              className="absolute top-3 right-3 text-muted-foreground hover:text-primary transition-colors"
-              onClick={(e) => { e.stopPropagation(); speak(flipped ? card.english : card.swedish); }}
-            >
-              <Volume2 className="w-4 h-4" />
-            </button>
+            <SpeakButton
+              text={flipped ? card.english : card.swedish}
+              lang={flipped ? "en-US" : "sv-SE"}
+              className="absolute top-3 right-3"
+            />
 
             <p className="text-3xl font-bold text-foreground mb-3">
               {flipped ? card.english : card.swedish}
