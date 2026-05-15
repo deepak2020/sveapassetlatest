@@ -7,10 +7,12 @@ import { BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
 import GenerateLessonModal from "../components/language/GenerateLessonModal";
 import GenerateContentButton from "../components/language/GenerateContentButton";
+import GrammarModule from "../components/language/GrammarModule";
 import { motion } from "framer-motion";
 
 const SFI_COURSES = [
@@ -147,16 +149,25 @@ export default function LanguageLessons() {
          )}
       </div>
 
-      {!activeCourse && isAdmin && lessons.length > 0 && (
-        <div className="mb-6">
-          <GenerateContentButton
-            lessons={lessons}
-            regenerateAll={false}
-            autoStart={true}
-            onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
-          />
-        </div>
-      )}
+      {/* Tab Navigation */}
+      <Tabs defaultValue="lessons" className="w-full mb-8">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="lessons">Lektioner · Lessons</TabsTrigger>
+          <TabsTrigger value="grammar">Grammatik · Grammar</TabsTrigger>
+        </TabsList>
+
+        {/* Lessons Tab */}
+        <TabsContent value="lessons">
+          {!activeCourse && isAdmin && lessons.length > 0 && (
+            <div className="mb-6">
+              <GenerateContentButton
+                lessons={lessons}
+                regenerateAll={false}
+                autoStart={true}
+                onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
+              />
+            </div>
+          )}
 
       {!activeCourse ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -177,7 +188,7 @@ export default function LanguageLessons() {
                   </div>
                   <h2 className="text-2xl font-bold mb-1">{course.name}</h2>
                   <p className="text-muted-foreground font-medium mb-6">{course.subtitle}</p>
-                  
+
                   <div className="flex flex-wrap gap-2 mb-8">
                     {course.topics.map((t) => (
                       <span key={t} className="px-3 py-1 bg-background/50 rounded-lg text-xs font-medium border border-border/20">
@@ -214,10 +225,10 @@ export default function LanguageLessons() {
                 key={s.key}
                 onClick={() => setSkillFilter(s.key)}
                 className={`px-4 py-3 md:py-2 rounded-xl text-sm font-semibold transition-all min-h-10 ${
-                   skillFilter === s.key 
-                   ? "bg-primary text-white shadow-md" 
-                   : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                 }`}
+                  skillFilter === s.key 
+                  ? "bg-primary text-white shadow-md" 
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                }`}
               >
                 {s.emoji} {s.label}
               </button>
@@ -239,6 +250,13 @@ export default function LanguageLessons() {
           )}
         </div>
       )}
+      </TabsContent>
+
+      {/* Grammar Tab */}
+      <TabsContent value="grammar">
+      <GrammarModule />
+      </TabsContent>
+      </Tabs>
     </div>
   );
 }
