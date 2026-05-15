@@ -127,15 +127,21 @@ Deno.serve(async (req) => {
   }
 
   const body = await req.json().catch(() => ({}));
-  const { topic_index } = body; // optional: generate just one by index
+  const { topic_index, batch_start = 0, batch_size = 3 } = body;
 
-  const toGenerate = topic_index !== undefined
-    ? [CIVIC_TOPICS[topic_index]].filter(Boolean)
-    : CIVIC_TOPICS;
+  let toGenerate;
+  if (topic_index !== undefined) {
+    toGenerate = [CIVIC_TOPICS[topic_index]].filter(Boolean);
+  } else {
+    // Generate in batches to avoid timeout
+    const end = Math.min(batch_start + batch_size, CIVIC_TOPICS.length);
+    toGenerate = CIVIC_TOPICS.slice(batch_start, end);
+  }
 
   const results = [];
 
-  for (const topic of toGenerate) {
+  for (let i = 0; i < toGenerate.length; i++) {
+    const topic = toGenerate[i];
     console.log(`[generateCivicContent] Generating: ${topic.title}`);
     try {
       const data = await generateOneTopic(base44, topic);
@@ -159,5 +165,11 @@ Deno.serve(async (req) => {
     }
   }
 
-  return Response.json({ results, total: toGenerate.length });
+  const hasMore = batch_start + batch_size < CIVIC_TOPICS.length;
+  return Response.json({ 
+    results, 
+    batch: { start: batch_start, size: batch_size, total: CIVIC_TOPICS.length },
+    hasMore,
+    nextBatch: hasMore ? batch_start + batch_size : null
+  });
 });
