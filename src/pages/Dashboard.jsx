@@ -76,6 +76,15 @@ export default function Dashboard() {
 
   const today = new Date().toISOString().split("T")[0];
   const dueCount = srsCards.filter(c => c.due_date <= today && c.status !== "mastered").length;
+  
+  // Gym stats
+  const gymStats = {
+    total: srsCards.length,
+    mastered: srsCards.filter(c => c.mastery_percentage === 100).length,
+    learning: srsCards.filter(c => c.mastery_percentage < 100 && c.mastery_percentage > 0).length,
+    new: srsCards.filter(c => c.mastery_percentage === 0).length,
+  };
+  const masteredPct = gymStats.total > 0 ? Math.round((gymStats.mastered / gymStats.total) * 100) : 0;
 
   // Estimate today's activity in minutes: each quiz result = ~2 min, each SRS card answered today = ~0.5 min
   const todayResults = quizResults.filter(r => r.created_date?.startsWith(today));
@@ -263,24 +272,51 @@ export default function Dashboard() {
       {/* Gym card */}
       <Link to="/gym" className="group">
         <Card className="border-border/50 hover:border-violet-400 hover:shadow-md transition-all duration-200">
-          <CardContent className="p-5 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                <Dumbbell className="w-5 h-5 text-violet-600" />
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                  <Dumbbell className="w-5 h-5 text-violet-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Träningssalen</h3>
+                  <p className="text-sm text-muted-foreground">Intensiv meningsträning</p>
+                  <p className="text-xs text-muted-foreground/60 italic">High-volume cloze sentence practice</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">Träningssalen</h3>
-                <p className="text-sm text-muted-foreground">Intensiv meningsträning</p>
-                <p className="text-xs text-muted-foreground/60 italic">High-volume cloze sentence practice</p>
+              <div className="text-right shrink-0">
+                {dueCount > 0 ? (
+                  <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{dueCount} förfallna</span>
+                ) : (
+                  <span className="text-xs text-primary font-medium group-hover:underline">Börja →</span>
+                )}
               </div>
             </div>
-            <div className="text-right shrink-0">
-              {dueCount > 0 ? (
-                <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{dueCount} förfallna</span>
-              ) : (
-                <span className="text-xs text-primary font-medium group-hover:underline">Börja →</span>
-              )}
-            </div>
+            {gymStats.total > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Mastery progress</span>
+                  <span className="font-semibold text-emerald-600">{masteredPct}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${masteredPct}%` }} />
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-xs mt-2">
+                  <div className="p-2 rounded-lg bg-emerald-50 text-center">
+                    <p className="font-bold text-emerald-600">{gymStats.mastered}</p>
+                    <p className="text-emerald-600/70">Mastered</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-blue-50 text-center">
+                    <p className="font-bold text-blue-600">{gymStats.learning}</p>
+                    <p className="text-blue-600/70">Learning</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 text-center">
+                    <p className="font-bold text-slate-600">{gymStats.new}</p>
+                    <p className="text-slate-600/70">New</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </Link>
@@ -349,8 +385,41 @@ export default function Dashboard() {
 
         {/* Progress Tab */}
         <TabsContent value="progress" className="space-y-6">
-          {resultsLoading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Gym Mastery Stats */}
+          {srsCards.length > 0 && (
+            <div>
+              <h2 className="font-semibold text-foreground mb-3">Träningssalen Framsteg</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="border-border/50">
+                  <CardContent className="p-5">
+                    <div className="text-2xl font-bold text-primary">{srsCards.length}</div>
+                    <p className="text-xs text-muted-foreground mt-1">Totalt kort</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border/50">
+                  <CardContent className="p-5">
+                    <div className="text-2xl font-bold text-emerald-600">{srsCards.filter(c => c.mastery_percentage === 100).length}</div>
+                    <p className="text-xs text-muted-foreground mt-1">Mastered (100%)</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border/50">
+                  <CardContent className="p-5">
+                    <div className="text-2xl font-bold text-blue-600">{srsCards.filter(c => c.mastery_percentage > 0 && c.mastery_percentage < 100).length}</div>
+                    <p className="text-xs text-muted-foreground mt-1">Learning (25-75%)</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border/50">
+                  <CardContent className="p-5">
+                    <div className="text-2xl font-bold text-slate-600">{srsCards.filter(c => c.mastery_percentage === 0).length}</div>
+                    <p className="text-xs text-muted-foreground mt-1">New (0%)</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+           {resultsLoading ? (
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {Array(4).fill(0).map((_, i) => (
                 <Card key={i}><CardContent className="p-6"><div className="h-16 bg-muted rounded animate-pulse" /></CardContent></Card>
               ))}

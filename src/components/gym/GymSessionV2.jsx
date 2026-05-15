@@ -347,28 +347,38 @@ async function updateSRS(sentenceId, isCorrect, srsCards) {
   if (existing) {
     let ease = Math.min(2.5, Math.max(1.3, existing.ease_factor || 2.5));
     let interval = existing.interval_days || 1;
+    let correctStreak = (existing.correct_streak || 0) + (isCorrect ? 1 : 0);
+    let masteryPercentage = existing.mastery_percentage || 0;
 
     if (isCorrect) {
       interval = Math.round(interval * ease);
       ease = Math.min(2.5, ease + 0.1);
+      
+      // Mastery progression: 0→25→50→75→100 (requires 4 correct in a row)
+      if (correctStreak >= 4) {
+        if (masteryPercentage < 100) {
+          masteryPercentage = Math.min(100, masteryPercentage + 25);
+        }
+        correctStreak = 0; // Reset streak after leveling up
+      }
     } else {
       interval = 1;
       ease = Math.max(1.3, ease - 0.2);
+      correctStreak = 0; // Reset streak on incorrect
     }
 
-    const due = new Date();
-    due.setDate(due.getDate() + interval);
     const timesCorrect = (existing.times_correct || 0) + (isCorrect ? 1 : 0);
     const timesSeen = (existing.times_seen || 0) + 1;
-    const accuracy = timesCorrect / timesSeen;
-    const status = timesCorrect >= 5 && accuracy >= 0.9 ? "mastered" : "review";
+    const status = masteryPercentage === 100 ? "mastered" : timesCorrect >= 3 ? "review" : "learning";
 
     await base44.entities.UserSRSCard.update(existing.id, {
       interval_days: interval,
       ease_factor: ease,
-      due_date: due.toISOString().split("T")[0],
+      due_date: new Date(new Date().setDate(new Date().getDate() + interval)).toISOString().split("T")[0],
       times_seen: timesSeen,
       times_correct: timesCorrect,
+      correct_streak: correctStreak,
+      mastery_percentage: masteryPercentage,
       last_answer_correct: isCorrect,
       status,
     });
@@ -383,6 +393,8 @@ async function updateSRS(sentenceId, isCorrect, srsCards) {
       due_date: due.toISOString().split("T")[0],
       times_seen: 1,
       times_correct: isCorrect ? 1 : 0,
+      correct_streak: isCorrect ? 1 : 0,
+      mastery_percentage: 0,
       last_answer_correct: isCorrect,
       status: "learning",
     });

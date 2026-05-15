@@ -29,8 +29,25 @@
       "type": "number",
       "default": 0
     },
+    "correct_streak": {
+      "type": "number",
+      "description": "Consecutive correct answers",
+      "default": 0
+    },
     "last_answer_correct": {
       "type": "boolean"
+    },
+    "mastery_percentage": {
+      "type": "number",
+      "description": "0, 25, 50, 75, or 100",
+      "default": 0,
+      "enum": [
+        0,
+        25,
+        50,
+        75,
+        100
+      ]
     },
     "status": {
       "type": "string",
