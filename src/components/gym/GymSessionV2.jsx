@@ -130,18 +130,25 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
                   <span className="text-xs font-semibold text-foreground uppercase">Swedish</span>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => playAudio(sentence.sentence_sv, "sv-SE", 0.8)}
+                      onClick={() => playAudio(sentence.sentence_sv, "sv-SE", 0.6)}
                       className="p-1.5 rounded-lg border border-border/50 hover:bg-muted transition-colors"
-                      title="Slow"
+                      title="Slow (0.6x)"
                     >
                       <Volume2 className="w-4 h-4 text-muted-foreground" />
                     </button>
                     <button
                       onClick={() => playAudio(sentence.sentence_sv, "sv-SE", 1)}
                       className="p-1.5 rounded-lg border border-border/50 hover:bg-muted transition-colors"
-                      title="Normal"
+                      title="Normal (1x)"
                     >
                       <Volume2 className="w-4 h-4 text-primary" />
+                    </button>
+                    <button
+                      onClick={() => playAudio(sentence.sentence_sv, "sv-SE", 1.4)}
+                      className="p-1.5 rounded-lg border border-border/50 hover:bg-muted transition-colors"
+                      title="Fast (1.4x)"
+                    >
+                      <Volume2 className="w-4 h-4 text-orange-500" />
                     </button>
                   </div>
                 </div>
