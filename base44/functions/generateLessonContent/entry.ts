@@ -96,11 +96,19 @@ writing_prompts: 5-6 items with INCREASING difficulty in the **Babbel style** �
 
 speaking_phrases: 8-10 practical conversational phrases in the **Babbel style** — things people actually say in Sweden related to this topic. Each has a pronunciation_tip focusing on Swedish sounds (vowels, sj-sound, pitch accent, etc.) in the **Hermods** explicit-instruction style.
 
+listening_phrases: 6-8 listening comprehension exercises for audio-based learning:
+  - phrase_sv: Swedish phrase for listening comprehension
+  - phrase_en: English translation
+  - exercise_type: "transcribe" (user types what they hear) or "select" (user chooses from 4 options)
+  - options: (for "select" type only) 4 multiple choice options in Swedish
+  - correct_index: (for "select" type only) index of correct answer (0-3)
+  Ensure phrases are natural, at the appropriate SFI level, and cover real-world Swedish conversations.
+
 match_pairs: 10-12 pairs for a matching exercise. Mix of:
-  - Swedish word → English translation
-  - Swedish sentence → English meaning  
-  - Swedish question → correct Swedish answer
-  Each pair: { left: string, right: string }
+   - Swedish word → English translation
+   - Swedish sentence → English meaning  
+   - Swedish question → correct Swedish answer
+   Each pair: { left: string, right: string }
 
 All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate ALL difficulty strictly to SFI ${sfi_course} level. Avoid overly formal or archaic Swedish — write how educated Swedes actually speak and write today.`;
 
@@ -184,6 +192,19 @@ All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate AL
               }
             }
           },
+          listening_phrases: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                phrase_sv: { type: "string" },
+                phrase_en: { type: "string" },
+                exercise_type: { type: "string", enum: ["transcribe", "select"] },
+                options: { type: "array", items: { type: "string" } },
+                correct_index: { type: "number" }
+              }
+            }
+          },
           match_pairs: {
             type: "array",
             items: {
@@ -228,6 +249,7 @@ All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate AL
     review_questions: sanitizeArray(data.review_questions),
     writing_prompts: sanitizeArray(data.writing_prompts),
     speaking_phrases: sanitizeArray(data.speaking_phrases),
+    listening_phrases: sanitizeArray(data.listening_phrases),
     match_pairs: sanitizeArray(data.match_pairs),
   });
 
@@ -241,6 +263,7 @@ All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate AL
     review_questions: data.review_questions?.length || 0,
     writing_prompts: data.writing_prompts?.length || 0,
     speaking_phrases: data.speaking_phrases?.length || 0,
+    listening_phrases: data.listening_phrases?.length || 0,
     match_pairs: data.match_pairs?.length || 0,
   });
 });
