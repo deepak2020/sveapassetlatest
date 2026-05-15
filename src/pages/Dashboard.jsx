@@ -62,10 +62,13 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold text-foreground">
-            {getGreeting()}, {user.full_name?.split(" ")[0] || "Learner"}! 👋
+            {getGreeting()}, {user.full_name?.split(" ")[0] || "Inlärare"}! 👋
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            {user.sfi_level ? `SFI ${user.sfi_level} • ` : ""}{user.goal || "Keep learning Swedish!"}
+            {user.sfi_level ? `SFI ${user.sfi_level} • ` : ""}{user.goal || "Fortsätt lära dig svenska!"}
+          </p>
+          <p className="text-muted-foreground/60 mt-0.5 text-xs italic">
+            {user.sfi_level ? `SFI ${user.sfi_level} • ` : ""}Keep learning Swedish!
           </p>
         </div>
 
@@ -74,7 +77,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-200 rounded-xl px-3 py-2">
             <Flame className="w-5 h-5 text-orange-500" />
             <span className="font-bold text-orange-600">{streak}</span>
-            <span className="text-xs text-orange-500">day streak</span>
+            <span className="text-xs text-orange-500">dagars svit</span>
           </div>
           <div className="flex items-center gap-1.5 bg-primary/5 border border-primary/20 rounded-xl px-3 py-2">
             <Zap className="w-5 h-5 text-primary" />
@@ -116,15 +119,15 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Target className="w-4 h-4 text-primary" />
-                Daily goal
+                <span>Dagligt mål <span className="font-normal text-muted-foreground/70 italic">· Daily goal</span></span>
               </div>
-              <span className="text-xs text-muted-foreground">{user.daily_goal_minutes} min target</span>
+              <span className="text-xs text-muted-foreground">{user.daily_goal_minutes} min mål</span>
             </div>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
               <div className="h-full bg-secondary rounded-full transition-all duration-700" style={{ width: `${dailyGoalPct}%` }} />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {dailyGoalPct >= 100 ? "🎉 Daily goal met!" : `~${estimatedMinutesToday} / ${user.daily_goal_minutes} min today`}
+              {dailyGoalPct >= 100 ? "🎉 Dagligt mål uppnått! · Daily goal met!" : `~${estimatedMinutesToday} / ${user.daily_goal_minutes} min idag · today`}
             </p>
           </CardContent>
         </Card>
@@ -139,8 +142,9 @@ export default function Dashboard() {
                 <BookOpen className="w-5 h-5 text-blue-600" />
               </div>
               <h3 className="font-semibold text-foreground">Svenska</h3>
-              <p className="text-sm text-muted-foreground mt-1">Language lessons by SFI level</p>
-              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Continue →</span>
+              <p className="text-sm text-muted-foreground mt-1">Språklektioner per SFI-nivå</p>
+              <p className="text-xs text-muted-foreground/60 italic">Language lessons by SFI level</p>
+              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Fortsätt →</span>
             </CardContent>
           </Card>
         </Link>
@@ -152,8 +156,9 @@ export default function Dashboard() {
                 <Landmark className="w-5 h-5 text-violet-600" />
               </div>
               <h3 className="font-semibold text-foreground">Samhälle</h3>
-              <p className="text-sm text-muted-foreground mt-1">Civic knowledge & citizenship test</p>
-              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Continue →</span>
+              <p className="text-sm text-muted-foreground mt-1">Samhällskunskap & medborgarprov</p>
+              <p className="text-xs text-muted-foreground/60 italic">Civic knowledge & citizenship test</p>
+              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Fortsätt →</span>
             </CardContent>
           </Card>
         </Link>
@@ -164,9 +169,10 @@ export default function Dashboard() {
               <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-3">
                 <FlaskConical className="w-5 h-5 text-amber-600" />
               </div>
-              <h3 className="font-semibold text-foreground">Tests</h3>
-              <p className="text-sm text-muted-foreground mt-1">Quiz yourself across all levels</p>
-              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Start →</span>
+              <h3 className="font-semibold text-foreground">Prov</h3>
+              <p className="text-sm text-muted-foreground mt-1">Testa dig på alla nivåer</p>
+              <p className="text-xs text-muted-foreground/60 italic">Quiz yourself across all levels</p>
+              <span className="text-xs text-primary font-medium mt-3 inline-block group-hover:underline">Börja →</span>
             </CardContent>
           </Card>
         </Link>
@@ -181,15 +187,16 @@ export default function Dashboard() {
                 <Dumbbell className="w-5 h-5 text-violet-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Practice Gym</h3>
-                <p className="text-sm text-muted-foreground">High-volume cloze sentence practice</p>
+                <h3 className="font-semibold text-foreground">Träningssalen</h3>
+                <p className="text-sm text-muted-foreground">Intensiv meningsträning</p>
+                <p className="text-xs text-muted-foreground/60 italic">High-volume cloze sentence practice</p>
               </div>
             </div>
             <div className="text-right shrink-0">
               {dueCount > 0 ? (
-                <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{dueCount} due</span>
+                <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{dueCount} förfallna</span>
               ) : (
-                <span className="text-xs text-primary font-medium group-hover:underline">Start →</span>
+                <span className="text-xs text-primary font-medium group-hover:underline">Börja →</span>
               )}
             </div>
           </CardContent>
@@ -200,9 +207,12 @@ export default function Dashboard() {
       {quizResults.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-foreground">Recent activity</h2>
+            <div>
+              <h2 className="font-semibold text-foreground">Senaste aktivitet</h2>
+              <p className="text-xs text-muted-foreground/60 italic">Recent activity</p>
+            </div>
             <Link to="/progress" className="text-xs text-primary hover:underline flex items-center gap-1">
-              <BarChart3 className="w-3.5 h-3.5" /> View all
+              <BarChart3 className="w-3.5 h-3.5" /> Visa alla
             </Link>
           </div>
           <div className="space-y-2">
@@ -215,7 +225,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{r.source_title || "Quiz"}</p>
-                      <p className="text-xs text-muted-foreground">{r.score}/{r.total} correct</p>
+                      <p className="text-xs text-muted-foreground">{r.score}/{r.total} rätt · correct</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-sm font-semibold text-primary">
@@ -232,18 +242,21 @@ export default function Dashboard() {
       {/* XP breakdown info */}
       <Card className="border-border/50 bg-muted/30">
         <CardContent className="p-5">
-          <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide">How to earn XP</h3>
+          <div className="mb-3">
+            <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Så tjänar du XP</h3>
+            <p className="text-xs text-muted-foreground/60 italic">How to earn XP</p>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             {[
-              { label: "Lesson complete", xp: 5 },
-              { label: "Practice passed", xp: 15 },
-              { label: "Quiz correct", xp: 20 },
-              { label: "Flashcard Good/Easy", xp: 10 },
-              { label: "7-day streak", xp: 50 },
-              { label: "Daily goal met", xp: 25 },
+              { label: "Lektion klar", sublabel: "Lesson complete", xp: 5 },
+              { label: "Övning godkänd", sublabel: "Practice passed", xp: 15 },
+              { label: "Quiz rätt", sublabel: "Quiz correct", xp: 20 },
+              { label: "Flashkort Bra/Lätt", sublabel: "Flashcard Good/Easy", xp: 10 },
+              { label: "7-dagars svit", sublabel: "7-day streak", xp: 50 },
+              { label: "Dagmål uppnått", sublabel: "Daily goal met", xp: 25 },
             ].map(item => (
               <div key={item.label} className="flex items-center justify-between bg-background rounded-lg px-3 py-2 border border-border/50">
-                <span className="text-muted-foreground text-xs">{item.label}</span>
+                <span className="text-muted-foreground text-xs">{item.label}<span className="block text-muted-foreground/50 italic">{item.sublabel}</span></span>
                 <span className="font-bold text-primary text-xs">+{item.xp}</span>
               </div>
             ))}

@@ -84,10 +84,10 @@ export default function Profile() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total XP", value: xp.toLocaleString(), icon: Zap, color: "text-primary" },
-          { label: "Day streak", value: streak, icon: Flame, color: "text-orange-500" },
-          { label: "Quizzes done", value: quizResults.length, icon: BookOpen, color: "text-blue-500" },
-          { label: "Mastered words", value: mastered, icon: Trophy, color: "text-emerald-500" },
+          { label: "Totalt XP", icon: Zap, color: "text-primary", value: xp.toLocaleString() },
+          { label: "Dagars svit", icon: Flame, color: "text-orange-500", value: streak },
+          { label: "Prov gjorda", icon: BookOpen, color: "text-blue-500", value: quizResults.length },
+          { label: "Bemästrade ord", icon: Trophy, color: "text-emerald-500", value: mastered },
         ].map(s => (
           <Card key={s.label} className="border-border/50">
             <CardContent className="p-4 text-center">
@@ -102,7 +102,7 @@ export default function Profile() {
       {accuracy > 0 && (
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Quiz accuracy</span>
+            <span className="text-sm text-muted-foreground">Provnoggrannhet · <span className="italic">Quiz accuracy</span></span>
             <span className="font-bold text-primary">{accuracy}%</span>
           </CardContent>
         </Card>
@@ -111,10 +111,10 @@ export default function Profile() {
       {/* Settings */}
       <Card className="border-border/50">
         <CardContent className="p-5 space-y-5">
-          <h2 className="font-semibold">Settings</h2>
+          <h2 className="font-semibold">Inställningar <span className="text-sm font-normal italic text-muted-foreground">· Settings</span></h2>
 
           <div>
-            <label className="text-sm text-muted-foreground mb-2 block">SFI Level</label>
+            <label className="text-sm text-muted-foreground mb-2 block">SFI-nivå · <span className="italic">SFI Level</span></label>
             <div className="flex gap-2">
               {SFI_LEVELS.map(l => (
                 <button
@@ -129,7 +129,7 @@ export default function Profile() {
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground mb-2 block">Daily goal (minutes)</label>
+            <label className="text-sm text-muted-foreground mb-2 block">Dagligt mål (minuter) · <span className="italic">Daily goal (minutes)</span></label>
             <div className="flex gap-2">
               {DAILY_GOALS.map(g => (
                 <button
@@ -143,7 +143,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {saved && <p className="text-sm text-emerald-600 font-medium">✓ Saved!</p>}
+          {saved && <p className="text-sm text-emerald-600 font-medium">✓ Sparat! · Saved!</p>}
         </CardContent>
       </Card>
 
@@ -152,7 +152,7 @@ export default function Profile() {
         className="w-full gap-2 text-destructive border-destructive/30 hover:bg-destructive/5"
         onClick={() => base44.auth.logout()}
       >
-        <LogOut className="w-4 h-4" /> Log out
+        <LogOut className="w-4 h-4" /> Logga ut · <span className="italic">Log out</span>
       </Button>
     </div>
   );

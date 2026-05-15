@@ -7,21 +7,21 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 
 const navItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/language", label: "Language", icon: BookOpen },
-  { path: "/civic", label: "Civic", icon: Landmark },
-  { path: "/gym", label: "Gym", icon: Dumbbell },
-  { path: "/progress", label: "Progress", icon: BarChart3 },
-  { path: "/profile", label: "Profile", icon: User },
+  { path: "/", label: "Hem", icon: Home },
+  { path: "/dashboard", label: "Översikt", icon: LayoutDashboard },
+  { path: "/language", label: "Språk", icon: BookOpen },
+  { path: "/civic", label: "Samhälle", icon: Landmark },
+  { path: "/gym", label: "Träning", icon: Dumbbell },
+  { path: "/progress", label: "Framsteg", icon: BarChart3 },
+  { path: "/profile", label: "Profil", icon: User },
 ];
 
 const bottomTabItems = [
-  { path: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { path: "/language", label: "Learn", icon: BookOpen },
-  { path: "/civic", label: "Civic", icon: Landmark },
-  { path: "/gym", label: "Gym", icon: Dumbbell },
-  { path: "/profile", label: "Profile", icon: User },
+  { path: "/dashboard", label: "Hem", icon: LayoutDashboard },
+  { path: "/language", label: "Lär dig", icon: BookOpen },
+  { path: "/civic", label: "Samhälle", icon: Landmark },
+  { path: "/gym", label: "Träning", icon: Dumbbell },
+  { path: "/profile", label: "Profil", icon: User },
 ];
 
 export default function Layout() {
@@ -63,7 +63,7 @@ export default function Layout() {
               </div>
               <div className="hidden sm:block">
                 <span className="font-display font-semibold text-lg text-foreground tracking-tight">Sveapasset</span>
-                <span className="text-xs text-muted-foreground block -mt-1">Your path to Swedish citizenship</span>
+                <span className="text-xs text-muted-foreground block -mt-1">Din väg till svenskt medborgarskap · <em>Your path to Swedish citizenship</em></span>
               </div>
             </Link>
 
@@ -104,13 +104,13 @@ export default function Layout() {
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => logout()} className="gap-2">
                     <LogOut className="w-4 h-4" />
-                    Log out
-                  </Button>
+                    Logga ut
+                    </Button>
                 </>
               ) : (
                 <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="gap-2">
                   <LogIn className="w-4 h-4" />
-                  Sign in
+                  Logga in
                 </Button>
               )}
             </div>
@@ -156,12 +156,12 @@ export default function Layout() {
               {isAuthenticated ? (
                 <Button variant="ghost" size="sm" onClick={() => logout()} className="w-full justify-start gap-2">
                   <LogOut className="w-4 h-4" />
-                  Log out ({user?.full_name || user?.email})
+                  Logga ut ({user?.full_name || user?.email})
                 </Button>
               ) : (
                 <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="w-full gap-2">
                   <LogIn className="w-4 h-4" />
-                  Sign in / Create account
+                  Logga in / Skapa konto
                 </Button>
               )}
             </div>
@@ -205,7 +205,7 @@ export default function Layout() {
               <span className="font-display font-semibold text-foreground">Sveapasset</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Lycka till med dina studier! — Good luck with your studies!
+              Lycka till med dina studier! · <em>Good luck with your studies!</em>
             </p>
           </div>
         </div>

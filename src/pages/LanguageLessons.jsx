@@ -120,7 +120,7 @@ export default function LanguageLessons() {
               onClick={() => { setActiveCourse(null); setSkillFilter("all"); }}
               className="text-sm text-muted-foreground hover:text-primary mb-2 flex items-center gap-1 transition-colors"
             >
-              ← Back to All Courses
+              ← Tillbaka till alla kurser · <em className="font-normal">Back to All Courses</em>
             </button>
           )}
           <div className="flex items-center gap-3">
@@ -131,13 +131,18 @@ export default function LanguageLessons() {
           <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
             {activeCourseData 
               ? activeCourseData.description 
-              : "Master the Swedish language and pass the 2026 civic knowledge requirements with our structured SFI curriculum."}
+              : "Bemästra svenska och klara 2026 års krav på samhällskunskap med vår strukturerade SFI-kurs."}
           </p>
+          {!activeCourseData && (
+            <p className="text-muted-foreground/60 text-sm italic mt-1 max-w-2xl">
+              Master the Swedish language and pass the 2026 civic knowledge requirements with our structured SFI curriculum.
+            </p>
+          )}
         </div>
         {isAdmin && (
           <Button onClick={() => setShowGenerate(true)} size="lg" className="gap-2 shadow-lg shadow-primary/20">
             <Sparkles className="w-5 h-5" />
-            AI Course Creator
+            AI-kursbyggare
           </Button>
         )}
       </div>
@@ -183,7 +188,7 @@ export default function LanguageLessons() {
 
                   <div className="flex items-center justify-between mt-auto">
                     <span className="text-sm font-bold text-primary">
-                      {countByCourse(course.id)} Units Available
+                      {countByCourse(course.id)} enheter tillgängliga · <span className="font-normal italic">units available</span>
                     </span>
                     <div className={`p-2 rounded-full bg-gradient-to-r ${course.color} text-white`}>
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -224,7 +229,7 @@ export default function LanguageLessons() {
               {[1, 2, 3].map((n) => <Skeleton key={n} className="h-48 rounded-2xl" />)}
             </div>
           ) : filteredLessons.length === 0 ? (
-            <EmptyState title="Units Loading" description="New lessons for this level are currently being curated by our educators." />
+            <EmptyState title="Enheter laddas · Units Loading" description="Nya lektioner för denna nivå skapas just nu av våra lärare. · New lessons for this level are currently being curated by our educators." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLessons.map((lesson, idx) => (

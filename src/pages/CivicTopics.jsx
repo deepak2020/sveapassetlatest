@@ -52,9 +52,12 @@ export default function CivicTopics() {
           <div className="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center">
             <Landmark className="w-5 h-5 text-secondary-foreground" />
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground">Civic Test Prep</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground">Förberedelse för samhällsprovet</h1>
         </div>
         <p className="text-muted-foreground mt-1">
+          Lär dig om det svenska samhället, staten och kulturen
+        </p>
+        <p className="text-muted-foreground/60 text-sm italic mt-0.5">
           Learn about Swedish society, government, and culture
         </p>
       </div>
@@ -67,7 +70,7 @@ export default function CivicTopics() {
           />
           <Button onClick={() => setShowGenerate(true)} variant="outline" className="gap-2">
             <Sparkles className="w-4 h-4" />
-            Generate Custom Topic with AI
+            Generera eget ämne med AI
           </Button>
         </div>
       )}
@@ -75,13 +78,13 @@ export default function CivicTopics() {
       {/* Filters */}
       <Tabs value={categoryFilter} onValueChange={setCategoryFilter} className="mb-8">
         <TabsList className="flex-wrap h-auto gap-1">
-          <TabsTrigger value="all">All Topics</TabsTrigger>
-          <TabsTrigger value="government">Government</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="culture">Culture</TabsTrigger>
-          <TabsTrigger value="rights_duties">Rights & Duties</TabsTrigger>
-          <TabsTrigger value="society">Society</TabsTrigger>
-          <TabsTrigger value="geography">Geography</TabsTrigger>
+          <TabsTrigger value="all">Alla ämnen</TabsTrigger>
+          <TabsTrigger value="government">Staten</TabsTrigger>
+          <TabsTrigger value="history">Historia</TabsTrigger>
+          <TabsTrigger value="culture">Kultur</TabsTrigger>
+          <TabsTrigger value="rights_duties">Rättigheter & skyldigheter</TabsTrigger>
+          <TabsTrigger value="society">Samhälle</TabsTrigger>
+          <TabsTrigger value="geography">Geografi</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -101,8 +104,8 @@ export default function CivicTopics() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Landmark}
-          title="No topics yet"
-          description="Civic test topics will appear here once they are added."
+          title="Inga ämnen ännu · No topics yet"
+          description="Ämnen för samhällsprovet visas här när de har lagts till. · Civic test topics will appear here once they are added."
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -125,7 +128,8 @@ export default function CivicTopics() {
                     </h3>
                     <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
                       <span className="text-xs text-muted-foreground">
-                        {topic.key_facts?.length || 0} facts · {topic.quiz_questions?.length || 0} questions
+                        {topic.key_facts?.length || 0} fakta · {topic.quiz_questions?.length || 0} frågor
+                        <span className="italic text-muted-foreground/60"> · facts · questions</span>
                       </span>
                       <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>

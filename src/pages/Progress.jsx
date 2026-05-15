@@ -48,10 +48,10 @@ export default function Progress() {
   }));
 
   const stats = [
-    { label: "Total Quizzes", value: totalQuizzes, icon: Target, color: "bg-primary/10 text-primary" },
-    { label: "Overall Average", value: `${overallAvg}%`, icon: TrendingUp, color: "bg-chart-3/10 text-chart-3" },
-    { label: "Language Average", value: `${langAvg}%`, icon: BookOpen, color: "bg-chart-1/10 text-chart-1" },
-    { label: "Civic Average", value: `${civicAvg}%`, icon: Landmark, color: "bg-secondary/20 text-secondary-foreground" },
+    { label: "Totalt antal prov", sublabel: "Total Quizzes", value: totalQuizzes, icon: Target, color: "bg-primary/10 text-primary" },
+    { label: "Totalt genomsnitt", sublabel: "Overall Average", value: `${overallAvg}%`, icon: TrendingUp, color: "bg-chart-3/10 text-chart-3" },
+    { label: "Språkgenomsnitt", sublabel: "Language Average", value: `${langAvg}%`, icon: BookOpen, color: "bg-chart-1/10 text-chart-1" },
+    { label: "Samhällsgenomsnitt", sublabel: "Civic Average", value: `${civicAvg}%`, icon: Landmark, color: "bg-secondary/20 text-secondary-foreground" },
   ];
 
   return (
@@ -62,9 +62,10 @@ export default function Progress() {
           <div className="w-10 h-10 rounded-xl bg-chart-3/10 flex items-center justify-center">
             <BarChart3 className="w-5 h-5 text-chart-3" />
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground">Your Progress</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground">Dina framsteg</h1>
         </div>
-        <p className="text-muted-foreground mt-1">Track your learning journey</p>
+        <p className="text-muted-foreground mt-1">Följ din inlärningsresa</p>
+        <p className="text-muted-foreground/60 text-sm italic">Your Progress · Track your learning journey</p>
       </div>
 
       {isLoading ? (
@@ -76,8 +77,8 @@ export default function Progress() {
       ) : totalQuizzes === 0 ? (
         <EmptyState
           icon={Trophy}
-          title="No quiz results yet"
-          description="Complete some quizzes in the Language or Civic sections to see your progress here!"
+          title="Inga provresultat ännu · No quiz results yet"
+          description="Gör några prov i Språk- eller Samhällsavsnitten för att se dina framsteg här! · Complete some quizzes in the Language or Civic sections to see your progress here!"
         />
       ) : (
         <>
@@ -99,6 +100,7 @@ export default function Progress() {
                       </div>
                       <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                       <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                      <p className="text-xs text-muted-foreground/50 italic">{stat.sublabel}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -110,7 +112,7 @@ export default function Progress() {
           {chartData.length > 0 && (
             <Card className="border-border/50 mb-10">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">Recent Scores</CardTitle>
+                <CardTitle className="text-lg font-semibold">Senaste poäng <span className="text-sm font-normal italic text-muted-foreground">· Recent Scores</span></CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -138,10 +140,10 @@ export default function Progress() {
           {sfiBreakdown.length > 0 && (
             <Card className="border-border/50 mb-10">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg font-semibold">Language Tests by SFI Course</CardTitle>
+                <CardTitle className="text-lg font-semibold">Språkprov per SFI-kurs <span className="text-sm font-normal italic text-muted-foreground">· Language Tests by SFI Course</span></CardTitle>
                 <Link to="/language-test">
                   <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-muted">
-                    <FlaskConical className="w-3 h-3" /> Take a test
+                    <FlaskConical className="w-3 h-3" /> Ta ett prov · Take a test
                   </Badge>
                 </Link>
               </CardHeader>
@@ -153,7 +155,7 @@ export default function Progress() {
                       <div className={`text-xl font-bold mb-1 ${avg >= 80 ? "text-emerald-600" : avg >= 60 ? "text-yellow-600" : "text-destructive"}`}>
                         {avg}%
                       </div>
-                      <div className="text-xs text-muted-foreground">{count} test{count !== 1 ? "s" : ""}</div>
+                      <div className="text-xs text-muted-foreground">{count} prov · test{count !== 1 ? "s" : ""}</div>
                     </div>
                   ))}
                 </div>
@@ -164,7 +166,7 @@ export default function Progress() {
           {/* Recent Results */}
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Quiz History</CardTitle>
+              <CardTitle className="text-lg font-semibold">Provhistorik <span className="text-sm font-normal italic text-muted-foreground">· Quiz History</span></CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
