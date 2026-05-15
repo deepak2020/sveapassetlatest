@@ -322,6 +322,14 @@ export default function GymSessionV2({ sentences, mode = "listen", level = "inte
                       {correct ? "✓ Correct!" : `✗ Answer: ${sentence.answer}`}
                     </p>
                   </div>
+                  {mode === "listen" && (
+                    <button
+                      onClick={() => playAudio(sentence.sentence_sv.replace("___", sentence.answer), "sv-SE", 1)}
+                      className="w-full p-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors flex items-center justify-center gap-2 font-semibold text-primary text-sm"
+                    >
+                      <Volume2 className="w-4 h-4" /> Höra hela meningen
+                    </button>
+                  )}
                   {sentence.grammar_note && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
                       💡 {sentence.grammar_note}
