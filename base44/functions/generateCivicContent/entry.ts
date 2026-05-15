@@ -67,13 +67,19 @@ Use ## headers, **bold**, bullet lists. Write in English but include Swedish ter
 
 key_facts: 6-8 concise, memorable facts about this topic. Each fact should be a clear statement and detail that a new arrival MUST know. Use concrete specifics (e.g. exact agency names, numbers, percentages, ages, laws).
 
-quiz_questions: 10-12 varied questions testing knowledge of this topic:
-- "What is the name of the agency responsible for X?"
-- "How does Y work in Sweden?"
-- "True or false: ..."
-- "Which of these is a right/responsibility in Sweden?"
-- "What should you do if...?"
-Each has 4 options and a correct_index.
+quiz_questions: 10-12 varied questions testing knowledge of this topic.
+For EACH question, provide:
+- question_sv: The question in Swedish
+- question_en: The SAME question translated to English
+- options: 4 answer choices (in Swedish)
+- correct_index: 0-3, the index of the correct answer
+
+Examples of question types:
+- "What is the name of the agency responsible for X?" / "Vad heter myndigheten som ansvarar för X?"
+- "How does Y work in Sweden?" / "Hur fungerar Y i Sverige?"
+- "True or false: ..." / "Sant eller falskt: ..."
+- "Which of these is a right/responsibility in Sweden?" / "Vilket av dessa är en rättighet/skyldighet i Sverige?"
+- "What should you do if...?" / "Vad bör du göra om...?"
 
 All content must be accurate, practical, and directly relevant to someone newly arrived in Sweden.`;
 
@@ -98,7 +104,8 @@ All content must be accurate, practical, and directly relevant to someone newly 
           items: {
             type: "object",
             properties: {
-              question: { type: "string" },
+              question_sv: { type: "string" },
+              question_en: { type: "string" },
               options: { type: "array", items: { type: "string" } },
               correct_index: { type: "number" }
             }
