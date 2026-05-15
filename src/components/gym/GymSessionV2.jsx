@@ -223,7 +223,14 @@ export default function GymSessionV2({ sentences, mode = "listen", level = "inte
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground mb-3">Listen to the sentence and type the missing word(s).</p>
                   <button
-                    onClick={() => playAudio(sentence.sentence_sv.replace("___", sentence.answer), "sv-SE", 1)}
+                    onClick={() => {
+                      const answers = sentence.answer.split(",").map(a => a.trim());
+                      let fullSentence = sentence.sentence_sv;
+                      answers.forEach(ans => {
+                        fullSentence = fullSentence.replace("___", ans);
+                      });
+                      playAudio(fullSentence, "sv-SE", 1);
+                    }}
                     className="w-full p-4 rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors flex items-center justify-center gap-2 font-semibold text-primary mb-3"
                   >
                     <Volume2 className="w-5 h-5" /> Listen to complete sentence
