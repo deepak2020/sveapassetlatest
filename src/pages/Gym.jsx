@@ -61,6 +61,7 @@ export default function Gym() {
     return (
       <GymSessionV2
         sentences={session.sentences}
+        mode={session.mode}
         srsCards={srsCards}
         onFinish={() => setSession(null)}
       />
