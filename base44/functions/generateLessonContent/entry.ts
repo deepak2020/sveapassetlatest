@@ -107,13 +107,16 @@ Requirements:
     }
   });
 
+  // Sanitize: filter out any non-object items the AI may have returned
+  const sanitizeArray = (arr) => (arr || []).filter(item => item && typeof item === 'object' && !Array.isArray(item));
+
   await base44.asServiceRole.entities.Lesson.update(lesson_id, {
     content: generated.content || null,
-    word_pairs: generated.word_pairs || [],
-    fill_in_blanks: generated.fill_in_blanks || [],
-    quiz_questions: generated.quiz_questions || [],
-    writing_prompts: generated.writing_prompts || [],
-    speaking_phrases: generated.speaking_phrases || [],
+    word_pairs: sanitizeArray(generated.word_pairs),
+    fill_in_blanks: sanitizeArray(generated.fill_in_blanks),
+    quiz_questions: sanitizeArray(generated.quiz_questions),
+    writing_prompts: sanitizeArray(generated.writing_prompts),
+    speaking_phrases: sanitizeArray(generated.speaking_phrases),
   });
 
   return Response.json({
