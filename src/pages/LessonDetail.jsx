@@ -17,6 +17,7 @@ import QuizRunner from "../components/shared/QuizRunner";
 import SentenceTranslation from "../components/lesson/SentenceTranslation";
 import LessonProgress from "../components/lesson/LessonProgress";
 import MatchingExercise from "../components/lesson/MatchingExercise";
+import ListeningExercise from "../components/lesson/ListeningExercise";
 import ReactMarkdown from "react-markdown";
 
 export default function LessonDetail() {
@@ -40,6 +41,7 @@ export default function LessonDetail() {
       review_questions: [],
       writing_prompts: [],
       speaking_phrases: [],
+      listening_phrases: [],
       match_pairs: [],
     });
     await queryClient.invalidateQueries({ queryKey: ["lesson", lessonId] });
@@ -86,6 +88,7 @@ export default function LessonDetail() {
   const hasReview = lesson.review_questions?.length > 0;
   const hasWriting = lesson.writing_prompts?.length > 0;
   const hasSpeaking = lesson.speaking_phrases?.length > 0;
+  const hasListening = lesson.listening_phrases?.length > 0;
   const hasTranslate = lesson.word_pairs?.some(wp => wp.example_en && wp.example_sv);
   const hasMatch = lesson.match_pairs?.length > 0;
 
@@ -183,6 +186,11 @@ export default function LessonDetail() {
               <Mic className="w-3.5 h-3.5" /> Speaking
             </TabsTrigger>
           )}
+          {hasListening && (
+            <TabsTrigger value="listening" className="gap-1.5 text-sm">
+              👂 Listening{completed.includes("listening") ? " ✓" : ` (${lesson.listening_phrases.length})`}
+            </TabsTrigger>
+          )}
           {hasTranslate && (
             <TabsTrigger value="translate" className="gap-1.5 text-sm">
               ✍️ Translate{completed.includes("translate") ? " ✓" : ""}
@@ -276,6 +284,19 @@ export default function LessonDetail() {
               <p className="text-sm text-muted-foreground">Read these phrases aloud to practice your pronunciation.</p>
             </div>
             <SpeakingPractice phrases={lesson.speaking_phrases} />
+          </TabsContent>
+        )}
+
+        {/* Listening */}
+        {hasListening && (
+          <TabsContent value="listening">
+            <div className="space-y-2 mb-4">
+              <h2 className="font-semibold text-lg">👂 Listening Comprehension</h2>
+              <p className="text-sm text-muted-foreground">Listen to Swedish phrases and test your comprehension.</p>
+            </div>
+            <ListeningExercise
+              phrases={lesson.listening_phrases}
+            />
           </TabsContent>
         )}
 

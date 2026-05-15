@@ -133,6 +133,42 @@
         }
       }
     },
+    "listening_phrases": {
+      "type": "array",
+      "description": "Listening comprehension exercises - hear audio and transcribe or answer questions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phrase_sv": {
+            "type": "string",
+            "description": "Swedish phrase to listen to"
+          },
+          "phrase_en": {
+            "type": "string",
+            "description": "English translation"
+          },
+          "exercise_type": {
+            "type": "string",
+            "enum": [
+              "transcribe",
+              "select"
+            ],
+            "description": "transcribe = type what you hear, select = choose from options"
+          },
+          "options": {
+            "type": "array",
+            "description": "For select type only - 4 multiple choice options",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_index": {
+            "type": "number",
+            "description": "For select type only - index of correct answer"
+          }
+        }
+      }
+    },
     "quiz_questions": {
       "type": "array",
       "items": {
