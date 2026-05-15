@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BookOpen, Layers, Pen, Mic, Trophy } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Pen, Mic, Trophy, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import LevelBadge from "../components/shared/LevelBadge";
@@ -21,8 +22,19 @@ export default function LessonDetail() {
   const pathParts = window.location.pathname.split("/");
   const lessonId = pathParts[pathParts.length - 1];
   const [completed, setCompleted] = useState([]);
+  const [regenerating, setRegenerating] = useState(false);
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const markComplete = (key) => setCompleted(c => c.includes(key) ? c : [...c, key]);
+
+  const handleRegenerate = async () => {
+    setRegenerating(true);
+    await base44.functions.invoke("generateLessonContent", { lesson_id: lessonId });
+    await queryClient.invalidateQueries({ queryKey: ["lesson", lessonId] });
+    setRegenerating(false);
+  };
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", lessonId],
@@ -88,10 +100,26 @@ export default function LessonDetail() {
             </span>
           )}
         </div>
-        <h1 className="font-display text-3xl font-bold text-foreground">{lesson.title}</h1>
-        {lesson.title_sv && (
-          <p className="text-lg text-muted-foreground italic mt-1">{lesson.title_sv}</p>
-        )}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-display text-3xl font-bold text-foreground">{lesson.title}</h1>
+            {lesson.title_sv && (
+              <p className="text-lg text-muted-foreground italic mt-1">{lesson.title_sv}</p>
+            )}
+          </div>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRegenerate}
+              disabled={regenerating}
+              className="gap-2 shrink-0"
+            >
+              <RefreshCw className={`w-4 h-4 ${regenerating ? "animate-spin" : ""}`} />
+              {regenerating ? "Regenerating…" : "Regenerate"}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Progress tracker */}
