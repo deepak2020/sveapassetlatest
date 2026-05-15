@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen, CheckCircle2, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import GrammarTopicDetail from "./GrammarTopicDetail";
 
 const GRAMMAR_TOPICS = [
   {
@@ -263,7 +264,8 @@ const GRAMMAR_QUIZZES = {
 
 export default function GrammarModule() {
   const [selectedLevel, setSelectedLevel] = useState("A");
-  const [activeTab, setActiveTab] = useState("topics"); // topics, quiz
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [activeTab, setActiveTab] = useState("topics");
   const [quizState, setQuizState] = useState({ started: false, currentQ: 0, score: 0, finished: false });
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [answered, setAnswered] = useState(false);
@@ -272,6 +274,16 @@ export default function GrammarModule() {
   const quizzesForLevel = GRAMMAR_QUIZZES[selectedLevel] || [];
   const activeQuiz = quizzesForLevel[0];
   const currentQuestion = activeQuiz?.questions[quizState.currentQ];
+
+  if (selectedTopic) {
+    return (
+      <GrammarTopicDetail
+        topic={selectedTopic}
+        level={selectedLevel}
+        onBack={() => setSelectedTopic(null)}
+      />
+    );
+  }
 
   const handleStartQuiz = () => {
     setQuizState({ started: true, currentQ: 0, score: 0, finished: false });
@@ -361,29 +373,38 @@ export default function GrammarModule() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {topicsForLevel.map((topic, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
-              <Card className="border-border/50 hover:shadow-md transition-shadow h-full">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{topic.title}</CardTitle>
-                    <Badge variant="secondary" className="shrink-0">
-                      SFI {selectedLevel}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground">{topic.description}</p>
-                  
-                  <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 space-y-1.5">
-                    <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Example</div>
-                    <p className="text-sm text-blue-900 dark:text-blue-100 italic">{topic.example}</p>
-                  </div>
+              <button
+                onClick={() => setSelectedTopic(topic)}
+                className="w-full text-left"
+              >
+                <Card className="border-border/50 hover:shadow-md hover:-translate-y-1 transition-all h-full cursor-pointer group">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-lg group-hover:text-primary transition-colors">{topic.title}</CardTitle>
+                      <Badge variant="secondary" className="shrink-0">
+                        SFI {selectedLevel}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">{topic.description}</p>
+                    
+                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 space-y-1.5">
+                      <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Example</div>
+                      <p className="text-sm text-blue-900 dark:text-blue-100 italic">{topic.example}</p>
+                    </div>
 
-                  <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-3">
-                    <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">Key Point</div>
-                    <p className="text-sm text-amber-900 dark:text-amber-100">{topic.keyPoint}</p>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-3">
+                      <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">Key Point</div>
+                      <p className="text-sm text-amber-900 dark:text-amber-100">{topic.keyPoint}</p>
+                    </div>
+
+                    <div className="pt-2 text-sm font-semibold text-primary group-hover:underline">
+                      Start Learning →
+                    </div>
+                  </CardContent>
+                </Card>
+              </button>
             </motion.div>
           ))}
         </div>
