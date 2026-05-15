@@ -115,8 +115,10 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
             exit={{ opacity: 0, x: -20 }}
           >
             <div className="mb-5">
-              <h3 className="text-lg font-semibold text-foreground mb-1">{question.question_sv}</h3>
-              <p className="text-sm text-muted-foreground italic">{question.question_en}</p>
+              <h3 className="text-lg font-semibold text-foreground mb-1">{question.question_sv || question.question || "Question not available"}</h3>
+              {question.question_en && (
+                <p className="text-sm text-muted-foreground italic">{question.question_en}</p>
+              )}
             </div>
             <div className="space-y-3">
               {question.options.map((option, index) => {
