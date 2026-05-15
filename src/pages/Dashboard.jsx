@@ -38,6 +38,8 @@ export default function Dashboard() {
     queryFn: () => base44.entities.UserSRSCard.list(),
   });
 
+  if (!user) return null;
+
   const today = new Date().toISOString().split("T")[0];
   const dueCount = srsCards.filter(c => c.due_date <= today && c.status !== "mastered").length;
 
@@ -47,8 +49,6 @@ export default function Dashboard() {
   const dailyGoalPct = user.daily_goal_minutes
     ? Math.min(100, Math.round((estimatedMinutesToday / user.daily_goal_minutes) * 100))
     : 0;
-
-  if (!user) return null;
 
   const xp = user.xp_total || 0;
   const streak = user.streak_days || 0;
