@@ -53,26 +53,49 @@ export default function SpeakingPractice({ phrases }) {
   }
 
   const handleRecord = (index) => {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "sv-SE";
-    recognition.start();
-    setListening(index);
+    if (listening === index) return;
+    
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Speech recognition not supported in your browser");
+        return;
+      }
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      const score = fuzzyMatch(transcript, phrases[index].phrase_sv);
-      const isCorrect = score >= 0.75;
-      setFeedback({
-        ...feedback,
-        [index]: { transcript, score, isCorrect }
-      });
-      playSound(isCorrect);
-      setListening(null);
-    };
+      const recognition = new SpeechRecognition();
+      recognition.lang = "sv-SE";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      
+      setListening(index);
+      recognition.start();
 
-    recognition.onerror = () => {
+      recognition.onresult = (event) => {
+        if (event.results.length > 0) {
+          const transcript = event.results[0][0].transcript;
+          const score = fuzzyMatch(transcript, phrases[index].phrase_sv);
+          const isCorrect = score >= 0.75;
+          setFeedback((prev) => ({
+            ...prev,
+            [index]: { transcript, score, isCorrect }
+          }));
+          playSound(isCorrect);
+        }
+        setListening(null);
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        setListening(null);
+      };
+
+      recognition.onend = () => {
+        setListening(null);
+      };
+    } catch (error) {
+      console.error("Error starting speech recognition:", error);
       setListening(null);
-    };
+    }
   };
 
   return (
