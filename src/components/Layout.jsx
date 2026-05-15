@@ -13,7 +13,6 @@ const navItems = [
   { path: "/language", label: "Språk", icon: BookOpen },
   { path: "/civic", label: "Samhälle", icon: Landmark },
   { path: "/gym", label: "Träning", icon: Dumbbell },
-  { path: "/profile", label: "Profil", icon: User },
 ];
 
 const bottomTabItems = [
@@ -21,7 +20,6 @@ const bottomTabItems = [
   { path: "/language", label: "Lär dig", icon: BookOpen },
   { path: "/civic", label: "Samhälle", icon: Landmark },
   { path: "/gym", label: "Träning", icon: Dumbbell },
-  { path: "/profile", label: "Profil", icon: User },
 ];
 
 export default function Layout() {
