@@ -132,8 +132,8 @@ const GRAMMAR_QUIZZES = {
   "A": [
     {
       id: 1,
-      title: "V2 Rule Basics",
-      description: "Test your understanding of the verb-second rule",
+      title: "V2 Rule (Verb Second)",
+      description: "Master the fundamental verb-second rule in Swedish",
       questions: [
         {
           question: "Which sentence follows the V2 rule correctly?",
@@ -164,13 +164,53 @@ const GRAMMAR_QUIZZES = {
           ],
           correct: 0,
           explanation: "Frequency adverbials typically come after the verb in Swedish."
+        },
+        {
+          question: "Which word order is correct? 'På morgonen... hom dricka kaffe.'",
+          options: [
+            "På morgonen dricka hon kaffe.",
+            "På morgonen hon dricka kaffe.",
+            "På morgonen drickar hon kaffe."
+          ],
+          correct: 2,
+          explanation: "Adverbial + Verb + Subject requires correct verb conjugation (drickar for 3rd person)."
+        },
+        {
+          question: "Select the correct sentence:",
+          options: [
+            "Jag inte älskar bonen.",
+            "Jag älskar inte bonen.",
+            "Jag älskar bonen inte."
+          ],
+          correct: 1,
+          explanation: "Negation 'inte' comes after the verb in the main clause position."
+        },
+        {
+          question: "What is the correct word order? 'Min vän läser boken varje kväll.'",
+          options: [
+            "Min vän läser boken varje kväll.",
+            "Min vän varje kväll läser boken.",
+            "Läser min vän boken varje kväll."
+          ],
+          correct: 0,
+          explanation: "Subject + Verb is the natural word order; time expressions come at the end."
+        },
+        {
+          question: "Choose the correctly ordered sentence:",
+          options: [
+            "Igår såg jag en film.",
+            "Igår jag såg en film.",
+            "Jag igår såg en film."
+          ],
+          correct: 0,
+          explanation: "Time adverbials at the beginning trigger V2: Adverbial + Verb + Subject"
         }
       ]
     },
     {
       id: 2,
-      title: "Present Tense",
-      description: "Master present tense conjugation",
+      title: "Present Tense Conjugation",
+      description: "Practice present tense verb endings and forms",
       questions: [
         {
           question: "Which form is correct? 'Han ____ äpplen.'",
@@ -191,6 +231,113 @@ const GRAMMAR_QUIZZES = {
           ],
           correct: 1,
           explanation: "First person plural also uses -r ending: studerar"
+        },
+        {
+          question: "Jag ____ kaffe varje morgon.",
+          options: [
+            "drickar",
+            "dricka",
+            "drickade"
+          ],
+          correct: 0,
+          explanation: "First person singular also gets -r: dricka → drickar"
+        },
+        {
+          question: "Du ____ svenska mycket bra!",
+          options: [
+            "talar",
+            "tala",
+            "talte"
+          ],
+          correct: 0,
+          explanation: "Second person singular: tala → talar"
+        },
+        {
+          question: "Vi ____ i en liten lägenhet.",
+          options: [
+            "bo",
+            "bor",
+            "bora"
+          ],
+          correct: 1,
+          explanation: "Plural forms add -r: bo → bor"
+        },
+        {
+          question: "Hon ____ med sin familj på helgerna.",
+          options: [
+            "spelar",
+            "spela",
+            "spelat"
+          ],
+          correct: 0,
+          explanation: "Third person singular: spela → spelar"
+        },
+        {
+          question: "De ____ inte hemma idag.",
+          options: [
+            "är",
+            "vara",
+            "varit"
+          ],
+          correct: 0,
+          explanation: "'Är' is the present tense of 'vara' for all persons except I."
+        },
+        {
+          question: "Jag ____ student i Stockholm.",
+          options: [
+            "är",
+            "vara",
+            "var"
+          ],
+          correct: 0,
+          explanation: "'Är' is used for present tense 'to be'."
+        }
+      ]
+    },
+    {
+      id: 3,
+      title: "Articles & Nouns",
+      description: "Master Swedish articles and noun usage",
+      questions: [
+        {
+          question: "Choose the correct article: '____ hus är stort.'",
+          options: [
+            "En",
+            "Ett",
+            "Huset"
+          ],
+          correct: 1,
+          explanation: "'Hus' is a neuter noun, so it uses 'ett'."
+        },
+        {
+          question: "Complete: '____ boken är intressant.'",
+          options: [
+            "En",
+            "Ett",
+            "Den"
+          ],
+          correct: 2,
+          explanation: "'Boken' is already in definite form (with -en ending), so we use the definite article 'den'."
+        },
+        {
+          question: "Choose the correct noun form: 'Jag har ____ (cat).'",
+          options: [
+            "en katt",
+            "ett katt",
+            "en katten"
+          ],
+          correct: 0,
+          explanation: "'Katt' (cat) is a common noun; use 'en'."
+        },
+        {
+          question: "What is the correct form? '____ barn spelar i parken.'",
+          options: [
+            "En",
+            "Ett",
+            "Der"
+          ],
+          correct: 1,
+          explanation: "'Barn' (child) is neuter, use 'ett'."
         }
       ]
     }
@@ -198,8 +345,8 @@ const GRAMMAR_QUIZZES = {
   "B": [
     {
       id: 1,
-      title: "Past Tense",
-      description: "Preterit vs Perfect tense",
+      title: "Past Tense (Preterit & Perfect)",
+      description: "Master past tense conjugation and usage",
       questions: [
         {
           question: "Choose the correct past tense: 'Igår jag ____ frukt.'",
@@ -220,15 +367,130 @@ const GRAMMAR_QUIZZES = {
           ],
           correct: 0,
           explanation: "Perfect tense (har + past participle) expresses relevance to the present."
+        },
+        {
+          question: "Complete: 'Vi ____ hemma igår.'",
+          options: [
+            "var",
+            "varit",
+            "voro"
+          ],
+          correct: 0,
+          explanation: "Preterit of 'vara' is 'var' for all persons."
+        },
+        {
+          question: "What's the correct form? 'Han ____ en lång resa för två år sedan.'",
+          options: [
+            "gör",
+            "gjorde",
+            "har gjort"
+          ],
+          correct: 1,
+          explanation: "With 'för två år sedan', use preterit (gjorde), not perfect."
+        },
+        {
+          question: "Choose: 'Jag ____ många bästa vänner här.'",
+          options: [
+            "har gjort",
+            "gjorde",
+            "gör"
+          ],
+          correct: 0,
+          explanation: "Perfect tense (har gjort) is used when the action is recent and has present relevance."
+        },
+        {
+          question: "Which is correct? 'Du ____ redan ätit middag?'",
+          options: [
+            "hade",
+            "har",
+            "hast"
+          ],
+          correct: 1,
+          explanation: "Perfect tense: 'har' + past participle for actions with present relevance."
+        },
+        {
+          question: "Complete: 'De ____ en mycket bra film när vi kom hem.'",
+          options: [
+            "såg",
+            "har sett",
+            "såger"
+          ],
+          correct: 0,
+          explanation: "Preterit (såg) is used for a completed action in the past."
         }
       ]
-    }
-  ],
-  "C": [
+    },
     {
-      id: 1,
+      id: 2,
+      title: "Adjective Agreement",
+      description: "Master adjective endings with different genders and numbers",
+      questions: [
+        {
+          question: "Complete: '____ dag är den.'",
+          options: [
+            "En vacker",
+            "Ett vackert",
+            "En vackert"
+          ],
+          correct: 0,
+          explanation: "'Dag' is common gender, no ending needed for the adjective."
+        },
+        {
+          question: "Which is correct? '____ hus är nytt.'",
+          options: [
+            "En vacker",
+            "Ett vackert",
+            "Ett vacker"
+          ],
+          correct: 1,
+          explanation: "'Hus' is neuter, so adjectives get -t ending: vackert."
+        },
+        {
+          question: "Choose: 'De är ____ (tall) pojkar.'",
+          options: [
+            "långe",
+            "lång",
+            "långa"
+          ],
+          correct: 2,
+          explanation: "Plural adjectives get -a: långa."
+        },
+        {
+          question: "What's correct? '____ äpplen är sura.'",
+          options: [
+            "De röda",
+            "De rött",
+            "De röd"
+          ],
+          correct: 0,
+          explanation: "Plural adjectives with definite article: rött → röda."
+        },
+        {
+          question: "Complete: 'En ____ (new) lägenhete.'",
+          options: [
+            "ny",
+            "nyt",
+            "nya"
+          ],
+          correct: 0,
+          explanation: "Common gender singular with no article: ny."
+        },
+        {
+          question: "Choose: '____ häst är snabb.'",
+          options: [
+            "En snabb",
+            "Ett snabbt",
+            "En snabbt"
+          ],
+          correct: 0,
+          explanation: "'Häst' (horse) is common gender."
+        }
+      ]
+    },
+    {
+      id: 3,
       title: "Subordinate Clauses",
-      description: "Word order in dependent clauses",
+      description: "Master word order in dependent clauses",
       questions: [
         {
           question: "Correct the subordinate clause: 'Jag vet att han kommer snart'",
@@ -239,6 +501,179 @@ const GRAMMAR_QUIZZES = {
           ],
           correct: 1,
           explanation: "In subordinate clauses, the finite verb moves to the end: Subject + Adverbial + Verb"
+        },
+        {
+          question: "Which is correct? 'Om jag hade tid, jag skulle...'",
+          options: [
+            "jag skulle gå",
+            "skulle jag gå",
+            "gå skulle jag"
+          ],
+          correct: 1,
+          explanation: "In subordinate clauses: Subject + Verb comes at the end."
+        },
+        {
+          question: "Complete: 'Eftersom vi är trötta, vi...'",
+          options: [
+            "vi vill gå hem",
+            "vill vi gå hem",
+            "gå vi hem"
+          ],
+          correct: 2,
+          explanation: "Subordinate clauses: verb comes last: vi gå hem (simplified for practice)."
+        }
+      ]
+    }
+  ],
+  "C": [
+    {
+      id: 1,
+      title: "Conditional Mood",
+      description: "Express wishes, hypotheticals, and conditions",
+      questions: [
+        {
+          question: "Complete: 'Jag ____ vilja åka till Sverige.'",
+          options: [
+            "skulle",
+            "ska",
+            "skall"
+          ],
+          correct: 0,
+          explanation: "Conditional: skulle + infinitive for wishes and hypotheticals."
+        },
+        {
+          question: "Which is correct? 'Om jag hade tid, jag ____ läsa mer.'",
+          options: [
+            "skulle",
+            "vill",
+            "kan"
+          ],
+          correct: 0,
+          explanation: "In conditional clauses: skulle + infinitive."
+        },
+        {
+          question: "Complete: 'Det ____ vara trevligt om du komit.'",
+          options: [
+            "skulle",
+            "ska",
+            "kan"
+          ],
+          correct: 0,
+          explanation: "'Skulle' is used for polite requests and hypotheticals."
+        },
+        {
+          question: "What's correct? 'Om vi hade kunnat, vi ____ gå på resan.'",
+          options: [
+            "skulle ha gått",
+            "hade gått",
+            "går"
+          ],
+          correct: 0,
+          explanation: "Past conditional: skulle ha + past participle."
+        }
+      ]
+    },
+    {
+      id: 2,
+      title: "Passive Voice",
+      description: "Transform active to passive and understand passive constructions",
+      questions: [
+        {
+          question: "Convert to passive: 'De byggde huset år 1990.'",
+          options: [
+            "Huset byggdes år 1990.",
+            "Huset bygga året 1990.",
+            "Huset var byggat år 1990."
+          ],
+          correct: 0,
+          explanation: "Passive: verb + -ades/-edes ending for past tense."
+        },
+        {
+          question: "Which passive form is correct? 'Boken ____ (read) av miljoner.'",
+          options: [
+            "läses",
+            "läsa",
+            "läst"
+          ],
+          correct: 0,
+          explanation: "Present passive: -s ending on present tense verb (läsa → läses)."
+        },
+        {
+          question: "Complete the passive: 'En ny väg ____ (build) i området.'",
+          options: [
+            "byggs",
+            "byggdes",
+            "bygga"
+          ],
+          correct: 0,
+          explanation: "Present passive uses -s: byggs."
+        },
+        {
+          question: "Transform to passive: 'De serverade middag kl 19.'",
+          options: [
+            "Middag serverades kl 19.",
+            "Middag serva kl 19.",
+            "Middag blev serverad kl 19."
+          ],
+          correct: 0,
+          explanation: "Preterit passive: verb + -ades."
+        },
+        {
+          question: "Which is the passive form? 'Barnen ____ (care for) av läraren.'",
+          options: [
+            "omsorgas",
+            "omsorgades",
+            "omsorgas"
+          ],
+          correct: 2,
+          explanation: "Present passive of 'omsorga': omsorgas (though this is an advanced form)."
+        }
+      ]
+    },
+    {
+      id: 3,
+      title: "Participles",
+      description: "Use present and past participles correctly",
+      questions: [
+        {
+          question: "Which participle is correct? 'En ____ (running) pojke.'",
+          options: [
+            "springandes",
+            "springande",
+            "springad"
+          ],
+          correct: 1,
+          explanation: "Present participle: -ande ending."
+        },
+        {
+          question: "Complete: '____ (broken) fönstret behöver repareras.'",
+          options: [
+            "Bruten",
+            "Brustet",
+            "Bruten"
+          ],
+          correct: 0,
+          explanation: "Past participle used as adjective: bruten."
+        },
+        {
+          question: "Which is correct? '____ (sleeping) barn.'",
+          options: [
+            "Sövande",
+            "Sovad",
+            "Sovande"
+          ],
+          correct: 2,
+          explanation: "Present participle: sovande."
+        },
+        {
+          question: "Choose: 'En ____ (painted) vägg är fin.'",
+          options: [
+            "målade",
+            "målad",
+            "målande"
+          ],
+          correct: 1,
+          explanation: "Past participle as adjective: målad."
         }
       ]
     }
@@ -246,8 +681,8 @@ const GRAMMAR_QUIZZES = {
   "D": [
     {
       id: 1,
-      title: "Advanced Structures",
-      description: "Complex sentences and formal expressions",
+      title: "Advanced Sentence Construction",
+      description: "Master complex nested clauses and formal structures",
       questions: [
         {
           question: "Which is the most formal?",
@@ -258,6 +693,207 @@ const GRAMMAR_QUIZZES = {
           ],
           correct: 0,
           explanation: "'Att' (that/to) is required in formal Swedish when expressing purpose or condition."
+        },
+        {
+          question: "Complete: 'Det är möjligt att...'",
+          options: [
+            "vi kan gå",
+            "vi kunna gå",
+            "gå vi"
+          ],
+          correct: 0,
+          explanation: "Subordinate clause after 'att': subject + verb with correct conjugation."
+        },
+        {
+          question: "Which is correct? 'Eftersom vi studerar engelska, ____ vi också svenska.'",
+          options: [
+            "vi studerar",
+            "studerar vi",
+            "kan vi studera"
+          ],
+          correct: 1,
+          explanation: "Main clause after subordinate clause: verb + subject inversion (V2)."
+        },
+        {
+          question: "Complete: 'Vad beträffar utbildning, ____.'",
+          options: [
+            "är det viktigt",
+            "det är viktigt",
+            "viktigt det är"
+          ],
+          correct: 0,
+          explanation: "Formal opening requires V2 word order."
+        },
+        {
+          question: "Which is most formal? 'Jag tror att ____ mycket viktigt att lära sig svenksa.'",
+          options: [
+            "det är",
+            "är det",
+            "det vara"
+          ],
+          correct: 0,
+          explanation: "Formal subordinate clause structure."
+        }
+      ]
+    },
+    {
+      id: 2,
+      title: "Subjunctive Mood",
+      description: "Formal expressions, wishes, and archaic forms",
+      questions: [
+        {
+          question: "Which is a subjunctive expression? (archaic/formal)",
+          options: [
+            "Leve kungen! (Long live the king!)",
+            "Kungens liv är långt.",
+            "Vi älskar kungen."
+          ],
+          correct: 0,
+          explanation: "Subjunctive is rare in modern Swedish but appears in set phrases and wishes."
+        },
+        {
+          question: "Complete the formal wish: 'Må du ____ lycka!'",
+          options: [
+            "ha",
+            "hava",
+            "hade"
+          ],
+          correct: 1,
+          explanation: "'Må' + infinitive in wishes is an archaic/formal construction."
+        },
+        {
+          question: "Which expresses formal distance? 'Om han ____ komma...'",
+          options: [
+            "skulle",
+            "kom",
+            "kommer"
+          ],
+          correct: 0,
+          explanation: "'Skulle' + infinitive is more formal than simple past."
+        },
+        {
+          question: "Complete: 'God morgon, väl ____ du?'",
+          options: [
+            "mår",
+            "må",
+            "måde"
+          ],
+          correct: 0,
+          explanation: "Standard form, though archaic subjunctive 'må' also exists."
+        }
+      ]
+    },
+    {
+      id: 3,
+      title: "Stylistic Variations & Registers",
+      description: "Understand formal, informal, and regional differences",
+      questions: [
+        {
+          question: "Which is the most formal?",
+          options: [
+            "Du pratar mycket.",
+            "Ni pratar mycket.",
+            "Du e jätte pratös."
+          ],
+          correct: 1,
+          explanation: "'Ni' is the formal plural 'you'; used in official contexts."
+        },
+        {
+          question: "Which is informal/colloquial?",
+          options: [
+            "Jag är väldigt glad.",
+            "Jag är jätteglad.",
+            "Min väl etablerade glädje."
+          ],
+          correct: 1,
+          explanation: "'Jätte' is informal/colloquial intensifier."
+        },
+        {
+          question: "Which is neutral Swedish?",
+          options: [
+            "Skynda dej!",
+            "Skynda på!",
+            "Skynda dig!"
+          ],
+          correct: 2,
+          explanation: "'Skynda dig' is standard; 'dej' is colloquial; 'på' is regional."
+        },
+        {
+          question: "Complete formally: 'Jag möter honom ____.'",
+          options: [
+            "imorgon",
+            "i morgon",
+            "imorn"
+          ],
+          correct: 1,
+          explanation: "Formal/written: 'i morgon'; colloquial: 'imorgon'."
+        },
+        {
+          question: "Which sounds most professional?",
+          options: [
+            "Vi ska kolla på det.",
+            "Vi skall granska det.",
+            "Vi e på det."
+          ],
+          correct: 1,
+          explanation: "'Skall' and 'granska' are more formal than 'ska' and 'kolla'."
+        }
+      ]
+    },
+    {
+      id: 4,
+      title: "Idiomatic Expressions",
+      description: "Master common Swedish idioms and expressions",
+      questions: [
+        {
+          question: "What does 'Det är ju inte raketen!' mean?",
+          options: [
+            "It's definitely not the rocket.",
+            "It's not rocket science! (i.e., it's simple)",
+            "There's no rocket involved."
+          ],
+          correct: 1,
+          explanation: "A common Swedish idiom meaning something is easy or not complicated."
+        },
+        {
+          question: "Complete the idiom: 'Det är inte min ____ !'",
+          options: [
+            "hund",
+            "frukt",
+            "cykel"
+          ],
+          correct: 0,
+          explanation: "'Det är inte min hund' = 'It's not my problem/business'."
+        },
+        {
+          question: "What does 'Att få kål för öronen' mean?",
+          options: [
+            "To get cabbage for the ears.",
+            "To get a scolding/telling-off.",
+            "To buy vegetables."
+          ],
+          correct: 1,
+          explanation: "An idiom meaning to be scolded harshly."
+        },
+        {
+          question: "What does 'Ha ett ben att stå på' mean?",
+          options: [
+            "To have one leg to stand on.",
+            "To have a solid argument or foundation.",
+            "To be disabled."
+          ],
+          correct: 1,
+          explanation: "Idiom: to have a solid basis or justification for something."
+        },
+        {
+          question: "Meaning of 'Lägga sitt hjärta på något':",
+          options: [
+            "To place one's heart on something.",
+            "To be very passionate about something.",
+            "To have a heart problem."
+          ],
+          correct: 1,
+          explanation: "Idiom meaning to devote oneself passionately to something."
         }
       ]
     }
