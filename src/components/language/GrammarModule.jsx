@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckCircle2, XCircle } from "lucide-react";
+import { BookOpen, CheckCircle2, XCircle, Wand2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import GrammarTopicDetail from "./GrammarTopicDetail";
+import GenerateGrammarContentModal from "./GenerateGrammarContentModal";
+import { useAuth } from "@/lib/AuthContext";
 
 const GRAMMAR_TOPICS = [
   {
@@ -269,6 +271,8 @@ export default function GrammarModule() {
   const [quizState, setQuizState] = useState({ started: false, currentQ: 0, score: 0, finished: false });
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [answered, setAnswered] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const { user } = useAuth();
 
   const topicsForLevel = GRAMMAR_TOPICS.find(g => g.level === selectedLevel)?.topics || [];
   const quizzesForLevel = GRAMMAR_QUIZZES[selectedLevel] || [];
@@ -343,30 +347,46 @@ export default function GrammarModule() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-border/50">
-        <button
-          onClick={() => { setActiveTab("topics"); handleRestartQuiz(); }}
-          className={`px-4 py-3 font-semibold transition-all ${
-            activeTab === "topics"
-              ? "text-primary border-b-2 border-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          📖 Topics & Lessons
-        </button>
-        {quizzesForLevel.length > 0 && (
+      <div className="flex gap-2 border-b border-border/50 items-center justify-between">
+        <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab("quiz")}
+            onClick={() => { setActiveTab("topics"); handleRestartQuiz(); }}
             className={`px-4 py-3 font-semibold transition-all ${
-              activeTab === "quiz"
+              activeTab === "topics"
                 ? "text-primary border-b-2 border-primary"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            ✅ Practice Quiz
+            📖 Topics & Lessons
           </button>
+          {quizzesForLevel.length > 0 && (
+            <button
+              onClick={() => setActiveTab("quiz")}
+              className={`px-4 py-3 font-semibold transition-all ${
+                activeTab === "quiz"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              ✅ Practice Quiz
+            </button>
+          )}
+        </div>
+        {user?.role === "admin" && (
+          <Button
+            onClick={() => setShowGenerateModal(true)}
+            size="sm"
+            className="gap-2"
+          >
+            <Wand2 className="w-4 h-4" /> Generate
+          </Button>
         )}
       </div>
+
+      <GenerateGrammarContentModal
+        open={showGenerateModal}
+        onOpenChange={setShowGenerateModal}
+      />
 
       {/* Topics Tab */}
       {activeTab === "topics" && (
