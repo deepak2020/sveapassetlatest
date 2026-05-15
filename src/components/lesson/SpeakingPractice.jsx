@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Mic, CheckCircle2, XCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Mic, CheckCircle2, XCircle, RotateCcw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -113,7 +113,19 @@ export default function SpeakingPractice({ phrases }) {
                       {feedback[i].isCorrect ? (
                         <p className="text-xs font-semibold text-chart-3">✓ Perfect pronunciation!</p>
                       ) : (
-                        <p className="text-xs text-destructive">Try again — focus on the pronunciation tip above.</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-destructive">Focus on the pronunciation tip above.</p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-2 text-xs gap-1"
+                            onClick={() => handleRecord(i)}
+                            disabled={listening === i}
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            Try again
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}
