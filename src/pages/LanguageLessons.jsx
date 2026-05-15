@@ -118,7 +118,7 @@ export default function LanguageLessons() {
           {activeCourse && (
             <button
               onClick={() => { setActiveCourse(null); setSkillFilter("all"); }}
-              className="text-sm text-muted-foreground hover:text-primary mb-2 flex items-center gap-1 transition-colors"
+              className="text-sm text-muted-foreground hover:text-primary mb-2 flex items-center gap-1 transition-colors h-10 px-3 rounded-lg hover:bg-muted/50"
             >
               ← Tillbaka till alla kurser · <em className="font-normal">Back to All Courses</em>
             </button>
@@ -140,11 +140,11 @@ export default function LanguageLessons() {
           )}
         </div>
         {isAdmin && (
-          <Button onClick={() => setShowGenerate(true)} size="lg" className="gap-2 shadow-lg shadow-primary/20">
-            <Sparkles className="w-5 h-5" />
-            AI-kursbyggare
-          </Button>
-        )}
+           <Button onClick={() => setShowGenerate(true)} size="lg" className="gap-2 shadow-lg shadow-primary/20 h-12 md:h-10">
+             <Sparkles className="w-5 h-5" />
+             AI-kursbyggare
+           </Button>
+         )}
       </div>
 
       {!activeCourse && isAdmin && lessons.length > 0 && (
@@ -213,11 +213,11 @@ export default function LanguageLessons() {
               <button
                 key={s.key}
                 onClick={() => setSkillFilter(s.key)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                  skillFilter === s.key 
-                  ? "bg-primary text-white shadow-md" 
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                }`}
+                className={`px-4 py-3 md:py-2 rounded-xl text-sm font-semibold transition-all min-h-10 ${
+                   skillFilter === s.key 
+                   ? "bg-primary text-white shadow-md" 
+                   : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                 }`}
               >
                 {s.emoji} {s.label}
               </button>
@@ -267,13 +267,13 @@ function LessonCard({ lesson, index }) {
                 {lesson.title_sv}
               </p>
               <div className="flex items-center justify-between pt-4 border-t border-border/40">
-                <span className="text-xs font-medium text-muted-foreground">
-                  {exerciseBadge(lesson)}
-                </span>
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
+                 <span className="text-xs font-medium text-muted-foreground">
+                   {exerciseBadge(lesson)}
+                 </span>
+                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:opacity-100 transition-opacity">
+                   <ArrowRight className="w-4 h-4" />
+                 </div>
+               </div>
             </div>
           </CardContent>
         </Card>

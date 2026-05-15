@@ -88,4 +88,10 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      @apply !transition-none !animate-none;
+    }
+  }
 }

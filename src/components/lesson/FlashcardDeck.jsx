@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
   const [known, setKnown] = useState([]);
   const [learning, setLearning] = useState([]);
   const [finished, setFinished] = useState(false);
+  const touchStartX = useRef(null);
 
   if (!wordPairs || wordPairs.length === 0) {
     return <p className="text-muted-foreground text-sm">No vocabulary available for this lesson.</p>;
@@ -45,6 +46,20 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
 
   const restart = () => {
     setIndex(0); setFlipped(false); setKnown([]); setLearning([]); setFinished(false);
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!touchStartX.current || !flipped) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) handleKnow();
+      else handleLearning();
+    }
+    touchStartX.current = null;
   };
 
   if (finished) {
@@ -90,6 +105,8 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
           exit={{ opacity: 0, x: -40 }}
           className="cursor-pointer"
           onClick={() => setFlipped(f => !f)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <div className="relative min-h-[240px] rounded-2xl border-2 border-border/50 bg-card shadow-sm flex flex-col items-center justify-center p-8 text-center select-none hover:border-primary/30 transition-colors">
             <span className="absolute top-3 left-3 text-xs text-muted-foreground uppercase tracking-wide font-medium">
@@ -116,6 +133,9 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
             {!flipped && (
               <p className="text-xs text-muted-foreground mt-4">Tap to reveal translation</p>
             )}
+            {flipped && (
+              <p className="text-xs text-muted-foreground mt-4 md:hidden">Swipe left/right to answer</p>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -126,13 +146,13 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handleLearning}
-              className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-orange-200 bg-orange-50 text-orange-700 font-semibold hover:bg-orange-100 transition-colors"
+              className="flex items-center justify-center gap-2 p-5 min-h-12 rounded-xl border-2 border-orange-200 bg-orange-50 text-orange-700 font-semibold hover:bg-orange-100 transition-colors"
             >
               <XCircle className="w-5 h-5" /> Still learning
             </button>
             <button
               onClick={handleKnow}
-              className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-green-200 bg-green-50 text-green-700 font-semibold hover:bg-green-100 transition-colors"
+              className="flex items-center justify-center gap-2 p-5 min-h-12 rounded-xl border-2 border-green-200 bg-green-50 text-green-700 font-semibold hover:bg-green-100 transition-colors"
             >
               <CheckCircle2 className="w-5 h-5" /> Got it!
             </button>

@@ -56,7 +56,7 @@ export default function FillInBlanks({ exercises, onComplete }) {
             <h3 className="font-display text-2xl font-bold mb-1">{pct >= 80 ? "Excellent! 🎉" : pct >= 60 ? "Good job! 👍" : "Keep going! 💪"}</h3>
             <p className="text-4xl font-bold text-primary my-2">{pct}%</p>
             <p className="text-muted-foreground mb-6">{score} / {exercises.length} correct</p>
-            <Button onClick={restart} variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" /> Try Again</Button>
+            <Button onClick={restart} variant="outline" className="gap-2 h-11 md:h-10"><RotateCcw className="w-4 h-4" /> Try Again</Button>
           </CardContent>
         </Card>
       </motion.div>
@@ -120,11 +120,11 @@ export default function FillInBlanks({ exercises, onComplete }) {
                 }
                 return (
                   <button
-                    key={opt}
-                    onClick={() => handleSelect(opt)}
-                    disabled={answered}
-                    className={`p-3 rounded-xl border-2 text-sm font-medium text-left transition-all duration-200 flex items-center justify-between gap-2 ${style}`}
-                  >
+                     key={opt}
+                     onClick={() => handleSelect(opt)}
+                     disabled={answered}
+                     className={`p-4 md:p-3 rounded-xl border-2 text-sm font-medium text-left transition-all duration-200 flex items-center justify-between gap-2 min-h-12 md:min-h-10 ${style}`}
+                   >
                     <span>{opt}</span>
                     {answered && opt === ex.answer && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />}
                     {answered && opt === selected && opt !== ex.answer && <XCircle className="w-4 h-4 text-red-500 shrink-0" />}
@@ -136,12 +136,12 @@ export default function FillInBlanks({ exercises, onComplete }) {
         </AnimatePresence>
 
         {answered && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
-            <Button onClick={handleNext} className="gap-2">
-              {current + 1 >= exercises.length ? "See Results" : "Next"}
-            </Button>
-          </motion.div>
-        )}
+           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
+             <Button onClick={handleNext} className="gap-2 h-11 md:h-10">
+               {current + 1 >= exercises.length ? "See Results" : "Next"}
+             </Button>
+           </motion.div>
+         )}
       </CardContent>
     </Card>
   );

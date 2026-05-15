@@ -34,7 +34,7 @@ export default function AddVocabDialog() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-20 right-6 md:bottom-8 md:right-8 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-110 transition-all"
+        className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-40 flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-110 transition-all"
       >
         <BookmarkPlus className="w-6 h-6" />
       </button>
@@ -49,7 +49,7 @@ export default function AddVocabDialog() {
 
       {/* Dialog */}
       {open && (
-        <div className="fixed bottom-0 left-0 right-0 md:bottom-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 bg-card rounded-t-2xl md:rounded-2xl p-6 md:max-w-md md:w-full md:shadow-lg border-t md:border border-border/50">
+        <div className="fixed bottom-0 left-0 right-0 md:bottom-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 bg-card rounded-t-2xl md:rounded-2xl p-6 md:max-w-md md:w-full md:shadow-lg border-t md:border border-border/50 animate-in slide-in-from-bottom-5 md:zoom-in-95 duration-200">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-lg">Add Word to Vocab</h3>
             <button
@@ -60,9 +60,9 @@ export default function AddVocabDialog() {
             </button>
           </div>
 
-          <div className="space-y-3 mb-4">
+          <div className="space-y-4 mb-4">
             <div>
-              <label className="text-sm font-medium text-muted-foreground block mb-1">
+              <label className="text-sm font-medium text-muted-foreground block mb-2">
                 Swedish
               </label>
               <Input
@@ -70,10 +70,11 @@ export default function AddVocabDialog() {
                 value={swedish}
                 onChange={(e) => setSwedish(e.target.value)}
                 disabled={loading}
+                className="h-11"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground block mb-1">
+              <label className="text-sm font-medium text-muted-foreground block mb-2">
                 English
               </label>
               <Input
@@ -81,6 +82,7 @@ export default function AddVocabDialog() {
                 value={english}
                 onChange={(e) => setEnglish(e.target.value)}
                 disabled={loading}
+                className="h-11"
               />
             </div>
           </div>
@@ -90,14 +92,14 @@ export default function AddVocabDialog() {
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
-              className="flex-1"
+              className="flex-1 h-11"
             >
               Cancel
             </Button>
             <Button
               onClick={handleAdd}
               disabled={loading || !swedish.trim() || !english.trim()}
-              className="flex-1"
+              className="flex-1 h-11"
             >
               {loading ? "Adding..." : "Add"}
             </Button>

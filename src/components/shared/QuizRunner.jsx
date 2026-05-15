@@ -147,11 +147,11 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
 
                 return (
                   <button
-                    key={index}
-                    onClick={() => handleSelect(index)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 ${optionStyle}`}
-                    disabled={answered}
-                  >
+                     key={index}
+                     onClick={() => handleSelect(index)}
+                     className={`w-full text-left p-4 md:p-3 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 min-h-12 md:min-h-10 ${optionStyle}`}
+                     disabled={answered}
+                   >
                     <span className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-sm font-medium shrink-0">
                       {String.fromCharCode(65 + index)}
                     </span>
@@ -170,17 +170,17 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
         </AnimatePresence>
 
         {answered && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex justify-end pt-2"
-          >
-            <Button onClick={handleNext} className="gap-2">
-              {currentQ + 1 >= questions.length ? "See Results" : "Next Question"}
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </motion.div>
-        )}
+           <motion.div
+             initial={{ opacity: 0, y: 10 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="flex justify-end pt-2"
+           >
+             <Button onClick={handleNext} className="gap-2 h-11 md:h-10">
+               {currentQ + 1 >= questions.length ? "See Results" : "Next Question"}
+               <ArrowRight className="w-4 h-4" />
+             </Button>
+           </motion.div>
+         )}
       </CardContent>
     </Card>
   );
