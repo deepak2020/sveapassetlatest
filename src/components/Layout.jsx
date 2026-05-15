@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import AddVocabDialog from "@/components/shared/AddVocabDialog";
 
 const navItems = [
   { path: "/", label: "Hem", icon: Home },
@@ -174,6 +175,9 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
+
+      {/* Global Add Vocab Dialog */}
+      {isAuthenticated && <AddVocabDialog />}
 
       {/* Bottom tab bar (mobile) */}
       {isAuthenticated && (
