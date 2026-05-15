@@ -11,13 +11,11 @@ import LanguageLessons from './pages/LanguageLessons';
 import LessonDetail from './pages/LessonDetail';
 import CivicTopics from './pages/CivicTopics';
 import TopicDetail from './pages/TopicDetail';
-import Progress from './pages/Progress';
 import LanguageTest from './pages/LanguageTest';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
 import Profile from './pages/Profile';
-import MyVocabulary from './pages/MyVocabulary';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -49,10 +47,8 @@ const AuthenticatedApp = () => {
         <Route path="/language/:id" element={<LessonDetail />} />
         <Route path="/civic" element={<CivicTopics />} />
         <Route path="/civic/:id" element={<TopicDetail />} />
-        <Route path="/progress" element={<Progress />} />
         <Route path="/language-test" element={<LanguageTest />} />
         <Route path="/gym" element={<Gym />} />
-        <Route path="/my-vocabulary" element={<MyVocabulary />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />

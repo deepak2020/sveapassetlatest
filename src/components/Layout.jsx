@@ -13,8 +13,6 @@ const navItems = [
   { path: "/language", label: "Språk", icon: BookOpen },
   { path: "/civic", label: "Samhälle", icon: Landmark },
   { path: "/gym", label: "Träning", icon: Dumbbell },
-  { path: "/my-vocabulary", label: "Min Ordlista", icon: BookMarked },
-  { path: "/progress", label: "Framsteg", icon: BarChart3 },
   { path: "/profile", label: "Profil", icon: User },
 ];
 
