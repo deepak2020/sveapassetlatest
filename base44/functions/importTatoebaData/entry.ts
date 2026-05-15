@@ -12,13 +12,16 @@ Deno.serve(async (req) => {
     const { limit = 100, sfiLevel = 'A' } = await req.json();
 
     // Fetch Swedish sentences from Tatoeba API
-    const response = await fetch('https://tatoeba.org/api_v0/search?from=swe&to=eng&limit=' + limit);
+    const response = await fetch(`https://tatoeba.org/api_v0/search?from=swe&to=eng&limit=${limit}`);
     if (!response.ok) {
       return Response.json({ error: 'Failed to fetch Tatoeba data' }, { status: 500 });
     }
 
     const data = await response.json();
-    const sentences = data.results || [];
+    const sentences = data.results?.map(r => ({
+      text: r.text,
+      translations: r.translations || []
+    })) || [];
 
     if (sentences.length === 0) {
       return Response.json({ message: 'No sentences found' }, { status: 200 });
@@ -53,10 +56,8 @@ Deno.serve(async (req) => {
 
         if (distractors.length < 3) continue; // Skip if not enough distractors
 
-        const existing = await base44.asServiceRole.entities.ClozeSentence.list(
-          undefined,
-          1,
-          { sentence_sv: sv }
+        const existing = await base44.asServiceRole.entities.ClozeSentence.filter(
+         { sentence_sv: sv }
         );
 
         if (existing.length === 0) {
