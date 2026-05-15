@@ -233,6 +233,8 @@ export default function LessonDetail() {
             <FlashcardDeck
               wordPairs={lesson.word_pairs}
               onComplete={() => markComplete("learn")}
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
             />
           </TabsContent>
         )}

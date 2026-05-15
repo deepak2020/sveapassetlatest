@@ -1,0 +1,46 @@
+{
+  "name": "UserVocabulary",
+  "type": "object",
+  "properties": {
+    "swedish": {
+      "type": "string",
+      "description": "Swedish word"
+    },
+    "english": {
+      "type": "string",
+      "description": "English translation"
+    },
+    "lesson_id": {
+      "type": "string",
+      "description": "ID of the lesson where it was found"
+    },
+    "lesson_title": {
+      "type": "string",
+      "description": "Title of the lesson"
+    },
+    "example_sentence": {
+      "type": "string",
+      "description": "Example sentence from the lesson"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Personal notes about the word"
+    }
+  },
+  "required": [
+    "swedish",
+    "english"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

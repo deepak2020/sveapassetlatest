@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
 import Profile from './pages/Profile';
+import MyVocabulary from './pages/MyVocabulary';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -55,6 +56,7 @@ const AuthenticatedApp = () => {
         <Route path="/progress" element={<Progress />} />
         <Route path="/language-test" element={<LanguageTest />} />
         <Route path="/gym" element={<Gym />} />
+        <Route path="/my-vocabulary" element={<MyVocabulary />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />

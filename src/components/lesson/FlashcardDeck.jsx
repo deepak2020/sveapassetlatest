@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { awardXP, XP_REWARDS } from "@/lib/xp";
 import SpeakButton from "@/components/shared/SpeakButton";
+import AddToVocabButton from "@/components/shared/AddToVocabButton";
 
-export default function FlashcardDeck({ wordPairs, onComplete }) {
+export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonTitle }) {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [known, setKnown] = useState([]);
@@ -121,19 +122,28 @@ export default function FlashcardDeck({ wordPairs, onComplete }) {
 
       {/* Actions */}
       {flipped ? (
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={handleLearning}
-            className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-orange-200 bg-orange-50 text-orange-700 font-semibold hover:bg-orange-100 transition-colors"
-          >
-            <XCircle className="w-5 h-5" /> Still learning
-          </button>
-          <button
-            onClick={handleKnow}
-            className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-green-200 bg-green-50 text-green-700 font-semibold hover:bg-green-100 transition-colors"
-          >
-            <CheckCircle2 className="w-5 h-5" /> Got it!
-          </button>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleLearning}
+              className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-orange-200 bg-orange-50 text-orange-700 font-semibold hover:bg-orange-100 transition-colors"
+            >
+              <XCircle className="w-5 h-5" /> Still learning
+            </button>
+            <button
+              onClick={handleKnow}
+              className="flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-green-200 bg-green-50 text-green-700 font-semibold hover:bg-green-100 transition-colors"
+            >
+              <CheckCircle2 className="w-5 h-5" /> Got it!
+            </button>
+          </div>
+          <AddToVocabButton
+            swedish={card.swedish}
+            english={card.english}
+            lessonId={lessonId}
+            lessonTitle={lessonTitle}
+            exampleSentence={card.example_sv}
+          />
         </div>
       ) : (
         <p className="text-center text-sm text-muted-foreground">Tap the card to reveal the answer, then rate yourself</p>
