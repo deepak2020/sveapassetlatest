@@ -157,15 +157,22 @@ export default function Gym() {
             <div>
               <h2 className="font-semibold mb-2 text-sm text-muted-foreground uppercase tracking-wide">SFI Level</h2>
               <div className="flex gap-2 flex-wrap">
-                {["all", "A", "B", "C", "D"].map(l => (
-                  <button
-                    key={l}
-                    onClick={() => setLevelFilter(l)}
-                    className={`px-3 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${levelFilter === l ? "border-primary bg-primary text-primary-foreground" : "border-border/50 hover:border-primary/30"}`}
-                  >
-                    {l === "all" ? "All" : l}
-                  </button>
-                ))}
+                {["all", "A", "B", "C", "D"].map(l => {
+                  const hasData = l === "all" || sentences.some(s => s.sfi_level === l);
+                  return (
+                    <button
+                      key={l}
+                      onClick={() => setLevelFilter(l)}
+                      disabled={!hasData}
+                      className={`px-3 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${
+                        !hasData ? "border-border/30 text-muted-foreground/50 cursor-not-allowed opacity-50" :
+                        levelFilter === l ? "border-primary bg-primary text-primary-foreground" : "border-border/50 hover:border-primary/30"
+                      }`}
+                    >
+                      {l === "all" ? "All" : l}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
