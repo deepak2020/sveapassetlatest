@@ -1,33 +1,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
-import { Dumbbell, Zap, Target, Play, BookOpen } from "lucide-react";
+import { Play, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import GymSessionV2 from "@/components/gym/GymSessionV2";
 
-const MODES = [
-  { id: "word_bank", label: "Word Bank", desc: "Tap the correct word from 4 options", levels: ["A", "B"], icon: "🔤" },
-  { id: "multiple_choice", label: "Multiple Choice", desc: "Choose from 4 options (A/B/C/D style)", levels: ["B", "C"], icon: "🅰️" },
-  { id: "type", label: "Type Answer", desc: "Type the missing Swedish word", levels: ["C", "D"], icon: "⌨️" },
-  { id: "listening", label: "Listening", desc: "Listen to audio and type what you hear", levels: ["B", "C", "D"], icon: "👂" },
-];
-
-const LEVELS = [
-  { id: "beginner", label: "Beginner", desc: "1 word missing • Multiple choice", blanks: 1 },
-  { id: "intermediate", label: "Intermediate", desc: "2-3 words missing • Mixed input", blanks: 2 },
-  { id: "advanced", label: "Advanced", desc: "Complete sentence • Write it all", blanks: "all" },
-];
-
-const COUNTS = [10, 25, 50];
+const SFI_LEVELS = ["A", "B", "C", "D"];
+const SENTENCE_COUNTS = [10, 25, 50];
 
 export default function Gym() {
   const [session, setSession] = useState(null);
-  const [mode, setMode] = useState("multiple_choice");
-  const [count, setCount] = useState(10);
-  const [levelFilter, setLevelFilter] = useState("all");
-  const [gymLevel, setGymLevel] = useState("beginner");
 
   const { data: sentences = [] } = useQuery({
     queryKey: ["cloze-sentences"],
@@ -42,16 +26,10 @@ export default function Gym() {
   const today = new Date().toISOString().split("T")[0];
   const dueCount = srsCards.filter(c => c.due_date <= today && c.status !== "mastered").length;
 
-  const filtered = sentences.filter(s =>
-    levelFilter === "all" || s.sfi_level === levelFilter
-  );
-
   if (session) {
     return (
       <GymSessionV2
-        sentences={filtered.slice(0, count)}
-        mode={mode}
-        level={gymLevel}
+        sentences={session.sentences}
         srsCards={srsCards}
         onFinish={() => setSession(null)}
       />
@@ -59,13 +37,10 @@ export default function Gym() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
-      <div className="text-center">
-        <div className="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center mx-auto mb-4">
-          <Dumbbell className="w-7 h-7 text-violet-600" />
-        </div>
-        <h1 className="font-display text-3xl font-bold">Practice Gym</h1>
-        <p className="text-muted-foreground mt-1">High-volume cloze sentence practice</p>
+    <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
+      <div className="text-center mb-8">
+        <h1 className="font-display text-3xl font-bold mb-2">Träningssalen</h1>
+        <p className="text-muted-foreground">Högvolym-meningsträning med SRS-spårning</p>
       </div>
 
       {/* Stats */}
@@ -73,19 +48,19 @@ export default function Gym() {
         <Card className="border-border/50">
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-primary">{sentences.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total sentences</p>
+            <p className="text-xs text-muted-foreground mt-1">Totalt meningar</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-orange-500">{dueCount}</p>
-            <p className="text-xs text-muted-foreground mt-1">Due for review</p>
+            <p className="text-xs text-muted-foreground mt-1">Förfallna för granskning</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-emerald-500">{srsCards.filter(c => c.status === "mastered").length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Mastered</p>
+            <p className="text-xs text-muted-foreground mt-1">Behärskat</p>
           </CardContent>
         </Card>
       </div>
@@ -94,100 +69,121 @@ export default function Gym() {
         <Card className="border-border/50">
           <CardContent className="p-8 text-center">
             <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="font-semibold mb-1">No sentences yet</h3>
-            <p className="text-sm text-muted-foreground">Ask an admin to add cloze sentences to the gym.</p>
+            <h3 className="font-semibold mb-1">Inga meningar ännu</h3>
+            <p className="text-sm text-muted-foreground">Be en admin att lägga till cloze-meningar i träningssalen.</p>
           </CardContent>
         </Card>
       ) : (
-        <>
-          {/* Mode selection */}
-          <div>
-            <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Practice Mode</h2>
-            <div className="space-y-2">
-              {MODES.map(m => (
-                <button
-                  key={m.id}
-                  onClick={() => setMode(m.id)}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${mode === m.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{m.icon}</span>
-                    <div>
-                      <p className="font-semibold text-sm">{m.label}</p>
-                      <p className="text-xs text-muted-foreground">{m.desc} · SFI {m.levels.join("–")}</p>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Gym Level */}
-          <div>
-            <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Gym Level</h2>
-            <div className="space-y-2">
-              {LEVELS.map(lv => (
-                <button
-                  key={lv.id}
-                  onClick={() => setGymLevel(lv.id)}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${gymLevel === lv.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"}`}
-                >
-                  <p className="font-semibold text-sm">{lv.label}</p>
-                  <p className="text-xs text-muted-foreground">{lv.desc}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Settings */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h2 className="font-semibold mb-2 text-sm text-muted-foreground uppercase tracking-wide">Sentences</h2>
-              <div className="flex gap-2">
-                {COUNTS.map(n => (
-                  <button
-                    key={n}
-                    onClick={() => setCount(n)}
-                    className={`flex-1 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${count === n ? "border-primary bg-primary text-primary-foreground" : "border-border/50 hover:border-primary/30"}`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h2 className="font-semibold mb-2 text-sm text-muted-foreground uppercase tracking-wide">SFI Level</h2>
-              <div className="flex gap-2 flex-wrap">
-                {["all", "A", "B", "C", "D"].map(l => {
-                  const hasData = l === "all" || sentences.some(s => s.sfi_level === l);
-                  return (
-                    <button
-                      key={l}
-                      onClick={() => setLevelFilter(l)}
-                      disabled={!hasData}
-                      className={`px-3 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${
-                        !hasData ? "border-border/30 text-muted-foreground/50 cursor-not-allowed opacity-50" :
-                        levelFilter === l ? "border-primary bg-primary text-primary-foreground" : "border-border/50 hover:border-primary/30"
-                      }`}
-                    >
-                      {l === "all" ? "All" : l}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <Button
-            onClick={() => setSession(true)}
-            size="lg"
-            className="w-full gap-2 text-base"
-            disabled={filtered.length === 0}
-          >
-            <Play className="w-5 h-5" /> Start Session ({Math.min(count, filtered.length)} sentences)
-          </Button>
-        </>
+        <GymDashboard sentences={sentences} srsCards={srsCards} onStartSession={setSession} />
       )}
+    </div>
+  );
+}
+
+function GymDashboard({ sentences, srsCards, onStartSession }) {
+  const [selectedLevel, setSelectedLevel] = useState("A");
+  const [count, setCount] = useState(10);
+
+  const levelSentences = sentences.filter(s => s.sfi_level === selectedLevel);
+  
+  // Group by topic
+  const topicGroups = {};
+  levelSentences.forEach(s => {
+    const topic = s.topic || "Allmänt";
+    if (!topicGroups[topic]) topicGroups[topic] = [];
+    topicGroups[topic].push(s);
+  });
+
+  const topics = Object.entries(topicGroups)
+    .map(([name, items]) => ({
+      name,
+      count: items.length,
+      avgFrequency: items.reduce((avg, s) => avg + (s.word_frequency_rank || 500), 0) / items.length,
+    }))
+    .sort((a, b) => a.avgFrequency - b.avgFrequency);
+
+  const startSession = () => {
+    const sessionSentences = levelSentences.slice(0, Math.min(count, levelSentences.length));
+    onStartSession({ sentences: sessionSentences });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* SFI Level Selection */}
+      <div>
+        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">SFI-nivå</h2>
+        <div className="grid grid-cols-4 gap-3">
+          {SFI_LEVELS.map(level => {
+            const levelCount = sentences.filter(s => s.sfi_level === level).length;
+            return (
+              <button
+                key={level}
+                onClick={() => setSelectedLevel(level)}
+                className={`p-4 rounded-xl border-2 text-center transition-all ${
+                  selectedLevel === level ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+                }`}
+              >
+                <p className="font-bold text-xl">{level}</p>
+                <p className="text-xs text-muted-foreground mt-1">{levelCount} meningar</p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Topics */}
+      {topics.length > 0 && (
+        <div>
+          <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Ämnen</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {topics.map(topic => (
+              <Card key={topic.name} className="border-border/50 hover:shadow-sm transition-all">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm">{topic.name}</p>
+                    </div>
+                    <Badge variant="outline" className="text-xs ml-2 shrink-0">
+                      {topic.count}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {topic.avgFrequency < 200 ? "Vanliga ord" : topic.avgFrequency < 500 ? "Medel svårighet" : "Avancerad"}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Session Length */}
+      <div>
+        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Sessionslängd</h2>
+        <div className="grid grid-cols-3 gap-3">
+          {SENTENCE_COUNTS.map(n => (
+            <button
+              key={n}
+              onClick={() => setCount(n)}
+              className={`py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
+                count === n ? "border-primary bg-primary text-primary-foreground" : "border-border/50 hover:border-primary/30"
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Start Button */}
+      <Button
+        onClick={startSession}
+        size="lg"
+        className="w-full gap-2 text-base"
+        disabled={levelSentences.length === 0}
+      >
+        <Play className="w-5 h-5" /> Starta session ({Math.min(count, levelSentences.length)} meningar)
+      </Button>
     </div>
   );
 }
