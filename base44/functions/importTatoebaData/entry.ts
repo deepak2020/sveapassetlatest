@@ -1,17 +1,63 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// Levenshtein distance: measures minimum character changes needed
+function levenshteinDistance(a, b) {
+  const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+  for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+  for (let j = 1; j <= b.length; j++) {
+    for (let i = 1; i <= a.length; i++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1,
+        matrix[j - 1][i] + 1,
+        matrix[j - 1][i - 1] + cost
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+// Generate distractors using three strategies: similar-looking, same-ish POS, random
+function generateDistracters(answer, candidateWords) {
+  const commonSwedish = [
+    'och', 'är', 'en', 'att', 'på', 'jag', 'du', 'det', 'han', 'hon', 'vi', 'de', 'med', 'för', 'från',
+    'vara', 'ha', 'do', 'gå', 'komma', 'ta', 'se', 'ge', 'kunna', 'vilja', 'skola', 'böra', 'få', 'behöva',
+    'inte', 'mycket', 'bara', 'här', 'där', 'nu', 'då', 'innan', 'efter', 'under', 'över', 'genom'
+  ];
+
+  // Bucket 1: Similar-looking words (Levenshtein distance 1-2)
+  const similar = commonSwedish
+    .filter(w => w !== answer && levenshteinDistance(answer, w) <= 2)
+    .slice(0, 2);
+
+  // Bucket 2: Words of similar length (proxy for same POS)
+  const sameLengthWords = candidateWords
+    .filter(w => w !== answer && Math.abs(w.length - answer.length) <= 1)
+    .slice(0, 2);
+
+  // Bucket 3: Random distractors
+  const random = commonSwedish
+    .filter(w => w !== answer && !similar.includes(w) && !sameLengthWords.includes(w))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 2);
+
+  // Combine and pick 3 total
+  const pool = [...similar, ...sameLengthWords, ...random];
+  return pool.slice(0, 3);
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
-    if (user?.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { limit = 100, sfiLevel = 'A' } = await req.json();
+    const { limit = 50, sfiLevel } = await req.json();
 
-    // Generate sample Swedish sentences instead (Tatoeba API is restricted)
     const sampleSentences = [
       { sv: 'Hej, hur mår du?', en: 'Hello, how are you?' },
       { sv: 'Jag heter Anna och jag är från Sverige.', en: 'My name is Anna and I am from Sweden.' },
@@ -125,7 +171,7 @@ Deno.serve(async (req) => {
       { sv: 'Klänningen är vacker och färgglad.', en: 'The dress is beautiful and colorful.' },
       { sv: 'Badkläder är perfekta för sommaren.', en: 'Swimwear is perfect for summer.' },
     ];
-    
+
     // Shuffle and select random sentences to avoid duplicates
     const shuffled = [...sampleSentences].sort(() => Math.random() - 0.5);
     const sentences = shuffled.slice(0, limit).map(s => ({
@@ -133,7 +179,6 @@ Deno.serve(async (req) => {
       translations: [[{ text: s.en }]]
     }));
 
-    // Process and import sentences as cloze cards
     const imported = [];
     const errors = [];
 
@@ -142,7 +187,6 @@ Deno.serve(async (req) => {
         const sv = sentence.text || sentence.sent;
         let en = null;
 
-        // Handle various translation formats
         if (Array.isArray(sentence.translations) && sentence.translations.length > 0) {
           const firstTrans = sentence.translations[0];
           en = Array.isArray(firstTrans) ? firstTrans[0]?.text : firstTrans?.text;
@@ -150,32 +194,29 @@ Deno.serve(async (req) => {
 
         if (!sv || !en) continue;
 
-        // Simple word extraction for cloze
         const words = sv.split(/\s+/);
-        if (words.length < 3) continue; // Skip very short sentences
+        if (words.length < 3) continue;
 
-        // Filter out punctuation-only words
-        const cleanWords = words.filter(w => /[a-zA-ZåäöÅÄÖ]/.test(w));
-        if (cleanWords.length < 3) continue;
+        // Filter: no punctuation-only, no capitals, no ≤2 chars
+        const cleanWords = words
+          .filter(w => /[a-zA-ZåäöÅÄÖ]/.test(w) && w.length > 2 && w[0] !== w[0].toUpperCase())
+          .map(w => w.toLowerCase());
+        if (cleanWords.length < 2) continue;
 
-        const randomIdx = Math.floor(Math.random() * cleanWords.length);
-        const answer = cleanWords[randomIdx].toLowerCase();
-        
-        // Create sentence with blank
+        // Pick least-common word (longest as proxy for rarity)
+        const answer = cleanWords.reduce((least, word) => 
+          word.length > least.length ? word : least
+        );
+
         const sentenceWithBlank = sv.split(/\s+/).map(w => {
           return w.toLowerCase() === answer ? '___' : w;
         }).join(' ');
 
-        // Generate simple distractors from common Swedish words
-        const commonWords = ['och', 'är', 'en', 'att', 'på', 'jag', 'du', 'det', 'han', 'hon', 'vi', 'de', 'med', 'för', 'från'];
-        const distractors = commonWords
-          .filter(w => w !== answer)
-          .slice(0, 3);
-
-        if (distractors.length < 3) continue; // Skip if not enough distractors
+        const distractors = generateDistracters(answer, cleanWords);
+        if (distractors.length < 3) continue;
 
         const existing = await base44.asServiceRole.entities.ClozeSentence.filter(
-         { sentence_sv: sv }
+          { sentence_sv: sv }
         );
 
         if (existing.length === 0) {
