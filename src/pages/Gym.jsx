@@ -46,7 +46,7 @@ export default function Gym() {
   const handleImportTatoeba = async (sfiLevel) => {
     setImporting(true);
     try {
-      const res = await base44.functions.invoke('importTatoebaData', { limit: 50, sfiLevel });
+      const res = await base44.functions.invoke('importTatoebaData', { limit: 1000, sfiLevel });
       alert(`✓ Imported ${res.data.imported} sentences from Tatoeba`);
       window.location.reload();
     } catch (error) {
