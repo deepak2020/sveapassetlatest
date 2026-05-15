@@ -142,6 +142,16 @@ export default function LanguageLessons() {
         )}
       </div>
 
+      {!activeCourse && isAdmin && lessons.length > 0 && (
+        <div className="mb-6">
+          <GenerateContentButton
+            lessons={lessons}
+            regenerateAll={true}
+            onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
+          />
+        </div>
+      )}
+
       {!activeCourse ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SFI_COURSES.map((course, i) => (
