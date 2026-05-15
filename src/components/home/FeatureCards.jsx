@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Landmark, Brain, BarChart3, ArrowRight, PenLine, Mic, Puzzle } from "lucide-react";
+import { BookOpen, Landmark, Brain, Dumbbell, ArrowRight, Mic, RefreshCw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -7,38 +7,38 @@ const features = [
   {
     icon: BookOpen,
     emoji: "📖",
-    title: "Reading & Writing",
-    description: "Read Swedish texts, fill in blanks, and practice writing with guided prompts and AI feedback.",
+    title: "SFI Lektioner A–D",
+    description: "Strukturerade lektioner i ordförråd, grammatik, läsning och skrivning — täcker hela SFI-kursen från nybörjare till avancerad.",
     link: "/language",
     gradient: "from-blue-500/10 to-blue-600/5",
     border: "hover:border-blue-300/60",
     iconColor: "bg-blue-100 text-blue-600",
   },
   {
+    icon: Dumbbell,
+    emoji: "💪",
+    title: "Ordgymmet (SRS)",
+    description: "Träna meningar med luckor i Clozemaster-stil. Spaced repetition håller koll på dina kort och ser till att du repeterar rätt ord vid rätt tidpunkt.",
+    link: "/gym",
+    gradient: "from-amber-500/10 to-amber-600/5",
+    border: "hover:border-amber-300/60",
+    iconColor: "bg-amber-100 text-amber-600",
+  },
+  {
     icon: Mic,
     emoji: "🗣️",
-    title: "Speaking Practice",
-    description: "Learn phrases, pronunciation tips, and everyday conversation for life in Sweden.",
+    title: "Uttal & Samtal",
+    description: "Lär dig fraser, uttal och vardagskonversation som du behöver i det svenska samhället — med röstövningar.",
     link: "/language",
     gradient: "from-green-500/10 to-green-600/5",
     border: "hover:border-green-300/60",
     iconColor: "bg-green-100 text-green-600",
   },
   {
-    icon: Puzzle,
-    emoji: "🧩",
-    title: "Clozemaster Exercises",
-    description: "Fill-in-the-blank style drills to master vocabulary in context — just like Clozemaster.",
-    link: "/language",
-    gradient: "from-amber-500/10 to-amber-600/5",
-    border: "hover:border-amber-300/60",
-    iconColor: "bg-amber-100 text-amber-600",
-  },
-  {
     icon: Landmark,
     emoji: "🏛️",
-    title: "Civic Test Prep",
-    description: "Study Swedish government, history, culture, and society. Quizzes included for every topic.",
+    title: "Samhällskunskap",
+    description: "Studera Sveriges historia, statsskick, demokrati, kultur och geografi. Quiz ingår i varje ämne — förbered dig för medborgarskapsprovet.",
     link: "/civic",
     gradient: "from-violet-500/10 to-violet-600/5",
     border: "hover:border-violet-300/60",
@@ -47,19 +47,19 @@ const features = [
   {
     icon: Brain,
     emoji: "✨",
-    title: "AI-Generated Lessons",
-    description: "Instantly generate any lesson or civic topic with AI — tailored to your level and goal.",
+    title: "AI-genererat innehåll",
+    description: "Generera nya lektioner och samhällsämnen direkt med AI — anpassade till din SFI-nivå och dina mål, på några sekunder.",
     link: "/language",
     gradient: "from-primary/10 to-primary/5",
     border: "hover:border-primary/30",
     iconColor: "bg-primary/10 text-primary",
   },
   {
-    icon: BarChart3,
-    emoji: "📈",
-    title: "Track Your Progress",
-    description: "See your quiz scores, streaks, and improvement over time on your personal dashboard.",
-    link: "/progress",
+    icon: RefreshCw,
+    emoji: "🔁",
+    title: "Mastery-spårning",
+    description: "Se dina SRS-kort, quiz-poäng, dagliga streak och XP-nivå i din personliga dashboard. Håll motivationen uppe hela vägen till medborgarskapet.",
+    link: "/dashboard",
     gradient: "from-chart-3/10 to-chart-3/5",
     border: "hover:border-chart-3/30",
     iconColor: "bg-chart-3/10 text-chart-3",
@@ -70,9 +70,12 @@ export default function FeatureCards() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="text-center mb-12">
-        <h2 className="font-display text-3xl font-bold text-foreground">Everything You Need to Succeed</h2>
-        <p className="mt-3 text-muted-foreground text-lg max-w-xl mx-auto">
-          From beginner Swedish to passing the citizenship test — all in one place.
+        <div className="inline-flex items-center gap-2 bg-[#FECC02]/20 border border-[#FECC02]/40 rounded-full px-4 py-1.5 text-sm font-medium text-foreground mb-4">
+          🇸🇪 Byggt för Sverige
+        </div>
+        <h2 className="font-display text-3xl font-bold text-foreground">Allt du behöver — på ett ställe</h2>
+        <p className="mt-3 text-muted-foreground text-base max-w-xl mx-auto">
+          Från första svenska orden till godkänt medborgarskapstest.
         </p>
       </div>
 
@@ -83,8 +86,9 @@ export default function FeatureCards() {
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.07 }}
             >
               <Link to={feature.link}>
                 <Card className={`group h-full border-border/50 ${feature.border} hover:shadow-lg transition-all duration-300 cursor-pointer bg-gradient-to-br ${feature.gradient} overflow-hidden`}>
@@ -98,7 +102,7 @@ export default function FeatureCards() {
                     <h3 className="font-semibold text-foreground mb-2 text-base">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                     <div className="mt-4 flex items-center gap-1 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      Get started <ArrowRight className="w-3.5 h-3.5" />
+                      Kom igång <ArrowRight className="w-3.5 h-3.5" />
                     </div>
                   </CardContent>
                 </Card>
