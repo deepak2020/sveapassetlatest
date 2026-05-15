@@ -168,6 +168,13 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
                     </span>
                   ))}
                 </p>
+                {/* Phonetic guide */}
+                {sentence.pronunciation_tip && (
+                  <div className="mt-3 pt-3 border-t border-border/50">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Swedish melody & sound</p>
+                    <p className="text-sm text-foreground italic">{sentence.pronunciation_tip}</p>
+                  </div>
+                )}
               </div>
 
               {/* Level-based input */}
