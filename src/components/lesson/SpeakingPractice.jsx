@@ -20,6 +20,29 @@ const fuzzyMatch = (userText, expectedText) => {
   return matches / expected.length;
 };
 
+const playSound = (isCorrect) => {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+  
+  if (isCorrect) {
+    oscillator.frequency.value = 800;
+    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  } else {
+    oscillator.frequency.value = 400;
+    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  }
+};
+
 export default function SpeakingPractice({ phrases }) {
   const [expanded, setExpanded] = useState(null);
   const [listening, setListening] = useState(null);
@@ -38,10 +61,12 @@ export default function SpeakingPractice({ phrases }) {
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       const score = fuzzyMatch(transcript, phrases[index].phrase_sv);
+      const isCorrect = score >= 0.75;
       setFeedback({
         ...feedback,
-        [index]: { transcript, score, isCorrect: score >= 0.75 }
+        [index]: { transcript, score, isCorrect }
       });
+      playSound(isCorrect);
       setListening(null);
     };
 
