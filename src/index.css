@@ -87,6 +87,12 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    overscroll-behavior-y: none;
+  }
+
+  .no-select {
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

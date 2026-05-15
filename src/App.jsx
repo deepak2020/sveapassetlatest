@@ -15,6 +15,7 @@ import LanguageTest from './pages/LanguageTest';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
+import ThemeSync from './components/ThemeSync';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -61,6 +62,7 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
+        <ThemeSync />
         <Router>
           <AuthenticatedApp />
         </Router>

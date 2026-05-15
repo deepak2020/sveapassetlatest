@@ -10,7 +10,18 @@ import { getLevelProgress, getNextLevel } from "@/lib/xp";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import EmptyState from "../components/shared/EmptyState";
 
 function getGreeting() {
@@ -31,17 +42,38 @@ const XP_LEVEL_COLORS = {
 export default function Dashboard() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const touchStartY = useRef(null);
 
   const { data: user, refetch } = useQuery({
     queryKey: ["me"],
     queryFn: () => base44.auth.me(),
   });
 
-  const { data: quizResults } = useQuery({
+  const { data: quizResults, refetch: refetchQuizResults } = useQuery({
     queryKey: ["quiz-results-recent"],
     queryFn: () => base44.entities.QuizResult.list("-created_date", 20),
     initialData: [],
   });
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetch(), refetchQuizResults()]);
+    setRefreshing(false);
+  }, [refetch, refetchQuizResults]);
+
+  const handleTouchStart = (e) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartY.current === null) return;
+    const delta = e.changedTouches[0].clientY - touchStartY.current;
+    if (delta > 80 && window.scrollY === 0) {
+      handleRefresh();
+    }
+    touchStartY.current = null;
+  };
 
   const { data: srsCards = [] } = useQuery({
     queryKey: ["srs-cards"],
@@ -138,7 +170,16 @@ export default function Dashboard() {
   const DAILY_GOALS = [5, 10, 15, 30];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div
+      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {refreshing && (
+        <div className="flex justify-center mb-4">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
       <Tabs defaultValue="home" className="w-full space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="home">Hem</TabsTrigger>
@@ -642,6 +683,39 @@ export default function Dashboard() {
           >
             <LogOut className="w-4 h-4" /> Logga ut
           </Button>
+
+          <Card className="border-destructive/30">
+            <CardContent className="p-5 space-y-3">
+              <h3 className="font-semibold text-destructive">Radera konto</h3>
+              <p className="text-sm text-muted-foreground">
+                Detta tar bort alla dina data permanent och kan inte ångras.
+              </p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="w-full gap-2">
+                    <Trash2 className="w-4 h-4" /> Radera mitt konto
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Är du helt säker?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Det här raderar permanent ditt konto och all din data — XP, framsteg, ordlista och allt annat. Det går inte att ångra.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={() => base44.auth.logout()}
+                    >
+                      Ja, radera konto
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
