@@ -38,7 +38,11 @@ Deno.serve(async (req) => {
       earlierLessons.map(l => `- "${l.title}": ${l.word_pairs.slice(0, 6).map(wp => `${wp.swedish} (${wp.english})`).join(', ')}`).join('\n')
     : '';
 
-  const prompt = `You are an expert Swedish language teacher creating SFI (Svenska för Invandrare) course content.
+  const prompt = `You are an expert Swedish language teacher creating SFI (Svenska för Invandrare) course content. 
+
+Your teaching philosophy blends TWO proven methodologies:
+1. **Hermods SFI style**: Structured, curriculum-aligned content following Sweden's official SFI framework. Grammar is taught explicitly with clear rules, Swedish school system conventions, and formal exercises that mirror real SFI classroom materials. Sentences and vocabulary are carefully calibrated to the CEFR level.
+2. **Babbel style**: Practical, real-life conversational learning. Every lesson is grounded in authentic everyday situations a new arrival in Sweden would actually face. Vocabulary and phrases are immediately usable. Dialogues feel natural, not textbook-stiff. Learning happens through context, not memorization.
 
 Generate VERY RICH, COMPREHENSIVE lesson content for:
 - Title: "${title}" (${title_sv})
@@ -51,46 +55,45 @@ ALL content must be 100% about the topic "${title}". Be generous — quantity AN
 
 === CONTENT REQUIREMENTS ===
 
-content: 6-8 paragraphs of thorough markdown. Include: introduction, key grammar rules with Swedish examples + English translations in parentheses, cultural/practical notes, common pitfalls, and a summary. Use ## headers, **bold**, *italic*, and bullet lists.
+content: 6-8 paragraphs of thorough markdown in the **Hermods style** — structured with clear sections, grammar rules explained formally with Swedish examples + English translations in parentheses, cultural/practical notes about life in Sweden, common learner pitfalls, and a summary. Use ## headers, **bold**, *italic*, and bullet lists. Include at least one realistic dialogue or situational example in the **Babbel style** (natural, conversational, set in a real Swedish context like a shop, workplace, or phone call).
 
-word_pairs: 18-22 items. Core vocabulary, compound words, collocations, and related phrases. Every item MUST have example_sv and example_en.
+word_pairs: 18-22 items in the **Babbel style** — prioritize words a new arrival in Sweden genuinely needs TODAY. Include core vocabulary, compound words, collocations, and real phrases heard in daily Swedish life. Every item MUST have example_sv and example_en showing the word used naturally in context.
 
-fill_in_blanks: 14-18 sentences covering:
-  - Basic vocabulary recall (fill in the noun/verb)
-  - Grammar in context (correct verb form, article, adjective agreement)
-  - Sentence-level comprehension (choose the word that fits the meaning)
+fill_in_blanks: 14-18 sentences blending both styles:
+  - **Hermods**: Grammar-focused (correct verb form, article, adjective agreement, word order)
+  - **Babbel**: Real-life context (sentences from situations like shopping, healthcare, workplace, transport)
   - Each has exactly 4 options with plausible distractors of the same word class.
 
-quiz_questions: 12-15 questions using VARIED FORMATS to test from multiple angles:
+quiz_questions: 12-15 questions using VARIED FORMATS:
   - "What does X mean in Swedish?" (vocabulary recall)
-  - "Which sentence is grammatically correct?"
-  - "How would you say [situation] in Swedish?"
+  - "Which sentence is grammatically correct?" (Hermods grammar focus)
+  - "How would you say [real situation] in Swedish?" (Babbel practical focus)
   - "What is the plural/past tense/definite form of X?"
   - "Which word does NOT belong with the others?"
-  - "Complete the dialogue: Person A says ___, what does Person B reply?"
-  - "What is the correct word order in this sentence?"
+  - "Complete the dialogue: Person A says ___, what does Person B reply?" (Babbel conversational)
+  - "What is the correct word order in this sentence?" (Hermods V2 rule etc.)
   - Reading a short 2-sentence Swedish paragraph and answering a comprehension question
   - Each question has 4 options.
 
 review_questions: 6-8 questions recycling vocabulary/grammar from PREVIOUS lessons. Use varied question types (translation, grammar, usage). ${reviewContext}
 
-writing_prompts: 5-6 items with INCREASING difficulty:
-  1. Write one sentence using [specific word from this lesson]
-  2. Describe [simple topic-related scenario] in 2-3 sentences
-  3. Write a short dialogue (4-6 lines) about [topic-related situation]
+writing_prompts: 5-6 items with INCREASING difficulty in the **Babbel style** — always rooted in realistic Swedish life situations:
+  1. Write one sentence using [specific word from this lesson] in a real context
+  2. Describe [simple topic-related everyday scenario] in 2-3 sentences
+  3. Write a short dialogue (4-6 lines) about [topic-related real-life situation in Sweden]
   4. Write a short paragraph (4-6 sentences) describing [topic-related scenario]
-  5. (For C/D levels) Write a formal or structured text about [advanced topic-related prompt]
-  Each prompt has a helpful hint and a full example_answer in Swedish.
+  5. (For C/D levels) Write a formal text (email, letter, report) about [advanced topic-related Swedish context]
+  Each prompt has a helpful hint and a full example_answer in natural, modern Swedish.
 
-speaking_phrases: 8-10 practical conversational phrases directly relevant to the lesson topic. Each has a pronunciation_tip focusing on Swedish sounds (vowels, sj-sound, etc.).
+speaking_phrases: 8-10 practical conversational phrases in the **Babbel style** — things people actually say in Sweden related to this topic. Each has a pronunciation_tip focusing on Swedish sounds (vowels, sj-sound, pitch accent, etc.) in the **Hermods** explicit-instruction style.
 
 match_pairs: 10-12 pairs for a matching exercise. Mix of:
   - Swedish word → English translation
-  - Swedish sentence → English meaning
+  - Swedish sentence → English meaning  
   - Swedish question → correct Swedish answer
   Each pair: { left: string, right: string }
 
-All Swedish must be natural, modern, and correct. Calibrate ALL difficulty strictly to SFI ${sfi_course} level.`;
+All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate ALL difficulty strictly to SFI ${sfi_course} level. Avoid overly formal or archaic Swedish — write how educated Swedes actually speak and write today.`;
 
   const generated = await base44.asServiceRole.integrations.Core.InvokeLLM({
     prompt,
