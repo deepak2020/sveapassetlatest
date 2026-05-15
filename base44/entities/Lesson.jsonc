@@ -138,7 +138,10 @@
       "items": {
         "type": "object",
         "properties": {
-          "question": {
+          "question_sv": {
+            "type": "string"
+          },
+          "question_en": {
             "type": "string"
           },
           "options": {
@@ -159,7 +162,10 @@
       "items": {
         "type": "object",
         "properties": {
-          "question": {
+          "question_sv": {
+            "type": "string"
+          },
+          "question_en": {
             "type": "string"
           },
           "options": {
