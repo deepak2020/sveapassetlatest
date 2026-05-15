@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, Sparkles, Loader } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { base44 } from "@/api/base44Client";
 
 const TOPIC_EXERCISES = {
   "A": {
@@ -650,10 +651,13 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [exercisesCompleted, setExercisesCompleted] = useState(0);
+  const [generatingQuestions, setGeneratingQuestions] = useState(false);
+  const [generatedQuestions, setGeneratedQuestions] = useState([]);
 
   const topicData = TOPIC_EXERCISES[level]?.[topic.title];
   const exercises = topicData?.exercises || [];
-  const currentEx = exercises[currentExercise];
+  const allExercises = generatedQuestions.length > 0 ? generatedQuestions : exercises;
+  const currentEx = allExercises[currentExercise];
 
   const handleAnswer = (answer, isCorrect) => {
     setSelectedAnswer(answer);
@@ -664,7 +668,7 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
   };
 
   const handleNextExercise = () => {
-    if (currentExercise + 1 >= exercises.length) {
+    if (currentExercise + 1 >= allExercises.length) {
       setExercisesCompleted(1);
     } else {
       setCurrentExercise(c => c + 1);
@@ -679,6 +683,26 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
     setSelectedAnswer(null);
     setScore(0);
     setExercisesCompleted(0);
+  };
+
+  const handleGenerateQuestions = async () => {
+    setGeneratingQuestions(true);
+    try {
+      const topicData = TOPIC_EXERCISES[level]?.[topic.title];
+      const response = await base44.functions.invoke('generateGrammarQuestions', {
+        topic: topicData?.lesson || '',
+        level,
+        currentTopicTitle: topic.title
+      });
+
+      if (response.data.success) {
+        setGeneratedQuestions(response.data.questions);
+      }
+    } catch (error) {
+      console.error('Error generating questions:', error);
+    } finally {
+      setGeneratingQuestions(false);
+    }
   };
 
   return (
@@ -698,12 +722,36 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
         <Badge>{level}</Badge>
       </div>
 
+      {/* Generate Button */}
+      <div className="flex gap-2 mb-4">
+        <Button 
+          onClick={handleGenerateQuestions} 
+          disabled={generatingQuestions}
+          className="gap-2"
+        >
+          {generatingQuestions ? (
+            <>
+              <Loader className="w-4 h-4 animate-spin" />
+              Generating 50 Questions...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              Generate 50 Questions
+            </>
+          )}
+        </Button>
+        {generatedQuestions.length > 0 && (
+          <Badge variant="secondary">{generatedQuestions.length} AI Questions Generated</Badge>
+        )}
+      </div>
+
       {/* Content Tabs */}
       <Tabs defaultValue="lesson" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="lesson">📖 Lesson</TabsTrigger>
           <TabsTrigger value="examples">💡 Examples</TabsTrigger>
-          {exercises.length > 0 && <TabsTrigger value="practice">✍️ Practice</TabsTrigger>}
+          {(exercises.length > 0 || generatedQuestions.length > 0) && <TabsTrigger value="practice">✍️ Practice</TabsTrigger>}
         </TabsList>
 
         {/* Lesson Tab */}
@@ -770,7 +818,7 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
         </TabsContent>
 
         {/* Practice Tab */}
-        {exercises.length > 0 && (
+        {(exercises.length > 0 || generatedQuestions.length > 0) && (
           <TabsContent value="practice">
             <AnimatePresence mode="wait">
               {exercisesCompleted ? (
@@ -779,11 +827,15 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
                     <CardContent className="p-8 text-center space-y-6">
                       <h3 className="text-2xl font-bold">Great Job! 🎉</h3>
                       <div className="text-5xl font-bold text-primary">
-                        {Math.round((score / exercises.length) * 100)}%
+                        {Math.round((score / allExercises.length) * 100)}%
                       </div>
-                      <p className="text-muted-foreground">{score} of {exercises.length} correct</p>
-                      <div className="flex gap-3 justify-center">
+                      <p className="text-muted-foreground">{score} of {allExercises.length} correct</p>
+                      <div className="flex gap-3 justify-center flex-wrap">
                         <Button onClick={resetExercises} variant="outline">Try Again</Button>
+                        <Button onClick={() => {
+                          setGeneratedQuestions([]);
+                          resetExercises();
+                        }}>Back to Options</Button>
                         <Button onClick={onBack}>Back to Grammar</Button>
                       </div>
                     </CardContent>
@@ -796,12 +848,12 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
                       {/* Progress */}
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-muted-foreground">
-                          Exercise {currentExercise + 1} of {exercises.length}
+                          Exercise {currentExercise + 1} of {allExercises.length}
                         </span>
                         <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-primary transition-all" 
-                            style={{ width: `${((currentExercise + 1) / exercises.length) * 100}%` }}
+                            style={{ width: `${((currentExercise + 1) / allExercises.length) * 100}%` }}
                           />
                         </div>
                       </div>
@@ -810,10 +862,10 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
                       <h3 className="text-xl font-bold">{currentEx.question}</h3>
 
                       {/* Options */}
-                      {currentEx.type === "choice" && (
+                      {(currentEx.type === "choice" || currentEx.type === "multiple-choice") && (
                         <div className="space-y-3">
-                          {currentEx.options.map((option, idx) => {
-                            const isCorrect = idx === currentEx.correct;
+                          {(currentEx.options || []).map((option, idx) => {
+                            const isCorrect = currentEx.answer === option || idx === currentEx.correct;
                             const isSelected = selectedAnswer === idx;
                             return (
                               <button
@@ -866,10 +918,19 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
                         </div>
                       )}
 
+                      {/* Explanation */}
+                      {answered && currentEx.explanation && (
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm text-blue-900 dark:text-blue-100">
+                            <strong>Explanation:</strong> {currentEx.explanation}
+                          </p>
+                        </div>
+                      )}
+
                       {/* Next Button */}
                       {answered && (
                         <Button onClick={handleNextExercise} className="w-full">
-                          {currentExercise + 1 >= exercises.length ? "See Results" : "Next Exercise"}
+                          {currentExercise + 1 >= allExercises.length ? "See Results" : "Next Exercise"}
                         </Button>
                       )}
                     </CardContent>
