@@ -4,7 +4,11 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "Topic title"
+      "description": "Topic title in Swedish"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "English subtitle translation"
     },
     "category": {
       "type": "string",
@@ -66,23 +70,5 @@
   "required": [
     "title",
     "category"
-  ],
-  "rls": {
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "read": {},
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    }
-  }
+  ]
 }

@@ -131,6 +131,9 @@ export default function CivicTopics() {
                     <h3 className="font-semibold text-foreground text-lg mb-1 group-hover:text-primary transition-colors">
                       {topic.title}
                     </h3>
+                    {topic.subtitle && (
+                      <p className="text-sm text-muted-foreground/70 italic mb-2">{topic.subtitle}</p>
+                    )}
                     <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
                       <span className="text-xs text-muted-foreground">
                         {topic.key_facts?.length || 0} fakta · {topic.quiz_questions?.length || 0} frågor
