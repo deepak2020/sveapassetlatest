@@ -9,6 +9,11 @@ import GymSessionV2 from "@/components/gym/GymSessionV2";
 
 const SFI_LEVELS = ["A", "B", "C", "D"];
 const SENTENCE_COUNTS = [10, 25, 50];
+const SKILLS = [
+  { id: "vocabulary", label: "Vocabulaire", icon: "📚", desc: "Practique des mots et phrases" },
+  { id: "grammar", label: "Grammaire", icon: "✍️", desc: "Formes et structures" },
+  { id: "reading", label: "Lecture", icon: "👁️", desc: "Compréhension de textes" },
+];
 
 export default function Gym() {
   const [session, setSession] = useState(null);
@@ -82,9 +87,19 @@ export default function Gym() {
 
 function GymDashboard({ sentences, srsCards, onStartSession }) {
   const [selectedLevel, setSelectedLevel] = useState("A");
+  const [selectedSkill, setSelectedSkill] = useState(null);
   const [count, setCount] = useState(10);
 
-  const levelSentences = sentences.filter(s => s.sfi_level === selectedLevel);
+  let levelSentences = sentences.filter(s => s.sfi_level === selectedLevel);
+  
+  // Filter by skill if selected
+  if (selectedSkill === "vocabulary") {
+    levelSentences = levelSentences.filter(s => (s.word_frequency_rank || 500) < 300);
+  } else if (selectedSkill === "grammar") {
+    levelSentences = levelSentences.filter(s => (s.word_frequency_rank || 500) >= 300 && (s.word_frequency_rank || 500) < 700);
+  } else if (selectedSkill === "reading") {
+    levelSentences = levelSentences.filter(s => (s.word_frequency_rank || 500) >= 700);
+  }
   
   // Group by topic
   const topicGroups = {};
@@ -128,6 +143,34 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Skill Selection */}
+      <div>
+        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Pratique une compétence</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={() => setSelectedSkill(null)}
+            className={`p-4 rounded-xl border-2 text-center transition-all ${
+              selectedSkill === null ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+            }`}
+          >
+            <p className="text-lg">🎯</p>
+            <p className="text-xs font-medium mt-1">Tous</p>
+          </button>
+          {SKILLS.map(skill => (
+            <button
+              key={skill.id}
+              onClick={() => setSelectedSkill(skill.id)}
+              className={`p-4 rounded-xl border-2 text-center transition-all ${
+                selectedSkill === skill.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+              }`}
+            >
+              <p className="text-lg">{skill.icon}</p>
+              <p className="text-xs font-medium mt-1">{skill.label}</p>
+            </button>
+          ))}
         </div>
       </div>
 
