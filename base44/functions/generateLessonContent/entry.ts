@@ -64,7 +64,7 @@ fill_in_blanks: 14-18 sentences blending both styles:
   - **Babbel**: Real-life context (sentences from situations like shopping, healthcare, workplace, transport)
   - Each has exactly 4 options with plausible distractors of the same word class.
 
-quiz_questions: 12-15 questions using VARIED FORMATS:
+quiz_questions: 12-15 bilingual questions using VARIED FORMATS:
   - "What does X mean in Swedish?" (vocabulary recall)
   - "Which sentence is grammatically correct?" (Hermods grammar focus)
   - "How would you say [real situation] in Swedish?" (Babbel practical focus)
@@ -73,9 +73,18 @@ quiz_questions: 12-15 questions using VARIED FORMATS:
   - "Complete the dialogue: Person A says ___, what does Person B reply?" (Babbel conversational)
   - "What is the correct word order in this sentence?" (Hermods V2 rule etc.)
   - Reading a short 2-sentence Swedish paragraph and answering a comprehension question
-  - Each question has 4 options.
+  - Each question has 4 options. For EACH question, MUST provide:
+    - question_sv: The question in Swedish
+    - question_en: The SAME question translated to English
+    - options: 4 answer choices (in Swedish)
+    - correct_index: 0-3
 
-review_questions: 6-8 questions recycling vocabulary/grammar from PREVIOUS lessons. Use varied question types (translation, grammar, usage). ${reviewContext}
+review_questions: 6-8 bilingual questions recycling vocabulary/grammar from PREVIOUS lessons. Use varied question types (translation, grammar, usage). For EACH question, MUST provide:
+  - question_sv: The question in Swedish
+  - question_en: The SAME question translated to English
+  - options: 4 answer choices (in Swedish)
+  - correct_index: 0-3
+${reviewContext}
 
 writing_prompts: 5-6 items with INCREASING difficulty in the **Babbel style** — always rooted in realistic Swedish life situations:
   1. Write one sentence using [specific word from this lesson] in a real context
@@ -134,7 +143,8 @@ All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate AL
             items: {
               type: "object",
               properties: {
-                question: { type: "string" },
+                question_sv: { type: "string" },
+                question_en: { type: "string" },
                 options: { type: "array", items: { type: "string" } },
                 correct_index: { type: "number" }
               }
@@ -145,7 +155,8 @@ All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate AL
             items: {
               type: "object",
               properties: {
-                question: { type: "string" },
+                question_sv: { type: "string" },
+                question_en: { type: "string" },
                 options: { type: "array", items: { type: "string" } },
                 correct_index: { type: "number" }
               }
