@@ -8,14 +8,16 @@ const TOTAL_TOPICS = 33;
 
 export default function GenerateCivicContentButton({ existingCount, onDone }) {
   const [running, setRunning] = useState(false);
+  const [started, setStarted] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0, errors: [] });
 
   const missing = TOTAL_TOPICS - existingCount;
 
   const handleGenerate = async () => {
     setRunning(true);
+    setStarted(true);
     const errors = [];
-    const startIndex = existingCount; // skip already generated ones
+    const startIndex = existingCount;
     const count = TOTAL_TOPICS - startIndex;
     setProgress({ done: 0, total: count, errors });
 
@@ -33,9 +35,12 @@ export default function GenerateCivicContentButton({ existingCount, onDone }) {
     onDone?.();
   };
 
+  // Only auto-start once, and only when existingCount has loaded (> 0 or explicitly ready)
   useEffect(() => {
-    if (missing > 0) handleGenerate();
-  }, []);
+    if (!started && existingCount !== undefined && missing > 0) {
+      handleGenerate();
+    }
+  }, [existingCount]);
 
   if (missing <= 0) return null;
 

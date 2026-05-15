@@ -29,7 +29,7 @@ export default function Dashboard() {
 
   const { data: quizResults } = useQuery({
     queryKey: ["quiz-results-recent"],
-    queryFn: () => base44.entities.QuizResult.list("-created_date", 3),
+    queryFn: () => base44.entities.QuizResult.list("-created_date", 20),
     initialData: [],
   });
 
@@ -40,6 +40,13 @@ export default function Dashboard() {
 
   const today = new Date().toISOString().split("T")[0];
   const dueCount = srsCards.filter(c => c.due_date <= today && c.status !== "mastered").length;
+
+  // Estimate today's activity in minutes: each quiz result = ~2 min, each SRS card answered today = ~0.5 min
+  const todayResults = quizResults.filter(r => r.created_date?.startsWith(today));
+  const estimatedMinutesToday = todayResults.length * 2;
+  const dailyGoalPct = user.daily_goal_minutes
+    ? Math.min(100, Math.round((estimatedMinutesToday / user.daily_goal_minutes) * 100))
+    : 0;
 
   if (!user) return null;
 
@@ -114,9 +121,11 @@ export default function Dashboard() {
               <span className="text-xs text-muted-foreground">{user.daily_goal_minutes} min target</span>
             </div>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full bg-secondary rounded-full w-0 transition-all" />
+              <div className="h-full bg-secondary rounded-full transition-all duration-700" style={{ width: `${dailyGoalPct}%` }} />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Complete activities to fill your daily goal</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {dailyGoalPct >= 100 ? "🎉 Daily goal met!" : `~${estimatedMinutesToday} / ${user.daily_goal_minutes} min today`}
+            </p>
           </CardContent>
         </Card>
       )}

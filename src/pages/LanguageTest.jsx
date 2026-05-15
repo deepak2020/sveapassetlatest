@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { awardXP, XP_REWARDS } from "@/lib/xp";
 import { FlaskConical, ArrowRight, RotateCcw, Trophy, ChevronLeft, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,14 +51,14 @@ export default function LanguageTest() {
     setAnswers((prev) => [...prev, idx === current.correct_index]);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQ + 1 < allQuestions.length) {
       setCurrentQ((q) => q + 1);
       setSelected(null);
       setShowFeedback(false);
     } else {
-      // Save result
-      base44.entities.QuizResult.create({
+      // Save result + award XP
+      await base44.entities.QuizResult.create({
         quiz_type: "language",
         source_id: selectedLesson?.id || selectedCourse,
         source_title: selectedLesson?.title || `SFI ${selectedCourse} — Full Test`,
@@ -67,6 +68,7 @@ export default function LanguageTest() {
         total: allQuestions.length,
         percentage,
       });
+      await awardXP(base44, score * XP_REWARDS.quiz_correct);
       queryClient.invalidateQueries({ queryKey: ["quizResults"] });
       setTestState("results");
     }

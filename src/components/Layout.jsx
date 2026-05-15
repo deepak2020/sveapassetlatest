@@ -36,10 +36,14 @@ export default function Layout() {
     enabled: isAuthenticated,
   });
 
-  // Redirect new users to onboarding
+  // Redirect new users to onboarding (skip for admins)
   useEffect(() => {
-    if (userProfile && !userProfile.onboarding_complete && location.pathname !== "/onboarding") {
+    if (userProfile && !userProfile.onboarding_complete && userProfile.role !== "admin" && location.pathname !== "/onboarding") {
       navigate("/onboarding");
+    }
+    // Redirect authenticated users away from landing page to dashboard
+    if (userProfile && location.pathname === "/") {
+      navigate("/dashboard");
     }
   }, [userProfile, location.pathname]);
 
