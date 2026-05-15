@@ -12,6 +12,7 @@ import CategoryBadge from "../components/shared/CategoryBadge";
 import EmptyState from "../components/shared/EmptyState";
 import { motion } from "framer-motion";
 import GenerateTopicModal from "../components/civic/GenerateTopicModal";
+import GenerateCivicContentButton from "../components/civic/GenerateCivicContentButton";
 
 const categoryIcons = {
   government: "🏛️",
@@ -59,10 +60,14 @@ export default function CivicTopics() {
       </div>
 
       {isAdmin && (
-        <div className="mb-8">
-          <Button onClick={() => setShowGenerate(true)} className="gap-2">
+        <div className="mb-8 space-y-3">
+          <GenerateCivicContentButton
+            existingCount={topics.length}
+            onDone={() => queryClient.invalidateQueries({ queryKey: ["civicTopics"] })}
+          />
+          <Button onClick={() => setShowGenerate(true)} variant="outline" className="gap-2">
             <Sparkles className="w-4 h-4" />
-            Generate Topic with AI
+            Generate Custom Topic with AI
           </Button>
         </div>
       )}
