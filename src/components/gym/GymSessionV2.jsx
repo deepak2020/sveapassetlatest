@@ -18,7 +18,7 @@ const playAudio = async (text, lang = "sv-SE", speed = 1) => {
   synth.speak(utterance);
 };
 
-export default function GymSessionV2({ sentences, mode, level, srsCards, onFinish }) {
+export default function GymSessionV2({ sentences, mode = "listen", level = "intermediate", srsCards, onFinish }) {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [typed, setTyped] = useState("");
@@ -163,8 +163,8 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
                 <p className="text-base leading-relaxed text-blue-900">{sentence.sentence_en}</p>
               </div>
 
-              {/* Swedish sentence with blanks (hidden in listening mode) */}
-              {mode !== "listening" && (
+              {/* Swedish sentence with blanks (hidden in listen mode) */}
+              {mode !== "listen" && (
               <div className="bg-muted/40 rounded-xl p-4 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xs font-semibold text-foreground uppercase">Swedish</span>
@@ -218,8 +218,8 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
               </div>
               )}
 
-              {/* Listening mode */}
-              {mode === "listening" ? (
+              {/* Listen mode - hide Swedish text, play audio */}
+              {mode === "listen" ? (
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground mb-3">Listen to the sentence and type the missing word(s).</p>
                   <button

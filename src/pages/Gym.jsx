@@ -88,6 +88,7 @@ export default function Gym() {
 function GymDashboard({ sentences, srsCards, onStartSession }) {
   const [selectedLevel, setSelectedLevel] = useState("A");
   const [selectedSkill, setSelectedSkill] = useState(null);
+  const [selectedMode, setSelectedMode] = useState("listen");
   const [count, setCount] = useState(10);
 
   let levelSentences = sentences.filter(s => s.sfi_level === selectedLevel);
@@ -119,7 +120,7 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
 
   const startSession = () => {
     const sessionSentences = levelSentences.slice(0, Math.min(count, levelSentences.length));
-    onStartSession({ sentences: sessionSentences });
+    onStartSession({ sentences: sessionSentences, mode: selectedMode });
   };
 
   return (
@@ -146,10 +147,47 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
         </div>
       </div>
 
+      {/* Exercise Mode Selection */}
+      <div>
+        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Övningstyp</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={() => setSelectedMode("listen")}
+            className={`p-4 rounded-xl border-2 text-center transition-all ${
+              selectedMode === "listen" ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+            }`}
+          >
+            <p className="text-lg">👂</p>
+            <p className="text-xs font-medium mt-1">Lyssna</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Läs engelska, lyssna på svenska</p>
+          </button>
+          <button
+            onClick={() => setSelectedMode("read")}
+            className={`p-4 rounded-xl border-2 text-center transition-all ${
+              selectedMode === "read" ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+            }`}
+          >
+            <p className="text-lg">📖</p>
+            <p className="text-xs font-medium mt-1">Läsa</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Läs både texterna</p>
+          </button>
+          <button
+            onClick={() => setSelectedMode("type")}
+            className={`p-4 rounded-xl border-2 text-center transition-all ${
+              selectedMode === "type" ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+            }`}
+          >
+            <p className="text-lg">⌨️</p>
+            <p className="text-xs font-medium mt-1">Skriva</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Alltid skriva svar</p>
+          </button>
+        </div>
+      </div>
+
       {/* Skill Selection */}
       <div>
-        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Pratique une compétence</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <h2 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Kompetens</h2>
+        <div className="grid grid-cols-4 gap-3">
           <button
             onClick={() => setSelectedSkill(null)}
             className={`p-4 rounded-xl border-2 text-center transition-all ${
@@ -157,7 +195,7 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
             }`}
           >
             <p className="text-lg">🎯</p>
-            <p className="text-xs font-medium mt-1">Tous</p>
+            <p className="text-xs font-medium mt-1">Alla</p>
           </button>
           {SKILLS.map(skill => (
             <button
