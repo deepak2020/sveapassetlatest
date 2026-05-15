@@ -65,7 +65,7 @@ export default function Layout() {
               </div>
               <div className="hidden sm:block">
                 <span className="font-display font-semibold text-lg text-foreground tracking-tight">Sveapasset</span>
-                <span className="text-xs text-muted-foreground block -mt-1">Din väg till svenskt medborgarskap · <em>Your path to Swedish citizenship</em></span>
+                <span className="text-xs text-muted-foreground block -mt-1">Your path to integration</span>
               </div>
             </Link>
 
