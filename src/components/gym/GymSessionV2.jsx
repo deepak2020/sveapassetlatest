@@ -345,35 +345,52 @@ async function updateSRS(sentenceId, isCorrect, srsCards) {
   const existing = srsCards.find(c => c.cloze_sentence_id === sentenceId);
 
   if (existing) {
-    let ease = Math.min(2.5, Math.max(1.3, existing.ease_factor || 2.5));
-    let interval = existing.interval_days || 1;
+    let interval = 1;
     let correctStreak = (existing.correct_streak || 0) + (isCorrect ? 1 : 0);
     let masteryPercentage = existing.mastery_percentage || 0;
 
     if (isCorrect) {
-      interval = Math.round(interval * ease);
-      ease = Math.min(2.5, ease + 0.1);
-      
-      // Mastery progression: 0→25→50→75→100 (requires 4 correct in a row)
-      if (correctStreak >= 4) {
-        if (masteryPercentage < 100) {
-          masteryPercentage = Math.min(100, masteryPercentage + 25);
+      // Fixed intervals per mastery level: 0%→1d, 25%→1d, 50%→10d, 75%→30d, 100%→180d
+      if (masteryPercentage === 0 || masteryPercentage === 25) {
+        interval = 1;
+        // Progress 0%→25% or 25%→50% after 2 correct
+        if (correctStreak >= 2) {
+          masteryPercentage = Math.min(50, masteryPercentage + 25);
+          correctStreak = 0;
+          interval = 10; // Next interval for 50% mastery
         }
-        correctStreak = 0; // Reset streak after leveling up
+      } else if (masteryPercentage === 50) {
+        interval = 10;
+        // Progress 50%→75% after 2 correct
+        if (correctStreak >= 2) {
+          masteryPercentage = 75;
+          correctStreak = 0;
+          interval = 30; // Next interval for 75% mastery
+        }
+      } else if (masteryPercentage === 75) {
+        interval = 30;
+        // Progress 75%→100% after 2 correct
+        if (correctStreak >= 2) {
+          masteryPercentage = 100;
+          correctStreak = 0;
+          interval = 180; // Final interval for 100% mastery
+        }
+      } else if (masteryPercentage === 100) {
+        interval = 180; // Mastered stays at 180 days
       }
     } else {
+      // Incorrect answer: reset streak, reset mastery to 0
       interval = 1;
-      ease = Math.max(1.3, ease - 0.2);
-      correctStreak = 0; // Reset streak on incorrect
+      correctStreak = 0;
+      masteryPercentage = 0;
     }
 
     const timesCorrect = (existing.times_correct || 0) + (isCorrect ? 1 : 0);
     const timesSeen = (existing.times_seen || 0) + 1;
-    const status = masteryPercentage === 100 ? "mastered" : timesCorrect >= 3 ? "review" : "learning";
+    const status = masteryPercentage === 100 ? "mastered" : masteryPercentage >= 50 ? "review" : "learning";
 
     await base44.entities.UserSRSCard.update(existing.id, {
       interval_days: interval,
-      ease_factor: ease,
       due_date: new Date(new Date().setDate(new Date().getDate() + interval)).toISOString().split("T")[0],
       times_seen: timesSeen,
       times_correct: timesCorrect,
@@ -383,18 +400,18 @@ async function updateSRS(sentenceId, isCorrect, srsCards) {
       status,
     });
   } else {
-    const interval = isCorrect ? 3 : 1;
+    // New card: first attempt
+    const interval = 1;
     const due = new Date();
     due.setDate(due.getDate() + interval);
     await base44.entities.UserSRSCard.create({
       cloze_sentence_id: sentenceId,
       interval_days: interval,
-      ease_factor: 2.5,
       due_date: due.toISOString().split("T")[0],
       times_seen: 1,
       times_correct: isCorrect ? 1 : 0,
       correct_streak: isCorrect ? 1 : 0,
-      mastery_percentage: 0,
+      mastery_percentage: isCorrect ? 25 : 0,
       last_answer_correct: isCorrect,
       status: "learning",
     });

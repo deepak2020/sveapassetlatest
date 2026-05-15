@@ -151,9 +151,10 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
   const [selectedMode, setSelectedMode] = useState("listen");
   const [count, setCount] = useState(10);
 
+  // Step 1: Filter by level
   let levelSentences = sentences.filter(s => s.sfi_level === selectedLevel);
   
-  // Filter by skill if selected
+  // Step 2: Filter by skill/frequency range
   if (selectedSkill === "vocabulary") {
     levelSentences = levelSentences.filter(s => (s.word_frequency_rank || 500) < 300);
   } else if (selectedSkill === "grammar") {
@@ -162,7 +163,26 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
     levelSentences = levelSentences.filter(s => (s.word_frequency_rank || 500) >= 700);
   }
   
-  // Group by topic
+  // Step 3: Build quiz queue mixing new + due sentences, ordered by frequency rank
+  const today = new Date().toISOString().split("T")[0];
+  const dueCards = srsCards.filter(c => c.due_date <= today && c.status !== "mastered");
+  const dueSentenceIds = new Set(dueCards.map(c => c.cloze_sentence_id));
+  
+  const newSentences = levelSentences.filter(s => !dueCards.some(c => c.cloze_sentence_id === s.id))
+    .sort((a, b) => (a.word_frequency_rank || 500) - (b.word_frequency_rank || 500));
+  
+  const dueSentences = levelSentences.filter(s => dueSentenceIds.has(s.id))
+    .sort((a, b) => (a.word_frequency_rank || 500) - (b.word_frequency_rank || 500));
+
+  // Mix new and due: alternate for balanced difficulty progression
+  const sessionSentences = [];
+  const maxIdx = Math.max(newSentences.length, dueSentences.length);
+  for (let i = 0; i < maxIdx; i++) {
+    if (i < dueSentences.length) sessionSentences.push(dueSentences[i]);
+    if (i < newSentences.length) sessionSentences.push(newSentences[i]);
+  }
+  
+  // Group by topic for display
   const topicGroups = {};
   levelSentences.forEach(s => {
     const topic = s.topic || "Allmänt";
@@ -179,8 +199,8 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
     .sort((a, b) => a.avgFrequency - b.avgFrequency);
 
   const startSession = () => {
-    const sessionSentences = levelSentences.slice(0, Math.min(count, levelSentences.length));
-    onStartSession({ sentences: sessionSentences, mode: selectedMode });
+    const quiz = sessionSentences.slice(0, Math.min(count, sessionSentences.length));
+    onStartSession({ sentences: quiz, mode: selectedMode });
   };
 
   return (
