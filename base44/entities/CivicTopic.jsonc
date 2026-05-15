@@ -47,8 +47,13 @@
       "items": {
         "type": "object",
         "properties": {
-          "question": {
-            "type": "string"
+          "question_sv": {
+            "type": "string",
+            "description": "Question in Swedish"
+          },
+          "question_en": {
+            "type": "string",
+            "description": "Question in English"
           },
           "options": {
             "type": "array",

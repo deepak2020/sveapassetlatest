@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategoryBadge from "../components/shared/CategoryBadge";
-import QuizRunner from "../components/shared/QuizRunner";
+import CivicQuizRunner from "../components/civic/CivicQuizRunner";
 import ReactMarkdown from "react-markdown";
 
 export default function TopicDetail() {
@@ -62,12 +62,12 @@ export default function TopicDetail() {
       {/* Content Tabs */}
       <Tabs defaultValue="content" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="content">Content</TabsTrigger>
+          <TabsTrigger value="content">Innehål · Content</TabsTrigger>
           {topic.key_facts?.length > 0 && (
-            <TabsTrigger value="facts">Key Facts ({topic.key_facts.length})</TabsTrigger>
+            <TabsTrigger value="facts">Nyckeltal · Key Facts ({topic.key_facts.length})</TabsTrigger>
           )}
           {topic.quiz_questions?.length > 0 && (
-            <TabsTrigger value="quiz">Quiz ({topic.quiz_questions.length})</TabsTrigger>
+            <TabsTrigger value="quiz">Frågor · Quiz ({topic.quiz_questions.length})</TabsTrigger>
           )}
         </TabsList>
 
@@ -105,7 +105,7 @@ export default function TopicDetail() {
 
         {topic.quiz_questions?.length > 0 && (
           <TabsContent value="quiz">
-            <QuizRunner
+            <CivicQuizRunner
               questions={topic.quiz_questions}
               quizType="civic"
               sourceId={topic.id}
