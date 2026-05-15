@@ -95,118 +95,141 @@ match_pairs: 10-12 pairs for a matching exercise. Mix of:
 
 All Swedish must be natural, modern standard Swedish (Rikssvenska). Calibrate ALL difficulty strictly to SFI ${sfi_course} level. Avoid overly formal or archaic Swedish — write how educated Swedes actually speak and write today.`;
 
-  const generated = await base44.asServiceRole.integrations.Core.InvokeLLM({
-    prompt,
-    model: "claude_sonnet_4_6",
-    response_json_schema: {
-      type: "object",
-      properties: {
-        content: { type: "string" },
-        word_pairs: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              swedish: { type: "string" },
-              english: { type: "string" },
-              example_sv: { type: "string" },
-              example_en: { type: "string" }
+  console.log("[generateLessonContent] Invoking LLM for lesson:", lesson_id, title);
+
+  let generated;
+  try {
+    generated = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          content: { type: "string" },
+          word_pairs: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                swedish: { type: "string" },
+                english: { type: "string" },
+                example_sv: { type: "string" },
+                example_en: { type: "string" }
+              }
             }
-          }
-        },
-        fill_in_blanks: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              sentence_sv: { type: "string" },
-              sentence_en: { type: "string" },
-              answer: { type: "string" },
-              options: { type: "array", items: { type: "string" } }
+          },
+          fill_in_blanks: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                sentence_sv: { type: "string" },
+                sentence_en: { type: "string" },
+                answer: { type: "string" },
+                options: { type: "array", items: { type: "string" } }
+              }
             }
-          }
-        },
-        quiz_questions: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              question: { type: "string" },
-              options: { type: "array", items: { type: "string" } },
-              correct_index: { type: "number" }
+          },
+          quiz_questions: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                question: { type: "string" },
+                options: { type: "array", items: { type: "string" } },
+                correct_index: { type: "number" }
+              }
             }
-          }
-        },
-        review_questions: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              question: { type: "string" },
-              options: { type: "array", items: { type: "string" } },
-              correct_index: { type: "number" }
+          },
+          review_questions: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                question: { type: "string" },
+                options: { type: "array", items: { type: "string" } },
+                correct_index: { type: "number" }
+              }
             }
-          }
-        },
-        writing_prompts: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              prompt: { type: "string" },
-              hint: { type: "string" },
-              example_answer: { type: "string" }
+          },
+          writing_prompts: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                prompt: { type: "string" },
+                hint: { type: "string" },
+                example_answer: { type: "string" }
+              }
             }
-          }
-        },
-        speaking_phrases: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              phrase_sv: { type: "string" },
-              phrase_en: { type: "string" },
-              pronunciation_tip: { type: "string" }
+          },
+          speaking_phrases: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                phrase_sv: { type: "string" },
+                phrase_en: { type: "string" },
+                pronunciation_tip: { type: "string" }
+              }
             }
-          }
-        },
-        match_pairs: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              left: { type: "string" },
-              right: { type: "string" }
+          },
+          match_pairs: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                left: { type: "string" },
+                right: { type: "string" }
+              }
             }
           }
         }
       }
-    }
-  });
+    });
+  } catch (llmError) {
+    console.error("[generateLessonContent] LLM call failed:", llmError.message);
+    return Response.json({ error: "LLM call failed: " + llmError.message }, { status: 500 });
+  }
 
-  const sanitizeArray = (arr) => (arr || []).filter(item => item && typeof item === 'object' && !Array.isArray(item));
+  console.log("[generateLessonContent] LLM response keys:", Object.keys(generated || {}));
+
+  // InvokeLLM may return { response: string } instead of parsed JSON — handle both
+  let data = generated;
+  if (generated?.response && typeof generated.response === 'string') {
+    try {
+      const raw = generated.response.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '').trim();
+      data = JSON.parse(raw);
+    } catch (e) {
+      console.error("[generateLessonContent] Failed to parse LLM response string:", e.message);
+      return Response.json({ error: "Failed to parse LLM JSON response" }, { status: 500 });
+    }
+  }
+
+  console.log("[generateLessonContent] word_pairs:", data?.word_pairs?.length, "content:", data?.content?.length);
+
+  const sanitizeArray = (arr) => (Array.isArray(arr) ? arr : []).filter(item => item && typeof item === 'object' && !Array.isArray(item));
 
   await base44.asServiceRole.entities.Lesson.update(lesson_id, {
-    content: generated.content || null,
-    word_pairs: sanitizeArray(generated.word_pairs),
-    fill_in_blanks: sanitizeArray(generated.fill_in_blanks),
-    quiz_questions: sanitizeArray(generated.quiz_questions),
-    review_questions: sanitizeArray(generated.review_questions),
-    writing_prompts: sanitizeArray(generated.writing_prompts),
-    speaking_phrases: sanitizeArray(generated.speaking_phrases),
-    match_pairs: sanitizeArray(generated.match_pairs),
+    content: data.content || null,
+    word_pairs: sanitizeArray(data.word_pairs),
+    fill_in_blanks: sanitizeArray(data.fill_in_blanks),
+    quiz_questions: sanitizeArray(data.quiz_questions),
+    review_questions: sanitizeArray(data.review_questions),
+    writing_prompts: sanitizeArray(data.writing_prompts),
+    speaking_phrases: sanitizeArray(data.speaking_phrases),
+    match_pairs: sanitizeArray(data.match_pairs),
   });
 
   return Response.json({
     success: true,
     lesson_id,
     title,
-    word_pairs: generated.word_pairs?.length || 0,
-    fill_in_blanks: generated.fill_in_blanks?.length || 0,
-    quiz_questions: generated.quiz_questions?.length || 0,
-    review_questions: generated.review_questions?.length || 0,
-    writing_prompts: generated.writing_prompts?.length || 0,
-    speaking_phrases: generated.speaking_phrases?.length || 0,
-    match_pairs: generated.match_pairs?.length || 0,
+    word_pairs: data.word_pairs?.length || 0,
+    fill_in_blanks: data.fill_in_blanks?.length || 0,
+    quiz_questions: data.quiz_questions?.length || 0,
+    review_questions: data.review_questions?.length || 0,
+    writing_prompts: data.writing_prompts?.length || 0,
+    speaking_phrases: data.speaking_phrases?.length || 0,
+    match_pairs: data.match_pairs?.length || 0,
   });
 });
