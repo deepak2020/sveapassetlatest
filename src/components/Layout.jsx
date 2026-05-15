@@ -110,7 +110,7 @@ export default function Layout() {
                     </Button>
                 </>
               ) : (
-                <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="gap-2">
+                <Button size="sm" onClick={() => base44.auth.redirectToLogin("/dashboard")} className="gap-2">
                   <LogIn className="w-4 h-4" />
                   Logga in
                 </Button>
@@ -161,10 +161,10 @@ export default function Layout() {
                   Logga ut ({user?.full_name || user?.email})
                 </Button>
               ) : (
-                <Button size="sm" onClick={() => base44.auth.redirectToLogin()} className="w-full gap-2">
-                  <LogIn className="w-4 h-4" />
-                  Logga in / Skapa konto
-                </Button>
+               <Button size="sm" onClick={() => base44.auth.redirectToLogin("/dashboard")} className="w-full gap-2">
+                 <LogIn className="w-4 h-4" />
+                 Logga in / Skapa konto
+               </Button>
               )}
             </div>
           </div>
