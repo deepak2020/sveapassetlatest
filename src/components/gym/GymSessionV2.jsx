@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowLeft, Volume2, Zap } from "lucide-react";
+import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowLeft, Volume2, Zap, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
@@ -26,6 +26,7 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
   const [correct, setCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [listening, setListening] = useState(false);
 
   if (!sentences || sentences.length === 0) {
     return (
@@ -70,6 +71,44 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
       setTyped("");
       setAnswered(false);
       setCorrect(false);
+    }
+  };
+
+  const handleListening = () => {
+    if (listening || answered) return;
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Speech recognition not supported in your browser");
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = "sv-SE";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      
+      setListening(true);
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        if (event.results.length > 0) {
+          const transcript = event.results[0][0].transcript;
+          setTyped(transcript);
+          handleAnswer(transcript);
+        }
+        setListening(false);
+      };
+
+      recognition.onerror = () => {
+        setListening(false);
+      };
+
+      recognition.onend = () => {
+        setListening(false);
+      };
+    } catch (error) {
+      console.error("Speech recognition error:", error);
+      setListening(false);
     }
   };
 
@@ -177,8 +216,42 @@ export default function GymSessionV2({ sentences, mode, level, srsCards, onFinis
                 )}
               </div>
 
-              {/* Level-based input */}
-              {level === "advanced" ? (
+              {/* Listening mode */}
+              {mode === "listening" ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground mb-3">Listen to the sentence and type the missing word(s).</p>
+                  <button
+                    onClick={() => playAudio(sentence.sentence_sv, "sv-SE", 1)}
+                    className="w-full p-4 rounded-xl border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors flex items-center justify-center gap-2 font-semibold text-primary mb-3"
+                  >
+                    <Volume2 className="w-5 h-5" /> Listen to full sentence
+                  </button>
+                  <input
+                    type="text"
+                    value={typed}
+                    onChange={e => setTyped(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter" && !answered) handleAnswer(typed); }}
+                    disabled={answered}
+                    placeholder="Type what you hear..."
+                    className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <div className="flex gap-2 text-sm text-muted-foreground">
+                    {["å", "ä", "ö"].map(c => (
+                      <button key={c} onClick={() => setTyped(t => t + c)}
+                        className="px-2.5 py-1 border rounded-lg hover:bg-muted transition-colors font-medium">{c}</button>
+                    ))}
+                  </div>
+                  {!answered && (
+                    <div className="flex gap-2">
+                      <Button onClick={handleListening} disabled={listening} className="flex-1 gap-2">
+                        <Mic className={`w-4 h-4 ${listening ? "animate-pulse" : ""}`} />
+                        {listening ? "Listening..." : "Tap to record"}
+                      </Button>
+                      <Button onClick={() => handleAnswer(typed)} className="flex-1">Check</Button>
+                    </div>
+                  )}
+                </div>
+              ) : level === "advanced" ? (
                 <div className="space-y-3">
                   <textarea
                     value={typed}

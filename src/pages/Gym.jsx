@@ -11,6 +11,7 @@ const MODES = [
   { id: "word_bank", label: "Word Bank", desc: "Tap the correct word from 4 options", levels: ["A", "B"], icon: "🔤" },
   { id: "multiple_choice", label: "Multiple Choice", desc: "Choose from 4 options (A/B/C/D style)", levels: ["B", "C"], icon: "🅰️" },
   { id: "type", label: "Type Answer", desc: "Type the missing Swedish word", levels: ["C", "D"], icon: "⌨️" },
+  { id: "listening", label: "Listening", desc: "Listen to audio and type what you hear", levels: ["B", "C", "D"], icon: "👂" },
 ];
 
 const LEVELS = [
