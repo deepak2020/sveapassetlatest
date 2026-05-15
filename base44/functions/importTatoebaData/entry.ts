@@ -94,6 +94,7 @@ Deno.serve(async (req) => {
             sfi_level: sfiLevel,
             topic: 'Tatoeba',
             word_frequency_rank: Math.floor(Math.random() * 1000),
+            source: 'tatoeba'
           });
           imported.push(sv);
         }

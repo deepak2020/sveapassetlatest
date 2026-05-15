@@ -22,7 +22,10 @@ export default function Gym() {
 
   const { data: sentences = [] } = useQuery({
     queryKey: ["cloze-sentences"],
-    queryFn: () => base44.entities.ClozeSentence.list("word_frequency_rank", 500),
+    queryFn: async () => {
+      const all = await base44.entities.ClozeSentence.list("word_frequency_rank", 500);
+      return all.filter(s => s.source === 'tatoeba');
+    },
   });
 
   const { data: srsCards = [] } = useQuery({

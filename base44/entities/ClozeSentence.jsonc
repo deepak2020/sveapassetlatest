@@ -46,6 +46,16 @@
     "pronunciation_tip": {
       "type": "string",
       "description": "Phonetic guide showing Swedish melody and sound patterns (e.g., 'B\u00f6rjar: emphasis on first syllable, rolling r')"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "tatoeba",
+        "generated",
+        "manual"
+      ],
+      "description": "Source of the sentence",
+      "default": "manual"
     }
   },
   "required": [
