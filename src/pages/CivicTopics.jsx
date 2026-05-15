@@ -35,9 +35,14 @@ export default function CivicTopics() {
     queryFn: () => base44.entities.CivicTopic.list("order", 100),
   });
 
+  // Deduplicate by title, keeping first occurrence
+  const uniqueTopics = Array.from(
+    new Map(topics.map(t => [t.title.toLowerCase(), t])).values()
+  );
+
   const filtered = categoryFilter === "all"
-    ? topics
-    : topics.filter((t) => t.category === categoryFilter);
+    ? uniqueTopics
+    : uniqueTopics.filter((t) => t.category === categoryFilter);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
