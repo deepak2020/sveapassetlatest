@@ -146,7 +146,8 @@ export default function LanguageLessons() {
         <div className="mb-6">
           <GenerateContentButton
             lessons={lessons}
-            regenerateAll={true}
+            regenerateAll={false}
+            autoStart={true}
             onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
           />
         </div>

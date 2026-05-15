@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Zap, CheckCircle, AlertCircle } from "lucide-react";
 
-export default function GenerateContentButton({ lessons, onDone, regenerateAll = false }) {
+import { useEffect } from "react";
+
+export default function GenerateContentButton({ lessons, onDone, regenerateAll = false, autoStart = false }) {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0, current: "", errors: [] });
 
@@ -32,6 +34,12 @@ export default function GenerateContentButton({ lessons, onDone, regenerateAll =
     setRunning(false);
     onDone?.();
   };
+
+  useEffect(() => {
+    if (autoStart && targetLessons.length > 0) {
+      handleGenerate();
+    }
+  }, []);
 
   if (targetLessons.length === 0) return null;
 
