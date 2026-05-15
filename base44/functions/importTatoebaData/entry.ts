@@ -126,7 +126,9 @@ Deno.serve(async (req) => {
       { sv: 'Badkläder är perfekta för sommaren.', en: 'Swimwear is perfect for summer.' },
     ];
     
-    const sentences = sampleSentences.slice(0, limit).map(s => ({
+    // Shuffle and select random sentences to avoid duplicates
+    const shuffled = [...sampleSentences].sort(() => Math.random() - 0.5);
+    const sentences = shuffled.slice(0, limit).map(s => ({
       text: s.sv,
       translations: [[{ text: s.en }]]
     }));
