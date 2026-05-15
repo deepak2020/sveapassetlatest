@@ -146,7 +146,10 @@ export default function LanguageTest() {
             {current._lessonTitle && (
               <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">{current._lessonTitle}</p>
             )}
-            <h2 className="text-xl font-semibold text-foreground mb-6">{current.question}</h2>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-foreground mb-1">{current.question_sv}</h2>
+              <p className="text-sm text-muted-foreground italic">{current.question_en}</p>
+            </div>
 
             <div className="space-y-3 mb-8">
               {(current.options || []).map((opt, idx) => {
