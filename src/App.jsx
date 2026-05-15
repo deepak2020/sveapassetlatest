@@ -15,7 +15,6 @@ import LanguageTest from './pages/LanguageTest';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
-import Profile from './pages/Profile';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,13 +42,13 @@ const AuthenticatedApp = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Dashboard />} />
         <Route path="/language" element={<LanguageLessons />} />
         <Route path="/language/:id" element={<LessonDetail />} />
         <Route path="/civic" element={<CivicTopics />} />
         <Route path="/civic/:id" element={<TopicDetail />} />
         <Route path="/language-test" element={<LanguageTest />} />
         <Route path="/gym" element={<Gym />} />
-        <Route path="/profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
