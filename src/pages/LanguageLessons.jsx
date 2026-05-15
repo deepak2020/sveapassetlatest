@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
 import GenerateLessonModal from "../components/language/GenerateLessonModal";
+import GenerateContentButton from "../components/language/GenerateContentButton";
 import { motion } from "framer-motion";
 
 const SFI_COURSES = [
@@ -184,6 +185,12 @@ export default function LanguageLessons() {
         </div>
       ) : (
         <div className="space-y-8">
+          {isAdmin && (
+            <GenerateContentButton
+              lessons={filteredLessons}
+              onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
+            />
+          )}
           {/* Filters */}
           <div className="flex flex-wrap gap-3 pb-2 border-b border-border/50">
             {SKILL_FILTERS.map((s) => (
