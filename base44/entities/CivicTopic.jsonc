@@ -10,6 +10,10 @@
       "type": "string",
       "description": "English subtitle translation"
     },
+    "chapter": {
+      "type": "string",
+      "description": "Chapter name from Sverige i Fokus (e.g. 'Landet Sverige', 'Lag och r\u00e4tt')"
+    },
     "category": {
       "type": "string",
       "enum": [
@@ -69,11 +73,12 @@
     },
     "order": {
       "type": "number",
-      "description": "Display order"
+      "description": "Display order within chapter"
     }
   },
   "required": [
     "title",
-    "category"
+    "category",
+    "chapter"
   ]
 }
