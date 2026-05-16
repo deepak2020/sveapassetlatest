@@ -111,25 +111,29 @@ export default function Gym() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className={`grid gap-3 ${user ? 'grid-cols-3' : 'grid-cols-1'}`}>
         <Card className="border-border/50">
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-primary">{sentences.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Totalt meningar</p>
+            <p className="text-xs text-muted-foreground mt-1">Totalt meningar i Träningssalen</p>
           </CardContent>
         </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-orange-500">{dueCount}</p>
-            <p className="text-xs text-muted-foreground mt-1">Förfallna för granskning</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-emerald-500">{masteryPct}%</p>
-            <p className="text-xs text-muted-foreground mt-1">Mastry ({masteredCount})</p>
-          </CardContent>
-        </Card>
+        {user && (
+          <>
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-orange-500">{dueCount}</p>
+                <p className="text-xs text-muted-foreground mt-1">Förfallna för granskning</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-emerald-500">{masteryPct}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Mastry ({masteredCount})</p>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       {sentences.length === 0 ? (
