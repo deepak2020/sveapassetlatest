@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle2, XCircle, Sparkles, Loader } from "lucide-react
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 
 const TOPIC_EXERCISES = {
   "A": {
@@ -685,6 +686,9 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
     setExercisesCompleted(0);
   };
 
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
   const handleGenerateQuestions = async () => {
     setGeneratingQuestions(true);
     try {
@@ -723,28 +727,30 @@ export default function GrammarTopicDetail({ topic, level, onBack }) {
       </div>
 
       {/* Generate Button */}
-      <div className="flex gap-2 mb-4">
-        <Button 
-          onClick={handleGenerateQuestions} 
-          disabled={generatingQuestions}
-          className="gap-2"
-        >
-          {generatingQuestions ? (
-            <>
-              <Loader className="w-4 h-4 animate-spin" />
-              Generating 50 Questions...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4" />
-              Generate 50 Questions
-            </>
+      {isAdmin && (
+        <div className="flex gap-2 mb-4">
+          <Button 
+            onClick={handleGenerateQuestions} 
+            disabled={generatingQuestions}
+            className="gap-2"
+          >
+            {generatingQuestions ? (
+              <>
+                <Loader className="w-4 h-4 animate-spin" />
+                Generating 50 Questions...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                Generate 50 Questions
+              </>
+            )}
+          </Button>
+          {generatedQuestions.length > 0 && (
+            <Badge variant="secondary">{generatedQuestions.length} AI Questions Generated</Badge>
           )}
-        </Button>
-        {generatedQuestions.length > 0 && (
-          <Badge variant="secondary">{generatedQuestions.length} AI Questions Generated</Badge>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Content Tabs */}
       <Tabs defaultValue="lesson" className="w-full">
