@@ -249,9 +249,6 @@
     "level"
   ],
   "rls": {
-    "read": {
-      "is_public": true
-    },
     "create": {
       "user_condition": {
         "role": "admin"
@@ -263,6 +260,11 @@
       }
     },
     "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
       "user_condition": {
         "role": "admin"
       }
