@@ -14,18 +14,22 @@ Deno.serve(async (req) => {
       2000
     );
 
+    // Process at most 150 per invocation to stay under 180s timeout
+    const LIMIT = 150;
+    const work = all.slice(0, LIMIT);
+
     let deleted = 0;
     const errors = [];
-    const BATCH = 20;
-    for (let i = 0; i < all.length; i += BATCH) {
-      const slice = all.slice(i, i + BATCH);
-      const results = await Promise.allSettled(
-        slice.map((l) => base44.asServiceRole.entities.Lesson.delete(l.id))
-      );
-      results.forEach((r, idx) => {
-        if (r.status === 'fulfilled') deleted++;
-        else errors.push({ id: slice[idx].id, error: r.reason?.message || String(r.reason) });
-      });
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    for (const l of work) {
+      try {
+        await base44.asServiceRole.entities.Lesson.delete(l.id);
+        deleted++;
+      } catch (e) {
+        errors.push({ id: l.id, error: e.message });
+        if (e.message?.includes('Rate limit')) await sleep(2000);
+      }
+      await sleep(120);
     }
 
     return Response.json({
