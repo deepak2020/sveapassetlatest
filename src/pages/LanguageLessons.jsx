@@ -36,7 +36,7 @@ export default function LanguageLessons() {
 
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["lessons"],
-    queryFn: () => base44.entities.Lesson.list("order", 200),
+    queryFn: () => base44.entities.Lesson.list("order", 500),
   });
 
   const countByCourse = (courseId) => lessons.filter((l) => l.sfi_course === courseId).length;
