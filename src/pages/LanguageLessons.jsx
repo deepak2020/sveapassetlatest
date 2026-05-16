@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
 import GrammarModule from "../components/language/GrammarModule";
+import TopicGroup from "../components/language/TopicGroup";
 import { motion } from "framer-motion";
 
 import { SFI_COURSES } from "@/lib/course-constants";
@@ -166,13 +167,22 @@ export default function LanguageLessons() {
             </div>
           ) : filteredLessons.length === 0 ? (
             <EmptyState title="Enheter laddas · Units Loading" description="Nya lektioner för denna nivå skapas just nu. · New lessons for this level are being created now." />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredLessons.map((lesson, idx) => (
-                <LessonCard key={lesson.id} lesson={lesson} index={idx} />
-              ))}
-            </div>
-          )}
+          ) : (() => {
+              const groups = {};
+              const topicOrder = [];
+              for (const l of filteredLessons) {
+                const t = l.topic || "Övrigt";
+                if (!groups[t]) { groups[t] = []; topicOrder.push(t); }
+                groups[t].push(l);
+              }
+              return (
+                <div className="space-y-6">
+                  {topicOrder.map((t, idx) => (
+                    <TopicGroup key={t} topic={t} lessons={groups[t]} index={idx} />
+                  ))}
+                </div>
+              );
+            })()}
         </div>
       )}
       </TabsContent>
