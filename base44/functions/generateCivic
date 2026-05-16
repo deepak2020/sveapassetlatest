@@ -1,0 +1,70 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// Maps topic title → chapter (from Sverige i Fokus)
+const TITLE_TO_CHAPTER = {
+  "Geografi, klimat och natur": "Landet Sverige",
+  "Sveriges indelning": "Landet Sverige",
+  "Befolkning": "Landet Sverige",
+  "Naturresurser": "Landet Sverige",
+  "Klimatförändringar och hållbar utveckling": "Landet Sverige",
+  "Demokrati betyder folkstyre": "Sveriges demokratiska system",
+  "Hot mot demokratin": "Sveriges demokratiska system",
+  "Landet styrs på olika nivåer": "Så här styrs Sverige",
+  "Myndigheter i Sverige": "Så här styrs Sverige",
+  "Regioner och kommuner": "Så här styrs Sverige",
+  "Sveriges statsskick – konstitutionell monarki": "Så här styrs Sverige",
+  "Val och röstning i Sverige": "Politiska val och partier",
+  "Politiska partier i Sverige": "Politiska val och partier",
+  "Grundlagarna": "Lag och rätt",
+  "Rättsväsendet i Sverige": "Lag och rätt",
+  "Fria medier och yttrandefrihet": "Mediernas roll",
+  "Källkritik": "Mediernas roll",
+  "Mänskliga rättigheter gäller alla": "Mänskliga rättigheter",
+  "Jämställdhet mellan könen": "Mänskliga rättigheter",
+  "Barns rättigheter": "Mänskliga rättigheter",
+  "Minoriteters rättigheter": "Mänskliga rättigheter",
+  "Diskriminering och dina rättigheter": "Mänskliga rättigheter",
+  "Så fungerar arbetsmarknaden": "Arbetsmarknad och privatekonomi",
+  "Lagar och regler på arbetsmarknaden": "Arbetsmarknad och privatekonomi",
+  "Privatekonomi i Sverige": "Arbetsmarknad och privatekonomi",
+  "Skatter och välfärden": "Välfärdssamhället",
+  "Sociala trygghetssystem": "Välfärdssamhället",
+  "Från jordbrukssamhälle till industrisamhälle": "Sveriges moderna historia",
+  "Sveriges väg till demokrati": "Sveriges moderna historia",
+  "Folkhem och modernisering": "Sveriges moderna historia",
+  "Informationssamhället och globalisering": "Sveriges moderna historia",
+  "Nordiskt och europeiskt samarbete": "Sverige och omvärlden",
+  "Globalt samarbete och FN": "Sverige och omvärlden",
+  "Försvars- och säkerhetspolitik": "Sverige och omvärlden",
+  "Religionsfrihet och sekulär stat": "En sekulär stat och ett mångreligiöst land",
+  "Religionens roll i Sverige": "En sekulär stat och ett mångreligiöst land",
+  "Svenska traditioner och högtider": "Traditioner och högtider",
+};
+
+Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+
+  const user = await base44.auth.me();
+  if (user?.role !== 'admin') {
+    return Response.json({ error: 'Admin only' }, { status: 403 });
+  }
+
+  const topics = await base44.asServiceRole.entities.CivicTopic.list("order", 100);
+  const results = [];
+
+  for (const topic of topics) {
+    const chapter = TITLE_TO_CHAPTER[topic.title];
+    if (!chapter) {
+      results.push({ title: topic.title, status: 'skipped — no mapping found' });
+      continue;
+    }
+    if (topic.chapter === chapter) {
+      results.push({ title: topic.title, status: 'already correct' });
+      continue;
+    }
+    await base44.asServiceRole.entities.CivicTopic.update(topic.id, { chapter });
+    results.push({ title: topic.title, chapter, status: 'updated' });
+  }
+
+  return Response.json({ results, total: results.length });
+});
