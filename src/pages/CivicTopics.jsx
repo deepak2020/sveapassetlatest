@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import CategoryBadge from "../components/shared/CategoryBadge";
 import EmptyState from "../components/shared/EmptyState";
+import BulkRegenerateCivicButton from "../components/civic/BulkRegenerateCivicButton";
+import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
 
 const categoryIcons = {
@@ -40,6 +42,8 @@ const CHAPTER_ORDER = [
 export default function CivicTopics() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
@@ -94,6 +98,10 @@ export default function CivicTopics() {
           Based on <span className="font-medium not-italic">Sverige i Fokus</span> — the official UHR citizenship test study material
         </p>
       </div>
+
+      {isAdmin && (
+        <BulkRegenerateCivicButton onDone={() => queryClient.invalidateQueries({ queryKey: ["civicTopics"] })} />
+      )}
 
       {/* Filters */}
       <Tabs value={categoryFilter} onValueChange={setCategoryFilter} className="mb-8">
