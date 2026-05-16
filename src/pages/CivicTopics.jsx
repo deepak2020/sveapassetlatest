@@ -49,7 +49,7 @@ export default function CivicTopics() {
 
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
-    queryFn: () => base44.entities.CivicTopic.list("order", 100),
+    queryFn: () => base44.entities.CivicTopic.list("-created_date", 200),
   });
 
   // Deduplicate by title, keeping first occurrence
