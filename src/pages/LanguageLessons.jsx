@@ -36,7 +36,14 @@ export default function LanguageLessons() {
 
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["lessons"],
-    queryFn: () => base44.entities.Lesson.list("order", 500),
+    queryFn: async () => {
+      const all = [];
+      for (const course of ["A", "B", "C", "D"]) {
+        const batch = await base44.entities.Lesson.filter({ sfi_course: course }, "order", 500);
+        all.push(...batch);
+      }
+      return all;
+    },
   });
 
   const countByCourse = (courseId) => lessons.filter((l) => l.sfi_course === courseId).length;
