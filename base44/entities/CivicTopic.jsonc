@@ -90,15 +90,18 @@
         "role": "admin"
       }
     },
-    "read": {
-      "is_public": true
-    },
+    "read": {},
     "update": {
       "user_condition": {
         "role": "admin"
       }
     },
     "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
       "user_condition": {
         "role": "admin"
       }
