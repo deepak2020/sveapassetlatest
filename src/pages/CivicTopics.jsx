@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/lib/AuthContext";
-import { Landmark, ArrowRight, Sparkles, BookOpen } from "lucide-react";
+import { Landmark, ArrowRight, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import CategoryBadge from "../components/shared/CategoryBadge";
 import EmptyState from "../components/shared/EmptyState";
 import { motion } from "framer-motion";
-import GenerateTopicModal from "../components/civic/GenerateTopicModal";
-import GenerateCivicContentButton from "../components/civic/GenerateCivicContentButton";
 
 const categoryIcons = {
   government: "🏛️",
@@ -42,10 +39,7 @@ const CHAPTER_ORDER = [
 
 export default function CivicTopics() {
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [showGenerate, setShowGenerate] = useState(false);
   const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
 
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
@@ -83,12 +77,6 @@ export default function CivicTopics() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <GenerateTopicModal
-        open={showGenerate}
-        onClose={() => setShowGenerate(false)}
-        onCreated={() => queryClient.invalidateQueries({ queryKey: ["civicTopics"] })}
-      />
-
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-2">
@@ -106,19 +94,6 @@ export default function CivicTopics() {
           Based on <span className="font-medium not-italic">Sverige i Fokus</span> — the official UHR citizenship test study material
         </p>
       </div>
-
-      {isAdmin && (
-        <div className="mb-8 space-y-3">
-          <GenerateCivicContentButton
-            existingCount={topics.length}
-            onDone={() => queryClient.invalidateQueries({ queryKey: ["civicTopics"] })}
-          />
-          <Button onClick={() => setShowGenerate(true)} variant="outline" className="gap-2">
-            <Sparkles className="w-4 h-4" />
-            Generera eget ämne med AI
-          </Button>
-        </div>
-      )}
 
       {/* Filters */}
       <Tabs value={categoryFilter} onValueChange={setCategoryFilter} className="mb-8">
