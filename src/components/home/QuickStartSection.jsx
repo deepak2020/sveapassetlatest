@@ -7,26 +7,26 @@ const steps = [
   {
     number: "01",
     emoji: "🎯",
-    title: "Välj din nivå",
-    description: "Börja med SFI A om du är nybörjare, eller hoppa direkt till B, C eller D baserat på din nuvarande kunskapsnivå.",
+    title: "Choose Your Starting Point",
+    description: "Begin at a level that matches your current skills — whether you're just starting out or already have some Swedish knowledge.",
   },
   {
     number: "02",
     emoji: "📚",
-    title: "Studera & öva",
-    description: "Gå igenom interaktiva lektioner med ordförråd, grammatik, läsning och uttal — anpassade till SFI-kursen.",
+    title: "Learn & Practice",
+    description: "Work through interactive lessons with vocabulary, grammar, listening, and real-world conversations — all tailored to your pace.",
   },
   {
     number: "03",
     emoji: "💪",
-    title: "Träna i Gymmet",
-    description: "Repetera ord och fraser med vår SRS-gym — systemet väljer automatiskt vad du behöver öva mest.",
+    title: "Master Through Daily Practice",
+    description: "Use our spaced repetition gym to reinforce what you learn. The system guides you to review exactly what you need, when you need it.",
   },
   {
     number: "04",
-    emoji: "🏛️",
-    title: "Klara provet",
-    description: "Förbered dig för samhällskunskapstestet med quizar om Sveriges historia, demokrati och kultur.",
+    emoji: "🌍",
+    title: "Integrate & Thrive",
+    description: "Develop cultural understanding and real-world Swedish skills. Become confident in social, professional, and everyday situations.",
   },
 ];
 
@@ -38,8 +38,8 @@ export default function QuickStartSection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <h2 className="font-display text-3xl font-bold text-foreground">Din resa mot medborgarskapet</h2>
-          <p className="mt-3 text-muted-foreground text-base">Fyra steg från nybörjare till ny medborgare</p>
+          <h2 className="font-display text-3xl font-bold text-foreground">Your Path to Swedish Fluency</h2>
+          <p className="mt-3 text-muted-foreground text-base">Four simple steps to confident Swedish fluency and integration</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14">
@@ -65,7 +65,7 @@ export default function QuickStartSection() {
           ))}
         </div>
 
-        {/* Sweden facts strip */}
+        {/* Sweden values strip */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -75,13 +75,13 @@ export default function QuickStartSection() {
         >
           <div className="text-3xl mb-3">🇸🇪</div>
           <h3 className="font-display text-xl font-bold text-foreground mb-2">
-            Välkommen till Sverige
+            Welcome to Sweden
           </h3>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-6">
-            Sverige är känt för sin demokrati, jämlikhet och innovationskultur. Lär dig språket och förstå samhället — det är nyckeln till en framgångsrik integration.
+            Sweden is known for its democratic values, gender equality, commitment to education, and inclusive society. Learning the language is just the beginning — understanding the culture is the key to real belonging.
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-6">
-            {["🗳️ Demokrati", "📚 Utbildning", "🏥 Välfärd", "🌿 Hållbarhet", "🤝 Jämlikhet", "🎶 Kultur"].map((tag) => (
+            {["🗳️ Democracy", "📚 Education", "🏥 Wellbeing", "🌿 Sustainability", "🤝 Equality", "🎶 Culture"].map((tag) => (
               <span key={tag} className="px-3 py-1.5 rounded-full bg-white/70 border border-[#006AA7]/20 text-sm text-foreground font-medium">
                 {tag}
               </span>
@@ -89,7 +89,7 @@ export default function QuickStartSection() {
           </div>
           <Link to="/language">
             <Button className="gap-2 bg-[#006AA7] hover:bg-[#005a8e]">
-              Börja nu <ArrowRight className="w-4 h-4" />
+              Start your journey <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
         </motion.div>
