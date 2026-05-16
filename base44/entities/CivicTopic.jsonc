@@ -80,5 +80,10 @@
     "title",
     "category",
     "chapter"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "is_public": true
+    }
+  }
 }

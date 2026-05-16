@@ -240,5 +240,10 @@
     "title",
     "category",
     "level"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "is_public": true
+    }
+  }
 }

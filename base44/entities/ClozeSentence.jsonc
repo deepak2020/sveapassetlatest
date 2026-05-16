@@ -62,5 +62,10 @@
     "sentence_sv",
     "answer",
     "sfi_level"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "is_public": true
+    }
+  }
 }
