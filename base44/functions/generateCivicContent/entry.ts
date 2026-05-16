@@ -397,7 +397,7 @@ Deno.serve(async (req) => {
       const sanitize = (arr) =>
         Array.isArray(arr) ? arr.filter((x) => x && typeof x === 'object') : [];
 
-      const created = await base44.asServiceRole.entities.CivicTopic.create({
+      const payload = {
         title: topic.title,
         chapter: topic.chapter,
         category: topic.category,
@@ -405,10 +405,17 @@ Deno.serve(async (req) => {
         content: data.content || null,
         key_facts: sanitize(data.key_facts),
         quiz_questions: sanitize(data.quiz_questions),
-      });
-
-      results.push({ title: topic.title, id: created.id, success: true });
-      console.log(`[generateCivicContent] Done: ${topic.title}`);
+      };
+      console.log(`[generateCivicContent] About to create: ${topic.title} (keys: ${Object.keys(payload).join(',')})`);
+      let created;
+      try {
+        created = await base44.asServiceRole.entities.CivicTopic.create(payload);
+      } catch (createErr) {
+        console.error(`[generateCivicContent] CREATE FAILED: ${topic.title}`, createErr?.message, createErr?.response?.data);
+        throw createErr;
+      }
+      console.log(`[generateCivicContent] Created id=${created?.id} for: ${topic.title}`);
+      results.push({ title: topic.title, id: created?.id, success: true });
     } catch (e) {
       console.error(`[generateCivicContent] Failed: ${topic.title}`, e.message);
       results.push({ title: topic.title, success: false, error: e.message });
