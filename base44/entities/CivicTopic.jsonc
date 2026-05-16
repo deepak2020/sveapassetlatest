@@ -74,6 +74,9 @@
     "order": {
       "type": "number",
       "description": "Display order within chapter"
+    },
+    "dummy_field_to_force_rebuild": {
+      "type": "string"
     }
   },
   "required": [
@@ -82,8 +85,23 @@
     "chapter"
   ],
   "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "is_public": true
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }
