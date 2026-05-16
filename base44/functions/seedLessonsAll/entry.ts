@@ -1,29 +1,71 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// Based on Skolverket's SFI kursplan (2022) and Hermods SFI course progression.
+// Topics reflect the "centralt innehåll" themes for each level.
 const SFI_COURSES = [
   {
     id: "A",
-    name: "Kurs A: Grunder",
+    name: "Kurs A: Grundläggande Svenska",
     level: "beginner",
-    topics: ["Hälsningar & Presentationer", "Uttal (Å, Ä, Ö)", "Siffror & Tid", "En & Ett Substantiv", "Familjemedlemmar", "Beställa Mat & Fika", "Fråga om Vägen", "Nödfraser"],
+    // Studieväg 1, nybörjarnivå – mycket vardagsnära, konkret språk
+    topics: [
+      "Alfabetet & Uttal",
+      "Hälsa & Presentera Sig",
+      "Siffror, Klockan & Datum",
+      "Familj & Personer",
+      "Min Kropp & Hälsa",
+      "Hemma & Mitt Rum",
+      "Mat, Dryck & Fika",
+      "Vägbeskrivning & Nödsituationer",
+    ],
   },
   {
     id: "B",
-    name: "Kurs B: Dagliga Livet",
+    name: "Kurs B: Vardagsspråk",
     level: "beginner",
-    topics: ["Shopping & Priser", "Pluralformer", "Bestämda & Obestämda Former", "Transport & Resor", "Dagliga Rutiner", "Adjektivöverensstämmelse", "Datumtid", "Natur & Allemansrätten"],
+    // Fortsättning – vardagsliv, rutiner, närsamhälle
+    topics: [
+      "Handla i Affären",
+      "Kläder & Väder",
+      "Transport & Kollektivtrafik",
+      "Min Bostad & Grannskap",
+      "Vardagsrutiner & Fritid",
+      "Sjukvård & Hos Doktorn",
+      "Årstider & Högtider",
+      "Plural & Bestämd Form",
+    ],
   },
   {
     id: "C",
-    name: "Kurs C: Integration",
+    name: "Kurs C: Samhälle & Arbete",
     level: "intermediate",
-    topics: ["Arbetsplatssvenska", "Perfekt & Pluskvamperfekt", "Bisatser", "Svenska Bostäder", "E-post & Formellt Skrivande", "Läsande av Nyheter", "Miljö & Hållbarhet", "Försäkringar"],
+    // Studieväg 2/3 – aktivt deltagande i samhället
+    topics: [
+      "Arbetsliv & Yrken",
+      "Skolan & Utbildning",
+      "Sjukvårdssystemet",
+      "Bo i Sverige (Hyresrätt & Bostadsrätt)",
+      "Banken, Skatt & Försäkringar",
+      "Svenska Traditioner & Kultur",
+      "Miljö & Hållbar Utveckling",
+      "Tempus: Perfekt & Preteritum",
+    ],
   },
   {
     id: "D",
-    name: "Kurs D: Avancerad",
+    name: "Kurs D: Avancerad Svenska",
     level: "advanced",
-    topics: ["Passivform", "Modalverb", "Villkorliga Meningar", "Komplex Ordföljning", "Akademisk Ordförråd", "Idiomatiska Uttryck", "Formella Rapporter & Brev", "Jobbansökningar"],
+    // Avslutande nivå – samhälle, arbetsmarknad, formellt språk
+    topics: [
+      "Arbetsmarknaden & Jobbsökning",
+      "CV, Personligt Brev & Intervju",
+      "Det Svenska Samhället & Demokrati",
+      "Nyheter, Medier & Källkritik",
+      "Att Uttrycka Åsikter & Argumentera",
+      "Formellt Skrivande & E-post",
+      "Bisatser, Passiv & Modalverb",
+      "Vidare Studier & Framtidsplaner",
+    ],
   },
 ];
 
