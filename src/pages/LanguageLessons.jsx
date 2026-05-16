@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/lib/AuthContext";
-import { BookOpen, ArrowRight, Sparkles } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
-import GenerateLessonModal from "../components/language/GenerateLessonModal";
-import GenerateContentButton from "../components/language/GenerateContentButton";
-import BulkRegenerateButton from "../components/language/BulkRegenerateButton";
 import GrammarModule from "../components/language/GrammarModule";
 import { motion } from "framer-motion";
 
@@ -38,10 +33,6 @@ const exerciseBadge = (lesson) => {
 export default function LanguageLessons() {
   const [activeCourse, setActiveCourse] = useState(null);
   const [skillFilter, setSkillFilter] = useState("all");
-  const [showGenerate, setShowGenerate] = useState(false);
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
 
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["lessons"],
@@ -60,12 +51,6 @@ export default function LanguageLessons() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <GenerateLessonModal
-        open={showGenerate}
-        onClose={() => setShowGenerate(false)}
-        onCreated={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
-      />
-
       {/* Navigation & Title */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
         <div>
@@ -93,12 +78,6 @@ export default function LanguageLessons() {
             </p>
           )}
         </div>
-        {isAdmin && (
-           <Button onClick={() => setShowGenerate(true)} size="lg" className="gap-2 shadow-lg shadow-primary/20 h-12 md:h-10">
-             <Sparkles className="w-5 h-5" />
-             AI-kursbyggare
-           </Button>
-         )}
       </div>
 
       {/* Tab Navigation */}
@@ -111,14 +90,8 @@ export default function LanguageLessons() {
         {/* Lessons Tab */}
         <TabsContent value="lessons">
       {!activeCourse ? (
-        <>
-        {isAdmin && (
-          <BulkRegenerateButton onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })} />
-        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SFI_COURSES.map((course, i) => {
-            const courseLessons = lessons.filter(l => l.sfi_course === course.id);
-            const needsGeneration = courseLessons.filter((l) => !l.content && (!l.fill_in_blanks || l.fill_in_blanks.length === 0)).length > 0;
             return (
             <motion.div
               key={course.id}
@@ -157,30 +130,12 @@ export default function LanguageLessons() {
                   </div>
                 </div>
               </button>
-              
-              {isAdmin && needsGeneration && (
-                <div className="w-full">
-                  <GenerateContentButton
-                    lessons={courseLessons}
-                    regenerateAll={false}
-                    autoStart={false}
-                    onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
-                  />
-                </div>
-              )}
             </motion.div>
           );
         })}
         </div>
-        </>
       ) : (
         <div className="space-y-8">
-          {isAdmin && (
-            <GenerateContentButton
-              lessons={filteredLessons}
-              onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
-            />
-          )}
           {/* Filters */}
           <div className="flex flex-wrap gap-3 pb-2 border-b border-border/50">
             {SKILL_FILTERS.map((s) => (
