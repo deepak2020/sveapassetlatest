@@ -18,69 +18,81 @@ import { motion } from "framer-motion";
 const SFI_COURSES = [
   {
     id: "A",
-    name: "Course A: Foundation",
-    subtitle: "Absolute Beginner (A1)",
-    description: "Learn your first Swedish words — greetings, numbers, time, family, and essential survival phrases. Master Swedish vowel sounds including Å, Ä, and Ö.",
+    name: "Kurs A: Grunder",
+    name_en: "Course A: Foundation",
+    subtitle: "Nybörjare (A1)",
+    subtitle_en: "Absolute Beginner (A1)",
+    description: "Lär dig dina första svenska ord — hälsningar, siffror, tid, familj och viktiga överlevnadsfraser. Bemästra svenska vokaler inklusive Å, Ä och Ö.",
+    description_en: "Learn your first Swedish words — greetings, numbers, time, family, and essential survival phrases. Master Swedish vowel sounds including Å, Ä, and Ö.",
     color: "from-emerald-400 to-teal-500",
     bg: "bg-emerald-50 dark:bg-emerald-900/20",
     border: "border-emerald-200 dark:border-emerald-800",
     badge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
     level: "beginner",
-    topics: ["Greetings & Introductions", "Pronunciation (Å, Ä, Ö)", "Numbers & Time", "En & Ett Nouns", "Family Members", "Ordering Food & Fika", "Asking Directions", "Emergency Phrases"],
+    topics: ["Hälsningar & Presentationer", "Uttal (Å, Ä, Ö)", "Siffror & Tid", "En & Ett Substantiv", "Familjemedlemmar", "Beställa Mat & Fika", "Fråga om Vägen", "Nödfraser"],
   },
   {
     id: "B",
-    name: "Course B: Daily Life",
-    subtitle: "Beginner (A2)",
-    description: "Build independence in Swedish daily life — shopping, transport, healthcare, and household routines. Learn the V2 word-order rule and past tense.",
+    name: "Kurs B: Dagliga Livet",
+    name_en: "Course B: Daily Life",
+    subtitle: "Grundläggande (A2)",
+    subtitle_en: "Beginner (A2)",
+    description: "Bygg oberoende i svenska dagliga livet — shopping, transport, sjukvård och hushållsrutiner. Lär dig V2-ordföljningsregeln och datumtid.",
+    description_en: "Build independence in Swedish daily life — shopping, transport, healthcare, and household routines. Learn the V2 word-order rule and past tense.",
     color: "from-blue-400 to-indigo-500",
     bg: "bg-blue-50 dark:bg-blue-900/20",
     border: "border-blue-200 dark:border-blue-800",
     badge: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
     level: "beginner",
-    topics: ["Shopping & Prices", "Plural Nouns", "Definite & Indefinite Forms", "Transport & Travel", "Daily Routines", "Adjective Agreement", "Past Tense", "Nature & Allemansrätten"],
+    topics: ["Shopping & Priser", "Pluralformer", "Bestämda & Obestämda Former", "Transport & Resor", "Dagliga Rutiner", "Adjektivöverensstämmelse", "Datumtid", "Natur & Allemansrätten"],
   },
   {
     id: "C",
-    name: "Course C: Integration",
-    subtitle: "Intermediate (B1)",
-    description: "Swedish for real-life integration — workplace communication, housing, formal writing, and reading news. Master complex grammar including subordinate clauses and perfect tense.",
+    name: "Kurs C: Integration",
+    name_en: "Course C: Integration",
+    subtitle: "Mellanliggande (B1)",
+    subtitle_en: "Intermediate (B1)",
+    description: "Svenska för verklig integration — arbetsplatskommunikation, bostäder, formellt skrivande och läsande av nyheter. Bemästra komplex grammatik inklusive bisatser och perfekt tempus.",
+    description_en: "Swedish for real-life integration — workplace communication, housing, formal writing, and reading news. Master complex grammar including subordinate clauses and perfect tense.",
     color: "from-violet-400 to-purple-500",
     bg: "bg-violet-50 dark:bg-violet-900/20",
     border: "border-violet-200 dark:border-violet-800",
     badge: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200",
     level: "intermediate",
-    topics: ["Workplace Swedish", "Perfect & Pluperfect Tense", "Subordinate Clauses", "Swedish Housing", "Email & Formal Writing", "Reading News", "Environment & Sustainability", "Försäkringskassan"],
+    topics: ["Arbetsplatssvenska", "Perfekt & Pluskvamperfekt", "Bisatser", "Svenska Bostäder", "E-post & Formellt Skrivande", "Läsande av Nyheter", "Miljö & Hållbarhet", "Försäkringar"],
   },
   {
     id: "D",
-    name: "Course D: Advanced",
-    subtitle: "Advanced (B2)",
-    description: "Master advanced Swedish grammar, academic vocabulary, and formal expression. Write structured arguments, read complex texts, and speak fluently in professional settings.",
+    name: "Kurs D: Avancerad",
+    name_en: "Course D: Advanced",
+    subtitle: "Avancerad (B2)",
+    subtitle_en: "Advanced (B2)",
+    description: "Bemästra avancerad svenska grammatik, akademisk ordförråd och formellt uttryckssätt. Skriv strukturerade argument, läs komplexa texter och tala flytande i professionella sammanhang.",
+    description_en: "Master advanced Swedish grammar, academic vocabulary, and formal expression. Write structured arguments, read complex texts, and speak fluently in professional settings.",
     color: "from-orange-400 to-red-500",
     bg: "bg-orange-50 dark:bg-orange-900/20",
     border: "border-orange-200 dark:border-orange-800",
     badge: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
     level: "advanced",
-    topics: ["Passive Voice", "Modal Verbs", "Conditional Sentences", "Complex Word Order", "Academic Vocabulary", "Idiomatic Expressions", "Formal Reports & Letters", "Job Applications"],
+    topics: ["Passivform", "Modalverb", "Villkorliga Meningar", "Komplex Ordföljning", "Akademisk Ordförråd", "Idiomatiska Uttryck", "Formella Rapporter & Brev", "Jobbansökningar"],
   },
 ];
 
 const SKILL_FILTERS = [
-  { key: "all", emoji: "✨", label: "All Skills" },
-  { key: "vocabulary", emoji: "📝", label: "Vocabulary" },
-  { key: "grammar", emoji: "🔤", label: "Grammar" },
-  { key: "reading", emoji: "📖", label: "Reading" },
-  { key: "writing", emoji: "✍️", label: "Writing" },
-  { key: "speaking", emoji: "🗣️", label: "Speaking" },
+  { key: "all", emoji: "✨", label: "Alla Färdigheter", label_en: "All Skills" },
+  { key: "vocabulary", emoji: "📝", label: "Ordförråd", label_en: "Vocabulary" },
+  { key: "grammar", emoji: "🔤", label: "Grammatik", label_en: "Grammar" },
+  { key: "reading", emoji: "📖", label: "Läsning", label_en: "Reading" },
+  { key: "writing", emoji: "✍️", label: "Skrivning", label_en: "Writing" },
+  { key: "speaking", emoji: "🗣️", label: "Tal", label_en: "Speaking" },
 ];
 
 const exerciseBadge = (lesson) => {
   const parts = [];
-  if (lesson.fill_in_blanks?.length) parts.push(`${lesson.fill_in_blanks.length} fill-in`);
+  if (lesson.fill_in_blanks?.length) parts.push(`${lesson.fill_in_blanks.length} fyllning`);
   if (lesson.quiz_questions?.length) parts.push(`${lesson.quiz_questions.length} quiz`);
-  if (lesson.word_pairs?.length) parts.push(`${lesson.word_pairs.length} cards`);
-  return parts.slice(0, 2).join(" · ") || "Interactive Lesson";
+  if (lesson.word_pairs?.length) parts.push(`${lesson.word_pairs.length} kort`);
+  return parts.slice(0, 2).join(" · ") || "Interaktiv Lektion";
 };
 
 export default function LanguageLessons() {
@@ -122,22 +134,22 @@ export default function LanguageLessons() {
               onClick={() => { setActiveCourse(null); setSkillFilter("all"); }}
               className="text-sm text-muted-foreground hover:text-primary mb-2 flex items-center gap-1 transition-colors h-10 px-3 rounded-lg hover:bg-muted/50"
             >
-              ← Tillbaka till alla kurser · <em className="font-normal">Back to All Courses</em>
+              ← Tillbaka till alla kurser · <em className="font-normal italic">Back to All Courses</em>
             </button>
           )}
           <div className="flex items-center gap-3">
             <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight">
-              {activeCourseData ? activeCourseData.name : "Vägen till Medborgarskap"}
+              {activeCourseData ? activeCourseData.name : "Svenska Språkkurser"}
             </h1>
           </div>
           <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
             {activeCourseData 
               ? activeCourseData.description 
-              : "Bemästra svenska och klara 2026 års krav på samhällskunskap med vår strukturerade SFI-kurs."}
+              : "Lär dig svenska från grunden till flytande tal med våra strukturerade kurser."}
           </p>
           {!activeCourseData && (
             <p className="text-muted-foreground/60 text-sm italic mt-1 max-w-2xl">
-              Master the Swedish language and pass the 2026 civic knowledge requirements with our structured SFI curriculum.
+              Learn Swedish from beginner to fluent with our structured courses.
             </p>
           )}
         </div>
@@ -184,9 +196,10 @@ export default function LanguageLessons() {
               >
                 <div className="relative z-10">
                   <div className={`inline-block px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 ${course.badge}`}>
-                    Module {course.id}
+                    Modul {course.id}
                   </div>
                   <h2 className="text-2xl font-bold mb-1">{course.name}</h2>
+                  <p className="text-sm italic text-muted-foreground font-medium mb-1">{course.name_en}</p>
                   <p className="text-muted-foreground font-medium mb-6">{course.subtitle}</p>
 
                   <div className="flex flex-wrap gap-2 mb-8">
@@ -240,7 +253,7 @@ export default function LanguageLessons() {
               {[1, 2, 3].map((n) => <Skeleton key={n} className="h-48 rounded-2xl" />)}
             </div>
           ) : filteredLessons.length === 0 ? (
-            <EmptyState title="Enheter laddas · Units Loading" description="Nya lektioner för denna nivå skapas just nu av våra lärare. · New lessons for this level are currently being curated by our educators." />
+            <EmptyState title="Enheter laddas · Units Loading" description="Nya lektioner för denna nivå skapas just nu. · New lessons for this level are being created now." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLessons.map((lesson, idx) => (
