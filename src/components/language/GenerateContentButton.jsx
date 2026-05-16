@@ -51,7 +51,7 @@ export default function GenerateContentButton({ lessons, onDone, regenerateAll =
             {regenerateAll ? `Regenerate all ${targetLessons.length} lessons` : `${targetLessons.length} lessons have no content yet`}
           </p>
           <p className="text-sm text-amber-700 dark:text-amber-300">
-            {regenerateAll ? "Re-generate content for every lesson across all courses" : "Generate word pairs, exercises, and quizzes using AI"}
+            {regenerateAll ? "Re-generate content for every lesson across all courses" : "Generate content based on Hermods & Babbel SFI syllabus"}
           </p>
         </div>
         <Button
@@ -60,7 +60,7 @@ export default function GenerateContentButton({ lessons, onDone, regenerateAll =
           className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
         >
           <Zap className="w-4 h-4" />
-          {running ? `Generating... (${progress.done}/${progress.total})` : regenerateAll ? `Regenerate All ${targetLessons.length} Lessons` : `Generate All ${targetLessons.length} Lessons`}
+          {running ? `Generating... (${progress.done}/${progress.total})` : regenerateAll ? `Regenerate All ${targetLessons.length} Lessons` : `Generate Content`}
         </Button>
       </div>
 

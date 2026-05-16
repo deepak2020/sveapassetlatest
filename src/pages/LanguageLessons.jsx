@@ -109,25 +109,18 @@ export default function LanguageLessons() {
 
         {/* Lessons Tab */}
         <TabsContent value="lessons">
-          {!activeCourse && isAdmin && lessons.length > 0 && (
-            <div className="mb-6">
-              <GenerateContentButton
-                lessons={lessons}
-                regenerateAll={false}
-                autoStart={true}
-                onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
-              />
-            </div>
-          )}
-
       {!activeCourse ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {SFI_COURSES.map((course, i) => (
+          {SFI_COURSES.map((course, i) => {
+            const courseLessons = lessons.filter(l => l.sfi_course === course.id);
+            const needsGeneration = courseLessons.filter((l) => !l.content && (!l.fill_in_blanks || l.fill_in_blanks.length === 0)).length > 0;
+            return (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
+              className="flex flex-col gap-4"
             >
               <button
                 onClick={() => setActiveCourse(course.id)}
@@ -159,8 +152,20 @@ export default function LanguageLessons() {
                   </div>
                 </div>
               </button>
+              
+              {isAdmin && needsGeneration && (
+                <div className="w-full">
+                  <GenerateContentButton
+                    lessons={courseLessons}
+                    regenerateAll={false}
+                    autoStart={false}
+                    onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })}
+                  />
+                </div>
+              )}
             </motion.div>
-          ))}
+          );
+        })}
         </div>
       ) : (
         <div className="space-y-8">
