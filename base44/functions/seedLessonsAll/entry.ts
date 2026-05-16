@@ -108,13 +108,34 @@ Deno.serve(async (req) => {
     }
 
     let createdCount = 0;
-    // Insert one by one to avoid any rate limit or silent failures
-    for (const lesson of newLessons) {
-      await base44.asServiceRole.entities.Lesson.create(lesson);
-      createdCount++;
+    const errors = [];
+    const BATCH_SIZE = 10;
+    const DELAY_MS = 1500;
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    for (let i = 0; i < newLessons.length; i += BATCH_SIZE) {
+      const batch = newLessons.slice(i, i + BATCH_SIZE);
+      for (const lesson of batch) {
+        try {
+          await base44.asServiceRole.entities.Lesson.create(lesson);
+          createdCount++;
+        } catch (e) {
+          errors.push({ title: lesson.title, error: e.message });
+        }
+      }
+      if (i + BATCH_SIZE < newLessons.length) {
+        await sleep(DELAY_MS);
+      }
     }
 
-    return Response.json({ success: true, count: createdCount, total: allExisting.length + createdCount });
+    return Response.json({
+      success: true,
+      created: createdCount,
+      skipped: allExisting.length,
+      remaining: newLessons.length - createdCount,
+      total: allExisting.length + createdCount,
+      errors: errors.slice(0, 5),
+    });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
