@@ -15,7 +15,7 @@ import GenerateContentButton from "../components/language/GenerateContentButton"
 import GrammarModule from "../components/language/GrammarModule";
 import { motion } from "framer-motion";
 
-const SFI_COURSES = [
+export const SFI_COURSES = [
   {
     id: "A",
     name: "Kurs A: Grunder",

@@ -10,6 +10,10 @@
       "type": "string",
       "description": "Swedish title"
     },
+    "topic": {
+      "type": "string",
+      "description": "Topic this lesson belongs to"
+    },
     "sfi_course": {
       "type": "string",
       "enum": [

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { SFI_COURSES } from "@/pages/LanguageLessons";
 
 export default function GenerateLessonModal({ open, onClose, onCreated }) {
   const [topic, setTopic] = useState("");
@@ -13,6 +14,9 @@ export default function GenerateLessonModal({ open, onClose, onCreated }) {
   const [level, setLevel] = useState("beginner");
   const [sfiCourse, setSfiCourse] = useState("A");
   const [loading, setLoading] = useState(false);
+
+  const courseData = SFI_COURSES.find(c => c.id === sfiCourse);
+  const availableTopics = courseData ? courseData.topics : [];
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
@@ -54,6 +58,7 @@ Make all content practical for everyday life in Sweden.`,
     await base44.entities.Lesson.create({
       title: result.title || topic,
       title_sv: result.title_sv,
+      topic: topic,
       category: skill === "reading" ? "reading" : skill === "writing" ? "writing" : skill === "speaking" ? "speaking" : "vocabulary",
       skill,
       level,
@@ -84,18 +89,11 @@ Make all content practical for everyday life in Sweden.`,
 
         <div className="space-y-4 pt-2">
           <div className="space-y-1.5">
-            <Label>What should this lesson be about?</Label>
-            <Input
-              placeholder="e.g. Visiting the doctor, At the grocery store..."
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
-            />
-          </div>
-
-          <div className="space-y-1.5">
             <Label>SFI Course</Label>
-            <Select value={sfiCourse} onValueChange={setSfiCourse}>
+            <Select value={sfiCourse} onValueChange={(val) => {
+              setSfiCourse(val);
+              setTopic("");
+            }}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -104,6 +102,20 @@ Make all content practical for everyday life in Sweden.`,
                 <SelectItem value="B">Course B — Beginner</SelectItem>
                 <SelectItem value="C">Course C — Intermediate</SelectItem>
                 <SelectItem value="D">Course D — Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Topic</Label>
+            <Select value={topic} onValueChange={setTopic}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a topic..." />
+              </SelectTrigger>
+              <SelectContent>
+                {availableTopics.map(t => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
