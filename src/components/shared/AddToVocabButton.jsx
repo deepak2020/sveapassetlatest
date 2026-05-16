@@ -2,10 +2,14 @@ import { useState } from "react";
 import { BookmarkPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function AddToVocabButton({ swedish, english, lessonId, lessonTitle, exampleSentence }) {
   const [added, setAdded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) return null;
 
   const handleAddToVocab = async () => {
     setLoading(true);

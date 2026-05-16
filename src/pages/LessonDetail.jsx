@@ -19,7 +19,6 @@ import LessonProgress from "../components/lesson/LessonProgress";
 import MatchingExercise from "../components/lesson/MatchingExercise";
 import ListeningExercise from "../components/lesson/ListeningExercise";
 import ReactMarkdown from "react-markdown";
-import LoginGate from "../components/shared/LoginGate";
 
 export default function LessonDetail() {
   const pathParts = window.location.pathname.split("/");
@@ -231,14 +230,12 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🃏 Vocabulary Flashcards</h2>
               <p className="text-sm text-muted-foreground">Flip each card, then mark yourself — Babbel style.</p>
             </div>
-            <LoginGate message="Logga in för att öva flashcards">
-              <FlashcardDeck
-                wordPairs={lesson.word_pairs}
-                onComplete={() => markComplete("learn")}
-                lessonId={lesson.id}
-                lessonTitle={lesson.title}
-              />
-            </LoginGate>
+            <FlashcardDeck
+              wordPairs={lesson.word_pairs}
+              onComplete={() => markComplete("learn")}
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+            />
           </TabsContent>
         )}
 
@@ -249,12 +246,10 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🧩 Fill in the Blank</h2>
               <p className="text-sm text-muted-foreground">Complete the Swedish sentence — Clozemaster style.</p>
             </div>
-            <LoginGate message="Logga in för att öva fyllningsövningar">
-              <FillInBlanks
-                exercises={lesson.fill_in_blanks}
-                onComplete={() => markComplete("practice")}
-              />
-            </LoginGate>
+            <FillInBlanks
+              exercises={lesson.fill_in_blanks}
+              onComplete={() => markComplete("practice")}
+            />
           </TabsContent>
         )}
 
@@ -265,12 +260,10 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🔗 Match the Pairs</h2>
               <p className="text-sm text-muted-foreground">Connect each Swedish word or phrase to its correct match.</p>
             </div>
-            <LoginGate message="Logga in för att öva matchningsövningar">
-              <MatchingExercise
-                pairs={lesson.match_pairs}
-                onComplete={() => markComplete("match")}
-              />
-            </LoginGate>
+            <MatchingExercise
+              pairs={lesson.match_pairs}
+              onComplete={() => markComplete("match")}
+            />
           </TabsContent>
         )}
 
@@ -281,9 +274,7 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">✍️ Writing Practice</h2>
               <p className="text-sm text-muted-foreground">Short writing exercises to reinforce your learning.</p>
             </div>
-            <LoginGate message="Logga in för att öva skrivning">
-              <WritingExercise prompts={lesson.writing_prompts} />
-            </LoginGate>
+            <WritingExercise prompts={lesson.writing_prompts} />
           </TabsContent>
         )}
 
@@ -294,9 +285,7 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🗣️ Speaking Practice</h2>
               <p className="text-sm text-muted-foreground">Read these phrases aloud to practice your pronunciation.</p>
             </div>
-            <LoginGate message="Logga in för att öva uttal">
-              <SpeakingPractice phrases={lesson.speaking_phrases} />
-            </LoginGate>
+            <SpeakingPractice phrases={lesson.speaking_phrases} />
           </TabsContent>
         )}
 
@@ -307,11 +296,9 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">👂 Listening Comprehension</h2>
               <p className="text-sm text-muted-foreground">Listen to Swedish phrases and test your comprehension.</p>
             </div>
-            <LoginGate message="Logga in för att öva lyssnande">
-              <ListeningExercise
-                phrases={lesson.listening_phrases}
-              />
-            </LoginGate>
+            <ListeningExercise
+              phrases={lesson.listening_phrases}
+            />
           </TabsContent>
         )}
 
@@ -322,12 +309,10 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">✍️ Translate to Swedish</h2>
               <p className="text-sm text-muted-foreground">Read the English sentence and type the Swedish translation.</p>
             </div>
-            <LoginGate message="Logga in för att öva översättning">
-              <SentenceTranslation
-                wordPairs={lesson.word_pairs}
-                onComplete={() => markComplete("translate")}
-              />
-            </LoginGate>
+            <SentenceTranslation
+              wordPairs={lesson.word_pairs}
+              onComplete={() => markComplete("translate")}
+            />
           </TabsContent>
         )}
 
@@ -338,15 +323,13 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🔁 Review Previous Lessons</h2>
               <p className="text-sm text-muted-foreground">Warm up with questions from earlier lessons to reinforce what you already know.</p>
             </div>
-            <LoginGate message="Logga in för att göra repetitionsquiz">
-              <QuizRunner
-                questions={lesson.review_questions}
-                quizType="language"
-                sourceId={lesson.id}
-                sourceTitle={`${lesson.title} — Review`}
-                onComplete={() => markComplete("review")}
-              />
-            </LoginGate>
+            <QuizRunner
+              questions={lesson.review_questions}
+              quizType="language"
+              sourceId={lesson.id}
+              sourceTitle={`${lesson.title} — Review`}
+              onComplete={() => markComplete("review")}
+            />
           </TabsContent>
         )}
 
@@ -357,15 +340,13 @@ export default function LessonDetail() {
               <h2 className="font-semibold text-lg">🎯 Final Quiz</h2>
               <p className="text-sm text-muted-foreground">Test your knowledge and track your score.</p>
             </div>
-            <LoginGate message="Logga in för att göra quizet">
-              <QuizRunner
-                questions={lesson.quiz_questions}
-                quizType="language"
-                sourceId={lesson.id}
-                sourceTitle={lesson.title}
-                onComplete={() => markComplete("quiz")}
-              />
-            </LoginGate>
+            <QuizRunner
+              questions={lesson.quiz_questions}
+              quizType="language"
+              sourceId={lesson.id}
+              sourceTitle={lesson.title}
+              onComplete={() => markComplete("quiz")}
+            />
           </TabsContent>
         )}
       </Tabs>

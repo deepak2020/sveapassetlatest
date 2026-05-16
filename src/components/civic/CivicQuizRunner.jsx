@@ -39,6 +39,9 @@ export default function CivicQuizRunner({ questions, quizType, sourceId, sourceT
   };
 
   const saveResult = async () => {
+    const isAuth = await base44.auth.isAuthenticated();
+    if (!isAuth) return;
+
     const percentage = Math.round((score / questions.length) * 100);
     await base44.entities.QuizResult.create({
       quiz_type: quizType,

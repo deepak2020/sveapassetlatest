@@ -84,7 +84,7 @@ export default function Layout() {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
+              {navItems.filter(item => isAuthenticated || item.path !== "/dashboard").map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path || 
                   (item.path !== "/" && location.pathname.startsWith(item.path));
@@ -146,7 +146,7 @@ export default function Layout() {
         {mobileOpen && (
           <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-xl">
             <nav className="px-4 py-3 space-y-1">
-              {navItems.map((item) => {
+              {navItems.filter(item => isAuthenticated || item.path !== "/dashboard").map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path ||
                   (item.path !== "/" && location.pathname.startsWith(item.path));
@@ -203,11 +203,10 @@ export default function Layout() {
       {isAuthenticated && <AddVocabDialog />}
 
       {/* Bottom tab bar (mobile) */}
-      {isAuthenticated && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-          <div className="flex items-center justify-around px-2 py-2">
-            {bottomTabItems.map((item) => {
-              const Icon = item.icon;
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="flex items-center justify-around px-2 py-2">
+          {bottomTabItems.filter(item => isAuthenticated || item.path !== "/dashboard").map((item) => {
+            const Icon = item.icon;
               const isActive = location.pathname === item.path ||
                 (item.path !== "/dashboard" && location.pathname.startsWith(item.path));
               return (
@@ -230,7 +229,6 @@ export default function Layout() {
             })}
           </div>
         </nav>
-      )}
 
       {/* Footer */}
       <footer className="border-t border-border/50 bg-card/50 mt-20 mb-16 md:mb-0">

@@ -39,14 +39,17 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
     if (currentQ + 1 >= questions.length) {
       const finalScore = score;
       const percentage = Math.round((finalScore / questions.length) * 100);
-      await base44.entities.QuizResult.create({
-        quiz_type: quizType,
-        source_id: sourceId,
-        source_title: sourceTitle,
-        score: finalScore,
-        total: questions.length,
-        percentage,
-      });
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        await base44.entities.QuizResult.create({
+          quiz_type: quizType,
+          source_id: sourceId,
+          source_title: sourceTitle,
+          score: finalScore,
+          total: questions.length,
+          percentage,
+        });
+      }
       setFinished(true);
       if (onComplete) onComplete(finalScore, questions.length);
     } else {
