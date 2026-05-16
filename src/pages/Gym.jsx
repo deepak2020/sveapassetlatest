@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import GymSessionV2 from "@/components/gym/GymSessionV2";
+import LoginGate from "@/components/shared/LoginGate";
 
 const SFI_LEVELS = ["A", "B", "C", "D"];
 const SENTENCE_COUNTS = [10, 25, 50];
@@ -338,14 +339,16 @@ function GymDashboard({ sentences, srsCards, onStartSession }) {
       </div>
 
       {/* Start Button */}
-      <Button
-        onClick={startSession}
-        size="lg"
-        className="w-full gap-2 text-base"
-        disabled={levelSentences.length === 0}
-      >
-        <Play className="w-5 h-5" /> Starta session ({Math.min(count, levelSentences.length)} meningar)
-      </Button>
+      <LoginGate message="Logga in för att starta träningssalen">
+        <Button
+          onClick={startSession}
+          size="lg"
+          className="w-full gap-2 text-base"
+          disabled={levelSentences.length === 0}
+        >
+          <Play className="w-5 h-5" /> Starta session ({Math.min(count, levelSentences.length)} meningar)
+        </Button>
+      </LoginGate>
     </div>
   );
 }
