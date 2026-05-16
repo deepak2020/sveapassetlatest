@@ -12,6 +12,7 @@ import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
 import GenerateLessonModal from "../components/language/GenerateLessonModal";
 import GenerateContentButton from "../components/language/GenerateContentButton";
+import BulkRegenerateButton from "../components/language/BulkRegenerateButton";
 import GrammarModule from "../components/language/GrammarModule";
 import { motion } from "framer-motion";
 
@@ -110,6 +111,10 @@ export default function LanguageLessons() {
         {/* Lessons Tab */}
         <TabsContent value="lessons">
       {!activeCourse ? (
+        <>
+        {isAdmin && (
+          <BulkRegenerateButton onDone={() => queryClient.invalidateQueries({ queryKey: ["lessons"] })} />
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SFI_COURSES.map((course, i) => {
             const courseLessons = lessons.filter(l => l.sfi_course === course.id);
@@ -167,6 +172,7 @@ export default function LanguageLessons() {
           );
         })}
         </div>
+        </>
       ) : (
         <div className="space-y-8">
           {isAdmin && (
