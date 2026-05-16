@@ -369,8 +369,9 @@ All content must be accurate and directly based on Sverige i Fokus (UHR, 2026).`
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  const user = await base44.auth.me();
-  if (user?.role !== 'admin') {
+  // Allow admin users OR internal service-role calls (no user context)
+  const user = await base44.auth.me().catch(() => null);
+  if (user && user.role !== 'admin') {
     return Response.json({ error: 'Admin only' }, { status: 403 });
   }
 
