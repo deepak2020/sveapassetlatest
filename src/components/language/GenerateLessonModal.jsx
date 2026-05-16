@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { SFI_COURSES } from "@/pages/LanguageLessons";
+import { SFI_COURSES } from "@/lib/course-constants";
 
 export default function GenerateLessonModal({ open, onClose, onCreated }) {
   const [topic, setTopic] = useState("");
