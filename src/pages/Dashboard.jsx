@@ -364,40 +364,66 @@ export default function Dashboard() {
       </Link>
 
       {/* Recent activity */}
-      {quizResults.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h2 className="font-semibold text-foreground">Senaste aktivitet</h2>
-              <p className="text-xs text-muted-foreground/60 italic">Recent activity</p>
-            </div>
-            <button className="text-xs text-primary hover:underline flex items-center gap-1" disabled>
-              (Se Framsteg-fliken)
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h2 className="font-semibold text-foreground">Senaste aktivitet</h2>
+            <p className="text-xs text-muted-foreground/60 italic">Recent activity</p>
+          </div>
+          {quizResults.length > 0 && (
+            <button
+              className="text-xs text-primary hover:underline flex items-center gap-1"
+              onClick={() => document.querySelector('[role="tab"][value="progress"]')?.click()}
+            >
+              Se Framsteg →
             </button>
-          </div>
-          <div className="space-y-2">
-            {quizResults.map(r => (
-              <Card key={r.id} className="border-border/50">
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.quiz_type === "civic" ? "bg-violet-100" : "bg-blue-100"}`}>
-                      {r.quiz_type === "civic" ? <Landmark className="w-4 h-4 text-violet-600" /> : <BookOpen className="w-4 h-4 text-blue-600" />}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{r.source_title || "Quiz"}</p>
-                      <p className="text-xs text-muted-foreground">{r.score}/{r.total} rätt · correct</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm font-semibold text-primary">
-                    <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                    {r.percentage}%
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          )}
         </div>
-      )}
+        {quizResults.length === 0 ? (
+          <Card className="border-border/50 border-dashed">
+            <CardContent className="p-6 text-center">
+              <Trophy className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">Ingen aktivitet ännu</p>
+              <p className="text-xs text-muted-foreground/60 italic mb-3">No activity yet</p>
+              <Link to="/language">
+                <Button size="sm" variant="outline">Börja en lektion</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-2">
+            {quizResults.slice(0, 5).map(r => {
+              const href = r.quiz_type === "civic"
+                ? (r.source_id ? `/civic/${r.source_id}` : "/civic")
+                : (r.source_id ? `/language/${r.source_id}` : "/language");
+              return (
+                <Link key={r.id} to={href}>
+                  <Card className="border-border/50 hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${r.quiz_type === "civic" ? "bg-violet-100" : "bg-blue-100"}`}>
+                          {r.quiz_type === "civic" ? <Landmark className="w-4 h-4 text-violet-600" /> : <BookOpen className="w-4 h-4 text-blue-600" />}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{r.source_title || "Quiz"}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {r.score}/{r.total} rätt
+                            {r.created_date && ` · ${format(new Date(r.created_date), "MMM d")}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm font-semibold text-primary shrink-0">
+                        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                        {r.percentage}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* XP breakdown info */}
       <Card className="border-border/50 bg-muted/30">
