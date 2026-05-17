@@ -47,6 +47,14 @@ export default function LanguageLessons() {
     },
   });
 
+  const { data: completedIds = new Set() } = useQuery({
+    queryKey: ["lesson-completions"],
+    queryFn: async () => {
+      const results = await base44.entities.QuizResult.filter({ quiz_type: "language" }, "-created_date", 500);
+      return new Set(results.filter((r) => r.percentage >= 60).map((r) => r.source_id));
+    },
+  });
+
   const countByCourse = (courseId) => lessons.filter((l) => l.sfi_course === courseId).length;
 
   const filteredLessons = lessons.filter((l) => {
@@ -178,7 +186,7 @@ export default function LanguageLessons() {
               return (
                 <div className="space-y-6">
                   {topicOrder.map((t, idx) => (
-                    <TopicGroup key={t} topic={t} lessons={groups[t]} index={idx} />
+                    <TopicGroup key={t} topic={t} lessons={groups[t]} index={idx} completedIds={completedIds} />
                   ))}
                 </div>
               );
