@@ -12,15 +12,6 @@ import { motion } from "framer-motion";
 
 import { SFI_COURSES } from "@/lib/course-constants";
 
-const SKILL_FILTERS = [
-  { key: "all", emoji: "✨", label: "Alla Färdigheter", label_en: "All Skills" },
-  { key: "vocabulary", emoji: "📝", label: "Ordförråd", label_en: "Vocabulary" },
-  { key: "grammar", emoji: "🔤", label: "Grammatik", label_en: "Grammar" },
-  { key: "reading", emoji: "📖", label: "Läsning", label_en: "Reading" },
-  { key: "writing", emoji: "✍️", label: "Skrivning", label_en: "Writing" },
-  { key: "speaking", emoji: "🗣️", label: "Tal", label_en: "Speaking" },
-];
-
 const exerciseBadge = (lesson) => {
   const parts = [];
   if (lesson.fill_in_blanks?.length) parts.push(`${lesson.fill_in_blanks.length} fyllning`);
@@ -31,7 +22,6 @@ const exerciseBadge = (lesson) => {
 
 export default function LanguageLessons() {
   const [activeCourse, setActiveCourse] = useState(null);
-  const [skillFilter, setSkillFilter] = useState("all");
 
   // Lightweight counts for the course overview cards (one tiny query, not full lessons)
   const { data: courseCounts = {} } = useQuery({
@@ -66,11 +56,6 @@ export default function LanguageLessons() {
 
   const countByCourse = (courseId) => courseCounts[courseId] || 0;
 
-  const filteredLessons = lessons.filter((l) => {
-    const skillMatch = skillFilter === "all" || l.skill === skillFilter || l.category === skillFilter;
-    return skillMatch;
-  });
-
   const activeCourseData = SFI_COURSES.find((c) => c.id === activeCourse);
 
   return (
@@ -80,7 +65,7 @@ export default function LanguageLessons() {
         <div>
           {activeCourse && (
             <button
-              onClick={() => { setActiveCourse(null); setSkillFilter("all"); }}
+              onClick={() => { setActiveCourse(null); }}
               className="text-sm text-muted-foreground hover:text-primary mb-2 flex items-center gap-1 transition-colors h-10 px-3 rounded-lg hover:bg-muted/50"
             >
               ← Tillbaka till alla kurser · <em className="font-normal italic">Back to All Courses</em>
@@ -150,42 +135,23 @@ export default function LanguageLessons() {
         })}
         </div>
       ) : (
-        <div className="space-y-8">
-          {/* Filters — horizontal scroll on mobile, wraps on desktop */}
-          <div className="-mx-4 sm:mx-0 pb-2 border-b border-border/50">
-            <div className="flex sm:flex-wrap gap-2 sm:gap-3 px-4 sm:px-0 overflow-x-auto scrollbar-none snap-x snap-mandatory">
-              {SKILL_FILTERS.map((s) => (
-                <button
-                  key={s.key}
-                  onClick={() => setSkillFilter(s.key)}
-                  className={`shrink-0 snap-start px-4 py-3 md:py-2 rounded-xl text-sm font-semibold transition-all min-h-10 whitespace-nowrap ${
-                    skillFilter === s.key
-                      ? "bg-primary text-white shadow-md"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {s.emoji} {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
+        <div className="space-y-6">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[1, 2, 3].map((n) => <Skeleton key={n} className="h-48 rounded-2xl" />)}
             </div>
-          ) : filteredLessons.length === 0 ? (
+          ) : lessons.length === 0 ? (
             <EmptyState title="Enheter laddas · Units Loading" description="Nya lektioner för denna nivå skapas just nu. · New lessons for this level are being created now." />
           ) : (() => {
               const groups = {};
               const topicOrder = [];
-              for (const l of filteredLessons) {
+              for (const l of lessons) {
                 const t = l.topic || "Övrigt";
                 if (!groups[t]) { groups[t] = []; topicOrder.push(t); }
                 groups[t].push(l);
               }
               return (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {topicOrder.map((t, idx) => (
                     <TopicGroup key={t} topic={t} lessons={groups[t]} index={idx} completedIds={completedIds} />
                   ))}
