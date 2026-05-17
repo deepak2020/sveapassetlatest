@@ -70,16 +70,20 @@
   ],
   "rls": {
     "create": {
-      "created_by": "{{user.email}}"
+      "user_condition": {
+        "role": "admin"
+      }
     },
+    "read": {},
     "update": {
-      "created_by": "{{user.email}}"
+      "user_condition": {
+        "role": "admin"
+      }
     },
     "delete": {
-      "created_by": "{{user.email}}"
-    },
-    "write": {
-      "created_by": "{{user.email}}"
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }
