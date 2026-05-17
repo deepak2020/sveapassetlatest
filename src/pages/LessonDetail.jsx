@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
+import confetti from "canvas-confetti";
 import { ArrowLeft, BookOpen, Pen, Mic, Trophy } from "lucide-react";
+import { useLessonCompletion, setLastLesson } from "@/hooks/useLessonProgress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,9 +25,8 @@ import ReactMarkdown from "react-markdown";
 export default function LessonDetail() {
   const pathParts = window.location.pathname.split("/");
   const lessonId = pathParts[pathParts.length - 1];
-  const [completed, setCompleted] = useState([]);
-
-  const markComplete = (key) => setCompleted(c => c.includes(key) ? c : [...c, key]);
+  const { completed, markComplete } = useLessonCompletion(lessonId);
+  const confettiFired = useRef(false);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", lessonId],
@@ -47,6 +48,11 @@ export default function LessonDetail() {
   const currentIdx = siblings.findIndex((l) => l.id === lessonId);
   const prevLesson = currentIdx > 0 ? siblings[currentIdx - 1] : null;
   const nextLesson = currentIdx >= 0 && currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null;
+
+  // Remember this lesson so Home can offer "Continue learning"
+  useEffect(() => {
+    if (lesson) setLastLesson(lesson);
+  }, [lesson]);
 
   if (isLoading) {
     return (
@@ -86,6 +92,18 @@ export default function LessonDetail() {
     (!hasBlanks || completed.includes("practice")) &&
     (!hasQuiz || completed.includes("quiz"))
   );
+
+  // Fire confetti once when lesson is completed
+  if (allDone && !confettiFired.current && typeof window !== "undefined") {
+    confettiFired.current = true;
+    setTimeout(() => {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+      });
+    }, 200);
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-28">
@@ -132,52 +150,52 @@ export default function LessonDetail() {
 
       {/* Tabs */}
       <Tabs defaultValue={hasVocab ? "learn" : hasBlanks ? "practice" : "content"} className="space-y-6">
-        <TabsList className="flex-wrap h-auto gap-1 w-full">
-          <TabsTrigger value="content" className="gap-1.5 text-sm">
+        <TabsList className="flex w-full max-w-full overflow-x-auto sm:flex-wrap h-auto gap-1 justify-start sm:justify-center scrollbar-none">
+          <TabsTrigger value="content" className="shrink-0 gap-1.5 text-sm">
             <BookOpen className="w-3.5 h-3.5" /> Lesson
           </TabsTrigger>
           {hasVocab && (
-            <TabsTrigger value="learn" className="gap-1.5 text-sm">
+            <TabsTrigger value="learn" className="shrink-0 gap-1.5 text-sm">
               🃏 Learn{completed.includes("learn") ? " ✓" : ` (${lesson.word_pairs.length})`}
             </TabsTrigger>
           )}
           {hasBlanks && (
-            <TabsTrigger value="practice" className="gap-1.5 text-sm">
+            <TabsTrigger value="practice" className="shrink-0 gap-1.5 text-sm">
               🧩 Practice{completed.includes("practice") ? " ✓" : ` (${lesson.fill_in_blanks.length})`}
             </TabsTrigger>
           )}
           {hasMatch && (
-            <TabsTrigger value="match" className="gap-1.5 text-sm">
+            <TabsTrigger value="match" className="shrink-0 gap-1.5 text-sm">
               🔗 Match{completed.includes("match") ? " ✓" : ` (${lesson.match_pairs.length})`}
             </TabsTrigger>
           )}
           {hasWriting && (
-            <TabsTrigger value="writing" className="gap-1.5 text-sm">
+            <TabsTrigger value="writing" className="shrink-0 gap-1.5 text-sm">
               <Pen className="w-3.5 h-3.5" /> Writing
             </TabsTrigger>
           )}
           {hasSpeaking && (
-            <TabsTrigger value="speaking" className="gap-1.5 text-sm">
+            <TabsTrigger value="speaking" className="shrink-0 gap-1.5 text-sm">
               <Mic className="w-3.5 h-3.5" /> Speaking
             </TabsTrigger>
           )}
           {hasListening && (
-            <TabsTrigger value="listening" className="gap-1.5 text-sm">
+            <TabsTrigger value="listening" className="shrink-0 gap-1.5 text-sm">
               👂 Listening{completed.includes("listening") ? " ✓" : ` (${lesson.listening_phrases.length})`}
             </TabsTrigger>
           )}
           {hasTranslate && (
-            <TabsTrigger value="translate" className="gap-1.5 text-sm">
+            <TabsTrigger value="translate" className="shrink-0 gap-1.5 text-sm">
               ✍️ Translate{completed.includes("translate") ? " ✓" : ""}
             </TabsTrigger>
           )}
           {hasReview && (
-            <TabsTrigger value="review" className="gap-1.5 text-sm">
+            <TabsTrigger value="review" className="shrink-0 gap-1.5 text-sm">
               🔁 Review{completed.includes("review") ? " ✓" : ` (${lesson.review_questions.length})`}
             </TabsTrigger>
           )}
           {hasQuiz && (
-            <TabsTrigger value="quiz" className="gap-1.5 text-sm">
+            <TabsTrigger value="quiz" className="shrink-0 gap-1.5 text-sm">
               🎯 Quiz{completed.includes("quiz") ? " ✓" : ` (${lesson.quiz_questions.length})`}
             </TabsTrigger>
           )}
