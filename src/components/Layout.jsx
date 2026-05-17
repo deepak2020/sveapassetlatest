@@ -244,12 +244,18 @@ export default function Layout() {
               </div>
               <span className="font-display font-semibold text-foreground">Sveapasset</span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+              <Link to="/about" className="hover:text-foreground transition-colors">
+                Om oss · <em>About</em>
+              </Link>
+              <span>·</span>
+              <Link to="/contact" className="hover:text-foreground transition-colors">
+                Kontakt · <em>Contact</em>
+              </Link>
+              <span>·</span>
               <Link to="/privacy" className="hover:text-foreground transition-colors">
                 Integritetspolicy · <em>Privacy</em>
               </Link>
-              <span className="hidden sm:inline">·</span>
-              <span className="hidden sm:inline">Lycka till med dina studier!</span>
             </div>
           </div>
         </div>

@@ -43,6 +43,11 @@
     "percentage": {
       "type": "number",
       "description": "Score percentage"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional free-form description or notes about this quiz result"
     }
   },
   "required": [

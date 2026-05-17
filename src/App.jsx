@@ -17,6 +17,8 @@ import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
 import CitizenshipTest from './pages/CitizenshipTest';
 import Privacy from './pages/Privacy';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import ThemeSync from './components/ThemeSync';
 
 const AuthenticatedApp = () => {
@@ -54,6 +56,8 @@ const AuthenticatedApp = () => {
         <Route path="/gym" element={<Gym />} />
         <Route path="/citizenship-test" element={<CitizenshipTest />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
