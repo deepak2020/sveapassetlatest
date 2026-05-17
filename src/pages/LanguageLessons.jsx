@@ -5,10 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
-import GrammarModule from "../components/language/GrammarModule";
 import TopicGroup from "../components/language/TopicGroup";
 import { motion } from "framer-motion";
 
@@ -96,15 +94,6 @@ export default function LanguageLessons() {
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <Tabs defaultValue="lessons" className="w-full mb-8">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="lessons">Lektioner · Lessons</TabsTrigger>
-          <TabsTrigger value="grammar">Grammatik · Grammar</TabsTrigger>
-        </TabsList>
-
-        {/* Lessons Tab */}
-        <TabsContent value="lessons">
       {!activeCourse ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SFI_COURSES.map((course, i) => {
@@ -193,13 +182,6 @@ export default function LanguageLessons() {
             })()}
         </div>
       )}
-      </TabsContent>
-
-      {/* Grammar Tab */}
-      <TabsContent value="grammar">
-      <GrammarModule />
-      </TabsContent>
-      </Tabs>
     </div>
   );
 }
