@@ -9,7 +9,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import LanguageLessons from './pages/LanguageLessons';
 import LessonDetail from './pages/LessonDetail';
-import TopicLesson from './pages/TopicLesson';
+import TopicLessons from './pages/TopicLessons';
 import CivicTopics from './pages/CivicTopics';
 import TopicDetail from './pages/TopicDetail';
 import LanguageTest from './pages/LanguageTest';
@@ -50,7 +50,7 @@ const AuthenticatedApp = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Dashboard />} />
         <Route path="/language" element={<LanguageLessons />} />
-        <Route path="/language/topic/:course/:topic" element={<TopicLesson />} />
+        <Route path="/language/topic/:course/:topic" element={<TopicLessons />} />
         <Route path="/language/:id" element={<LessonDetail />} />
         <Route path="/civic" element={<CivicTopics />} />
         <Route path="/civic/:id" element={<TopicDetail />} />

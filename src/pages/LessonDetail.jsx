@@ -8,15 +8,12 @@ import { useLessonCompletion, setLastLesson } from "@/hooks/useLessonProgress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import LevelBadge from "../components/shared/LevelBadge";
-import CategoryBadge from "../components/shared/CategoryBadge";
 import FlashcardDeck from "../components/lesson/FlashcardDeck";
 import FillInBlanks from "../components/lesson/FillInBlanks";
 import WritingExercise from "../components/lesson/WritingExercise";
 import SpeakingPractice from "../components/lesson/SpeakingPractice";
 import QuizRunner from "../components/shared/QuizRunner";
 import SentenceTranslation from "../components/lesson/SentenceTranslation";
-import LessonProgress from "../components/lesson/LessonProgress";
 import MatchingExercise from "../components/lesson/MatchingExercise";
 import ListeningExercise from "../components/lesson/ListeningExercise";
 import LessonBottomNav from "../components/lesson/LessonBottomNav";
@@ -105,48 +102,54 @@ export default function LessonDetail() {
     }, 200);
   }
 
+  const availableKeys = [
+    hasVocab && "learn",
+    hasBlanks && "practice",
+    hasMatch && "match",
+    hasWriting && "writing",
+    hasSpeaking && "speaking",
+    hasListening && "listening",
+    hasTranslate && "translate",
+    hasReview && "review",
+    hasQuiz && "quiz",
+  ].filter(Boolean);
+  const doneCount = availableKeys.filter((k) => completed.includes(k)).length;
+  const pct = availableKeys.length ? Math.round((doneCount / availableKeys.length) * 100) : 0;
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-28">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-28">
       {/* Back */}
-      <Link to="/language" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
-        <ArrowLeft className="w-4 h-4" /> Back to all lessons
+      <Link to={lesson.topic ? `/language/topic/${lesson.sfi_course}/${encodeURIComponent(lesson.topic)}` : "/language"} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> {lesson.topic ? `Back to ${lesson.topic}` : "Back to lessons"}
       </Link>
 
-      {/* Header */}
+      {/* Header — clean & calm */}
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <LevelBadge level={lesson.level} />
-          <CategoryBadge category={lesson.skill || lesson.category} />
-          {lesson.sfi_course && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-              SFI {lesson.sfi_course}
-            </span>
-          )}
-        </div>
-        <div>
-          <h1 className="font-display text-3xl font-bold text-foreground">{lesson.title}</h1>
-          {lesson.title_sv && (
-            <p className="text-lg text-muted-foreground italic mt-1">{lesson.title_sv}</p>
-          )}
-        </div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          {lesson.sfi_course && `SFI ${lesson.sfi_course}`}
+          {lesson.topic && lesson.sfi_course && " · "}
+          {lesson.topic}
+        </p>
+        <h1 className="font-display text-3xl font-bold text-foreground leading-tight">{lesson.title}</h1>
+        {lesson.title_sv && lesson.title_sv !== lesson.title && (
+          <p className="text-muted-foreground italic mt-1">{lesson.title_sv}</p>
+        )}
       </div>
 
-      {/* Progress tracker */}
-      <LessonProgress
-        completed={completed}
-        scores={scores}
-        availableKeys={[
-          hasVocab && "learn",
-          hasBlanks && "practice",
-          hasMatch && "match",
-          hasWriting && "writing",
-          hasSpeaking && "speaking",
-          hasListening && "listening",
-          hasTranslate && "translate",
-          hasReview && "review",
-          hasQuiz && "quiz",
-        ].filter(Boolean)}
-      />
+      {/* Slim progress bar */}
+      {availableKeys.length > 0 && (
+        <div className="mb-6 flex items-center gap-3">
+          <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all ${allDone ? "bg-green-500" : "bg-primary"}`}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+            {doneCount}/{availableKeys.length} klart
+          </span>
+        </div>
+      )}
 
       {/* Completion banner */}
       {allDone && (
@@ -156,61 +159,63 @@ export default function LessonDetail() {
             <p className="font-semibold text-green-800 text-sm">Lesson complete! 🎉</p>
             <p className="text-xs text-green-600">You've finished all activities for this lesson.</p>
           </div>
-          <Link to="/language" className="ml-auto">
-            <Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">Next lesson</Button>
-          </Link>
+          {nextLesson && (
+            <Link to={`/language/${nextLesson.id}`} className="ml-auto">
+              <Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">Next lesson</Button>
+            </Link>
+          )}
         </div>
       )}
 
       {/* Tabs */}
       <Tabs defaultValue={hasVocab ? "learn" : hasBlanks ? "practice" : "content"} className="space-y-6">
-        <TabsList className="flex w-full max-w-full overflow-x-auto sm:flex-wrap h-auto gap-1 justify-start sm:justify-center scrollbar-none">
-          <TabsTrigger value="content" className="shrink-0 gap-1.5 text-sm">
+        <TabsList className="flex w-full max-w-full overflow-x-auto sm:flex-wrap h-auto gap-1 justify-start sm:justify-center scrollbar-none bg-muted/50 p-1 rounded-xl">
+          <TabsTrigger value="content" className="shrink-0 gap-1.5 text-sm data-[state=active]:bg-background">
             <BookOpen className="w-3.5 h-3.5" /> Lesson
           </TabsTrigger>
           {hasVocab && (
-            <TabsTrigger value="learn" className="shrink-0 gap-1.5 text-sm">
-              🃏 Learn{completed.includes("learn") ? " ✓" : ` (${lesson.word_pairs.length})`}
+            <TabsTrigger value="learn" className="shrink-0 text-sm data-[state=active]:bg-background">
+              🃏 Learn {completed.includes("learn") && "✓"}
             </TabsTrigger>
           )}
           {hasBlanks && (
-            <TabsTrigger value="practice" className="shrink-0 gap-1.5 text-sm">
-              🧩 Practice{completed.includes("practice") ? " ✓" : ` (${lesson.fill_in_blanks.length})`}
+            <TabsTrigger value="practice" className="shrink-0 text-sm data-[state=active]:bg-background">
+              🧩 Practice {completed.includes("practice") && "✓"}
             </TabsTrigger>
           )}
           {hasMatch && (
-            <TabsTrigger value="match" className="shrink-0 gap-1.5 text-sm">
-              🔗 Match{completed.includes("match") ? " ✓" : ` (${lesson.match_pairs.length})`}
+            <TabsTrigger value="match" className="shrink-0 text-sm data-[state=active]:bg-background">
+              🔗 Match {completed.includes("match") && "✓"}
             </TabsTrigger>
           )}
           {hasWriting && (
-            <TabsTrigger value="writing" className="shrink-0 gap-1.5 text-sm">
+            <TabsTrigger value="writing" className="shrink-0 gap-1.5 text-sm data-[state=active]:bg-background">
               <Pen className="w-3.5 h-3.5" /> Writing
             </TabsTrigger>
           )}
           {hasSpeaking && (
-            <TabsTrigger value="speaking" className="shrink-0 gap-1.5 text-sm">
+            <TabsTrigger value="speaking" className="shrink-0 gap-1.5 text-sm data-[state=active]:bg-background">
               <Mic className="w-3.5 h-3.5" /> Speaking
             </TabsTrigger>
           )}
           {hasListening && (
-            <TabsTrigger value="listening" className="shrink-0 gap-1.5 text-sm">
-              👂 Listening{completed.includes("listening") ? " ✓" : ` (${lesson.listening_phrases.length})`}
+            <TabsTrigger value="listening" className="shrink-0 text-sm data-[state=active]:bg-background">
+              👂 Listening {completed.includes("listening") && "✓"}
             </TabsTrigger>
           )}
           {hasTranslate && (
-            <TabsTrigger value="translate" className="shrink-0 gap-1.5 text-sm">
-              ✍️ Translate{completed.includes("translate") ? " ✓" : ""}
+            <TabsTrigger value="translate" className="shrink-0 text-sm data-[state=active]:bg-background">
+              ✍️ Translate {completed.includes("translate") && "✓"}
             </TabsTrigger>
           )}
           {hasReview && (
-            <TabsTrigger value="review" className="shrink-0 gap-1.5 text-sm">
-              🔁 Review{completed.includes("review") ? " ✓" : ` (${lesson.review_questions.length})`}
+            <TabsTrigger value="review" className="shrink-0 text-sm data-[state=active]:bg-background">
+              🔁 Review {completed.includes("review") && "✓"}
             </TabsTrigger>
           )}
           {hasQuiz && (
-            <TabsTrigger value="quiz" className="shrink-0 gap-1.5 text-sm">
-              🎯 Quiz{completed.includes("quiz") ? " ✓" : ` (${lesson.quiz_questions.length})`}
+            <TabsTrigger value="quiz" className="shrink-0 text-sm data-[state=active]:bg-background">
+              🎯 Quiz {completed.includes("quiz") && "✓"}
             </TabsTrigger>
           )}
         </TabsList>
