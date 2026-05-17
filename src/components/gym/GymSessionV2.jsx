@@ -240,7 +240,7 @@ export default function GymSessionV2({ sentences, mode = "listen", level = "inte
                     onKeyDown={e => { if (e.key === "Enter" && !answered) handleAnswer(typed); }}
                     disabled={answered}
                     placeholder="Type what you hear..."
-                    className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                    className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm text-foreground bg-transparent focus:outline-none focus:border-primary transition-colors"
                   />
                   <div className="flex gap-2 text-sm text-muted-foreground">
                     {["å", "ä", "ö"].map(c => (
@@ -265,7 +265,7 @@ export default function GymSessionV2({ sentences, mode = "listen", level = "inte
                     onChange={e => setTyped(e.target.value)}
                     disabled={answered}
                     placeholder="Write the complete Swedish sentence..."
-                    className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors min-h-24 resize-none"
+                    className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm text-foreground bg-transparent focus:outline-none focus:border-primary transition-colors min-h-24 resize-none"
                   />
                   <div className="flex gap-2 text-sm text-muted-foreground">
                     {["å", "ä", "ö"].map(c => (
@@ -286,7 +286,7 @@ export default function GymSessionV2({ sentences, mode = "listen", level = "inte
                         onKeyDown={e => { if (e.key === "Enter" && !answered) handleAnswer(typed); }}
                         disabled={answered}
                         placeholder={`Type the missing word${blanksCount > 1 ? "s" : ""}...`}
-                        className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                        className="w-full border-2 border-border/50 rounded-xl px-4 py-3 text-sm text-foreground bg-transparent focus:outline-none focus:border-primary transition-colors"
                       />
                       <div className="flex gap-2 text-sm text-muted-foreground">
                         {["å", "ä", "ö"].map(c => (
