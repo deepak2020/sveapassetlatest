@@ -12,7 +12,7 @@ const playAudio = async (text, lang = "sv-SE", speed = 1) => {
   synth.speak(utterance);
 };
 
-export default function ListeningExercise({ phrases }) {
+export default function ListeningExercise({ phrases, onComplete }) {
   const [current, setCurrent] = useState(0);
   const [typed, setTyped] = useState("");
   const [selected, setSelected] = useState(null);
@@ -74,6 +74,7 @@ export default function ListeningExercise({ phrases }) {
   const handleNext = () => {
     if (current + 1 >= phrases.length) {
       setFinished(true);
+      onComplete?.(score, phrases.length);
     } else {
       setCurrent(c => c + 1);
       setTyped("");

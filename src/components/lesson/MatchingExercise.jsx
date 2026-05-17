@@ -37,7 +37,7 @@ export default function MatchingExercise({ pairs, onComplete }) {
       setSelected({ left: null, right: null });
       if (newMatched.length === pairs.length) {
         setDone(true);
-        onComplete?.();
+        onComplete?.(pairs.length, pairs.length);
       }
     } else {
       setWrong(true);

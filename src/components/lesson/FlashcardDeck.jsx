@@ -37,20 +37,22 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
   const handleKnow = async () => {
     setKnown(k => [...k, card]);
     await awardXP(base44, XP_REWARDS.flashcard_good);
-    advance();
+    advance(true);
   };
 
   const handleLearning = async () => {
     setLearning(l => [...l, card]);
     await awardXP(base44, XP_REWARDS.flashcard_hard);
-    advance();
+    advance(false);
   };
 
-  const advance = () => {
+  const advance = (knewThisCard) => {
     setFlipped(false);
     if (index + 1 >= total) {
       setFinished(true);
-      onComplete?.();
+      // Final known count = known so far + 1 if user just marked the last card as known
+      const finalKnown = known.length + (knewThisCard ? 1 : 0);
+      onComplete?.(finalKnown, total);
     } else {
       setIndex(i => i + 1);
     }

@@ -32,7 +32,7 @@ export default function FillInBlanks({ exercises, onComplete }) {
   const handleNext = () => {
     if (current + 1 >= exercises.length) {
       setFinished(true);
-      onComplete?.();
+      onComplete?.(score, exercises.length);
     } else {
       setCurrent(c => c + 1);
       setSelected(null);

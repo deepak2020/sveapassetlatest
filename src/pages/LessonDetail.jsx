@@ -25,7 +25,7 @@ import ReactMarkdown from "react-markdown";
 export default function LessonDetail() {
   const pathParts = window.location.pathname.split("/");
   const lessonId = pathParts[pathParts.length - 1];
-  const { completed, markComplete } = useLessonCompletion(lessonId);
+  const { completed, scores, markComplete } = useLessonCompletion(lessonId);
   const confettiFired = useRef(false);
 
   const { data: lesson, isLoading } = useQuery({
@@ -134,6 +134,7 @@ export default function LessonDetail() {
       {/* Progress tracker */}
       <LessonProgress
         completed={completed}
+        scores={scores}
         availableKeys={[
           hasVocab && "learn",
           hasBlanks && "practice",
@@ -238,7 +239,7 @@ export default function LessonDetail() {
             </div>
             <FlashcardDeck
               wordPairs={lesson.word_pairs}
-              onComplete={() => markComplete("learn")}
+              onComplete={(score, total) => markComplete("learn", { score, total })}
               lessonId={lesson.id}
               lessonTitle={lesson.title}
             />
@@ -254,7 +255,7 @@ export default function LessonDetail() {
             </div>
             <FillInBlanks
               exercises={lesson.fill_in_blanks}
-              onComplete={() => markComplete("practice")}
+              onComplete={(score, total) => markComplete("practice", { score, total })}
             />
           </TabsContent>
         )}
@@ -268,7 +269,7 @@ export default function LessonDetail() {
             </div>
             <MatchingExercise
               pairs={lesson.match_pairs}
-              onComplete={() => markComplete("match")}
+              onComplete={(score, total) => markComplete("match", { score, total })}
             />
           </TabsContent>
         )}
@@ -304,6 +305,7 @@ export default function LessonDetail() {
             </div>
             <ListeningExercise
               phrases={lesson.listening_phrases}
+              onComplete={(score, total) => markComplete("listening", { score, total })}
             />
           </TabsContent>
         )}
@@ -317,7 +319,7 @@ export default function LessonDetail() {
             </div>
             <SentenceTranslation
               wordPairs={lesson.word_pairs}
-              onComplete={() => markComplete("translate")}
+              onComplete={(score, total) => markComplete("translate", { score, total })}
             />
           </TabsContent>
         )}
@@ -334,7 +336,7 @@ export default function LessonDetail() {
               quizType="language"
               sourceId={lesson.id}
               sourceTitle={`${lesson.title} — Review`}
-              onComplete={() => markComplete("review")}
+              onComplete={(score, total) => markComplete("review", { score, total })}
             />
           </TabsContent>
         )}
@@ -351,7 +353,7 @@ export default function LessonDetail() {
               quizType="language"
               sourceId={lesson.id}
               sourceTitle={lesson.title}
-              onComplete={() => markComplete("quiz")}
+              onComplete={(score, total) => markComplete("quiz", { score, total })}
             />
           </TabsContent>
         )}

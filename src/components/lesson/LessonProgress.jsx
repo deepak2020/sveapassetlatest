@@ -12,8 +12,13 @@ const ALL_STEPS = [
   { key: "quiz", label: "Quiz", emoji: "🎯" },
 ];
 
-export default function LessonProgress({ completed = [], availableKeys = null }) {
-  // If availableKeys is provided, only show those steps. Otherwise show all.
+function scoreColor(pct) {
+  if (pct >= 80) return "text-emerald-700 bg-emerald-100";
+  if (pct >= 60) return "text-amber-700 bg-amber-100";
+  return "text-red-700 bg-red-100";
+}
+
+export default function LessonProgress({ completed = [], scores = {}, availableKeys = null }) {
   const steps = availableKeys
     ? ALL_STEPS.filter((s) => availableKeys.includes(s.key))
     : ALL_STEPS;
@@ -35,10 +40,11 @@ export default function LessonProgress({ completed = [], availableKeys = null })
       <div className="flex items-center gap-2 flex-wrap">
         {steps.map((step) => {
           const done = completed.includes(step.key);
+          const result = scores[step.key];
           return (
             <div
               key={step.key}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+              className={`flex items-center gap-1.5 pl-2.5 pr-2 py-1 rounded-full text-xs font-medium border transition-colors ${
                 done
                   ? "bg-green-50 border-green-200 text-green-700"
                   : "bg-muted border-border/40 text-muted-foreground"
@@ -52,6 +58,14 @@ export default function LessonProgress({ completed = [], availableKeys = null })
               <span>
                 {step.emoji} {step.label}
               </span>
+              {done && result && (
+                <span
+                  className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${scoreColor(result.percentage)}`}
+                  title={`Last: ${result.score}/${result.total}`}
+                >
+                  {result.score}/{result.total} · {result.percentage}%
+                </span>
+              )}
             </div>
           );
         })}

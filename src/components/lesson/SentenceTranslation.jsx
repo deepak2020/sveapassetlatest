@@ -45,7 +45,8 @@ export default function SentenceTranslation({ wordPairs, onComplete }) {
   const handleNext = () => {
     if (current + 1 >= exercises.length) {
       setFinished(true);
-      onComplete?.();
+      const finalScore = isCorrect ? score : score; // score is already updated for current question via handleSubmit
+      onComplete?.(finalScore, exercises.length);
     } else {
       setCurrent(c => c + 1);
       setInput("");
