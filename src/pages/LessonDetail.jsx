@@ -132,7 +132,20 @@ export default function LessonDetail() {
       </div>
 
       {/* Progress tracker */}
-      <LessonProgress completed={completed} />
+      <LessonProgress
+        completed={completed}
+        availableKeys={[
+          hasVocab && "learn",
+          hasBlanks && "practice",
+          hasMatch && "match",
+          hasWriting && "writing",
+          hasSpeaking && "speaking",
+          hasListening && "listening",
+          hasTranslate && "translate",
+          hasReview && "review",
+          hasQuiz && "quiz",
+        ].filter(Boolean)}
+      />
 
       {/* Completion banner */}
       {allDone && (
