@@ -3,8 +3,8 @@ import { ChevronLeft, ChevronRight, List } from "lucide-react";
 
 export default function LessonBottomNav({ prevLesson, nextLesson }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/60 md:hidden">
-      <div className="max-w-4xl mx-auto px-3 py-2 flex items-center gap-2">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/60">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
         {prevLesson ? (
           <Link
             to={`/language/${prevLesson.id}`}
