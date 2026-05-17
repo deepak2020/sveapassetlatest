@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import LevelBadge from "../components/shared/LevelBadge";
 import EmptyState from "../components/shared/EmptyState";
-import TopicGroup from "../components/language/TopicGroup";
+import TopicCard from "../components/language/TopicCard";
 import { motion } from "framer-motion";
 
 import { SFI_COURSES } from "@/lib/course-constants";
@@ -151,9 +151,9 @@ export default function LanguageLessons() {
                 groups[t].push(l);
               }
               return (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {topicOrder.map((t, idx) => (
-                    <TopicGroup key={t} topic={t} lessons={groups[t]} index={idx} completedIds={completedIds} />
+                    <TopicCard key={t} topic={t} lessons={groups[t]} course={activeCourse} index={idx} completedIds={completedIds} />
                   ))}
                 </div>
               );
