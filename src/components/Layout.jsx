@@ -244,9 +244,13 @@ export default function Layout() {
               </div>
               <span className="font-display font-semibold text-foreground">Sveapasset</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Lycka till med dina studier! · <em>Good luck with your studies!</em>
-            </p>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <Link to="/privacy" className="hover:text-foreground transition-colors">
+                Integritetspolicy · <em>Privacy</em>
+              </Link>
+              <span className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline">Lycka till med dina studier!</span>
+            </div>
           </div>
         </div>
       </footer>
