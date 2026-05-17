@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import AddVocabDialog from "@/components/shared/AddVocabDialog";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navItems = [
@@ -107,6 +108,7 @@ export default function Layout() {
 
             {/* Auth buttons (desktop) */}
             <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
               {isAuthenticated ? (
                 <>
                   {streak > 0 && (
@@ -130,15 +132,17 @@ export default function Layout() {
               )}
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile theme + menu button */}
+            <div className="md:hidden flex items-center gap-1">
+              <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
+            </div>
           </div>
         </div>
 

@@ -15,6 +15,7 @@ import LanguageTest from './pages/LanguageTest';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Gym from './pages/Gym';
+import CitizenshipTest from './pages/CitizenshipTest';
 import ThemeSync from './components/ThemeSync';
 
 const AuthenticatedApp = () => {
@@ -50,6 +51,7 @@ const AuthenticatedApp = () => {
         <Route path="/civic/:id" element={<TopicDetail />} />
         <Route path="/language-test" element={<LanguageTest />} />
         <Route path="/gym" element={<Gym />} />
+        <Route path="/citizenship-test" element={<CitizenshipTest />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Lightbulb } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { awardXP, XP_REWARDS } from "@/lib/xp";
+import SpeakButton from "@/components/shared/SpeakButton";
 
 export default function QuizRunner({ questions, quizType, sourceId, sourceTitle, onComplete }) {
   const [currentQ, setCurrentQ] = useState(0);
@@ -120,7 +121,10 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
             <div className="mb-5">
               {question.question_sv && (
                 <>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">{question.question_sv}</h3>
+                  <div className="flex items-start gap-2 mb-1">
+                    <h3 className="text-lg font-semibold text-foreground flex-1">{question.question_sv}</h3>
+                    <SpeakButton text={question.question_sv} lang="sv-SE" />
+                  </div>
                   {question.question_en && (
                     <p className="text-sm text-muted-foreground italic">{question.question_en}</p>
                   )}
@@ -173,17 +177,51 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
         </AnimatePresence>
 
         {answered && (
-           <motion.div
-             initial={{ opacity: 0, y: 10 }}
-             animate={{ opacity: 1, y: 0 }}
-             className="flex justify-end pt-2"
-           >
-             <Button onClick={handleNext} className="gap-2 h-11 md:h-10">
-               {currentQ + 1 >= questions.length ? "See Results" : "Next Question"}
-               <ArrowRight className="w-4 h-4" />
-             </Button>
-           </motion.div>
-         )}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-3 pt-2"
+          >
+            {/* Explanation panel */}
+            <div className={`p-4 rounded-xl border-l-4 ${
+              isCorrect
+                ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500"
+                : "bg-amber-50 dark:bg-amber-950/20 border-amber-500"
+            }`}>
+              <div className="flex items-start gap-2">
+                <Lightbulb className={`w-5 h-5 mt-0.5 shrink-0 ${
+                  isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+                }`} />
+                <div className="flex-1 text-sm">
+                  {isCorrect ? (
+                    <p className="font-medium text-foreground">
+                      ✓ Korrekt! · <em className="font-normal">Correct!</em>
+                    </p>
+                  ) : (
+                    <>
+                      <p className="font-medium text-foreground mb-1">
+                        Rätt svar · <em className="font-normal">Correct answer:</em>
+                      </p>
+                      <p className="text-foreground font-semibold">
+                        {question.options[question.correct_index]}
+                      </p>
+                    </>
+                  )}
+                  {question.explanation && (
+                    <p className="text-muted-foreground mt-2 leading-relaxed">{question.explanation}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button onClick={handleNext} className="gap-2 h-11 md:h-10">
+                {currentQ + 1 >= questions.length ? "See Results" : "Next Question"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </CardContent>
     </Card>
   );

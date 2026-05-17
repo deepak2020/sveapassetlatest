@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Landmark, ArrowRight, BookOpen } from "lucide-react";
+import { Landmark, ArrowRight, BookOpen, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -92,6 +92,30 @@ export default function CivicTopics() {
         <p className="text-muted-foreground/60 text-sm italic mt-0.5">
           Based on <span className="font-medium not-italic">Sverige i Fokus</span> — the official UHR citizenship test study material
         </p>
+
+        {/* Mock exam CTA */}
+        <Link
+          to="/citizenship-test"
+          className="mt-6 block rounded-2xl border border-secondary/30 bg-gradient-to-r from-secondary/20 to-secondary/5 p-5 sm:p-6 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0">
+              <Trophy className="w-6 h-6 text-secondary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wider text-secondary-foreground mb-0.5">
+                Provläge · <span className="italic font-normal">Test mode</span>
+              </p>
+              <h3 className="font-display text-lg font-bold text-foreground">
+                Gör ett medborgarskapsprov
+              </h3>
+              <p className="text-sm text-muted-foreground italic">
+                25 questions · 30 min · simulates the official exam
+              </p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-secondary-foreground group-hover:translate-x-1 transition-transform shrink-0" />
+          </div>
+        </Link>
       </div>
 
       {/* Filters */}

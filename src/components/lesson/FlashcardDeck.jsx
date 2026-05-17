@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { awardXP, XP_REWARDS } from "@/lib/xp";
+import { useSpeech } from "@/hooks/useSpeech";
 import SpeakButton from "@/components/shared/SpeakButton";
 import AddToVocabButton from "@/components/shared/AddToVocabButton";
 
@@ -14,6 +15,17 @@ export default function FlashcardDeck({ wordPairs, onComplete, lessonId, lessonT
   const [learning, setLearning] = useState([]);
   const [finished, setFinished] = useState(false);
   const touchStartX = useRef(null);
+  const { speak } = useSpeech();
+
+  // Auto-play Swedish pronunciation when a new card appears or when flipping back to Swedish side
+  useEffect(() => {
+    const w = wordPairs?.[index];
+    if (!w || finished) return;
+    if (!flipped && w.swedish) {
+      const t = setTimeout(() => speak(w.swedish, "sv-SE"), 250);
+      return () => clearTimeout(t);
+    }
+  }, [index, flipped, finished]);
 
   if (!wordPairs || wordPairs.length === 0) {
     return <p className="text-muted-foreground text-sm">No vocabulary available for this lesson.</p>;

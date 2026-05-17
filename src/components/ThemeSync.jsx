@@ -1,20 +1,41 @@
 import { useEffect } from "react";
 
+const STORAGE_KEY = "svenska:theme";
+
+function applyTheme(theme) {
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", isDark);
+}
+
+export function getStoredTheme() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) || "system";
+  } catch {
+    return "system";
+  }
+}
+
+export function setStoredTheme(theme) {
+  try {
+    localStorage.setItem(STORAGE_KEY, theme);
+  } catch {}
+  applyTheme(theme);
+  window.dispatchEvent(new CustomEvent("themechange", { detail: theme }));
+}
+
 export default function ThemeSync() {
   useEffect(() => {
+    const theme = getStoredTheme();
+    applyTheme(theme);
+
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const apply = (e) => {
-      if (e.matches) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    const onSystemChange = () => {
+      if (getStoredTheme() === "system") applyTheme("system");
     };
-
-    apply(mq);
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    mq.addEventListener("change", onSystemChange);
+    return () => mq.removeEventListener("change", onSystemChange);
   }, []);
 
   return null;
