@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Users, Brain, Zap, ArrowRight, Lightbulb, TrendingUp } from "lucide-react";
+import { BookOpen, Users, Zap, ArrowRight, Lightbulb, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -43,16 +43,6 @@ const features = [
     gradient: "from-violet-500/10 to-violet-600/5",
     border: "hover:border-violet-300/60",
     iconColor: "bg-violet-100 text-violet-600",
-  },
-  {
-    icon: Brain,
-    emoji: "✨",
-    title: "AI-Powered Learning",
-    description: "Generate new lessons and cultural topics personalized to your level and goals — unlocking unlimited learning possibilities.",
-    link: "/language",
-    gradient: "from-primary/10 to-primary/5",
-    border: "hover:border-primary/30",
-    iconColor: "bg-primary/10 text-primary",
   },
   {
     icon: TrendingUp,
