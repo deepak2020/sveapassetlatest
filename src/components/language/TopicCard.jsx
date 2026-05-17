@@ -1,13 +1,55 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, BookOpen } from "lucide-react";
 
-export default function TopicCard({ topic, lessons, course, index, completedIds = new Set() }) {
-  const doneCount = lessons.filter((l) => completedIds.has(l.id)).length;
-  const allDone = doneCount === lessons.length && lessons.length > 0;
+// Mirror of the activity-availability logic in TopicLesson, on merged lessons.
+function getAvailableKeys(lessons) {
+  const has = (key) => lessons.some((l) => (l[key]?.length || 0) > 0);
+  const hasTranslate = lessons.some((l) =>
+    (l.word_pairs || []).some((wp) => wp.example_en && wp.example_sv)
+  );
+  return [
+    has("word_pairs") && "learn",
+    has("fill_in_blanks") && "practice",
+    has("match_pairs") && "match",
+    has("writing_prompts") && "writing",
+    has("speaking_phrases") && "speaking",
+    has("listening_phrases") && "listening",
+    hasTranslate && "translate",
+    has("review_questions") && "review",
+    has("quiz_questions") && "quiz",
+  ].filter(Boolean);
+}
+
+function readCompleted(topicKey) {
+  try {
+    const raw = localStorage.getItem(`svenska:lesson_progress:${topicKey}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export default function TopicCard({ topic, lessons, course, index }) {
+  const topicKey = `topic:${course}:${topic}`;
+  const [completed, setCompleted] = useState([]);
+
+  useEffect(() => {
+    setCompleted(readCompleted(topicKey));
+    // Re-read when user returns to the page (e.g. after finishing activities)
+    const onFocus = () => setCompleted(readCompleted(topicKey));
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [topicKey]);
+
+  const availableKeys = getAvailableKeys(lessons);
+  const doneCount = availableKeys.filter((k) => completed.includes(k)).length;
+  const total = availableKeys.length;
+  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+  const allDone = total > 0 && doneCount === total;
   const topicSv = lessons[0]?.title_sv?.split(" - ")[0] || topic;
 
-  // Aggregate activity counts so the card shows what's inside
   const totals = lessons.reduce(
     (acc, l) => {
       acc.cards += l.word_pairs?.length || 0;
@@ -46,9 +88,24 @@ export default function TopicCard({ topic, lessons, course, index, completedIds 
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
               allDone ? "bg-green-100 text-green-700" : doneCount > 0 ? "bg-amber-100 text-amber-700" : "bg-muted text-muted-foreground"
             }`}>
-              {doneCount}/{lessons.length}
+              {doneCount}/{total}
             </span>
           </div>
+
+          {/* Activity progress bar */}
+          {total > 0 && (
+            <div className="space-y-1">
+              <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all ${allDone ? "bg-green-500" : "bg-primary"}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                {pct}% aktiviteter klara · <span className="italic">activities complete</span>
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-1.5 text-[11px] font-medium">
             {totals.cards > 0 && <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">🃏 {totals.cards}</span>}
