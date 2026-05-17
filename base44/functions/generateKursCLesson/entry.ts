@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     const raw = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: schema,
-      ...(model ? { model } : {}),
+      model: model || 'claude_sonnet_4_6',
     });
 
     // Some models return the data wrapped as { type, properties: {...} }
