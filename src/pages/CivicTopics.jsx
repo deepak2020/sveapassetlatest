@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Landmark, ArrowRight, BookOpen, Trophy } from "lucide-react";
+import { Landmark, ArrowRight, BookOpen, Trophy, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,6 +43,17 @@ export default function CivicTopics() {
   const { data: topics = [], isLoading } = useQuery({
     queryKey: ["civicTopics"],
     queryFn: () => base44.entities.CivicTopic.list("-created_date", 200),
+  });
+
+  // Track which topics the user has completed (passed quiz with ≥60%)
+  const { data: completedIds = new Set() } = useQuery({
+    queryKey: ["civic-completions"],
+    queryFn: async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) return new Set();
+      const results = await base44.entities.QuizResult.filter({ quiz_type: "civic" }, "-created_date", 500);
+      return new Set(results.filter((r) => r.percentage >= 60).map((r) => r.source_id));
+    },
   });
 
   // Deduplicate by title, keeping first occurrence
@@ -182,7 +193,7 @@ export default function CivicTopics() {
                 {groupedByChapter[chapter]
                   .sort((a, b) => (a.order || 0) - (b.order || 0))
                   .map((topic, index) => (
-                    <TopicCard key={topic.id} topic={topic} index={index} />
+                    <TopicCard key={topic.id} topic={topic} index={index} done={completedIds.has(topic.id)} />
                   ))}
               </div>
             </motion.div>
@@ -194,7 +205,7 @@ export default function CivicTopics() {
           {filtered
             .sort((a, b) => (a.order || 0) - (b.order || 0))
             .map((topic, index) => (
-              <TopicCard key={topic.id} topic={topic} index={index} />
+              <TopicCard key={topic.id} topic={topic} index={index} done={completedIds.has(topic.id)} />
             ))}
         </div>
       )}
@@ -202,7 +213,7 @@ export default function CivicTopics() {
   );
 }
 
-function TopicCard({ topic, index }) {
+function TopicCard({ topic, index, done = false }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -210,11 +221,14 @@ function TopicCard({ topic, index }) {
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <Link to={`/civic/${topic.id}`}>
-        <Card className="group h-full border-border/50 hover:border-secondary/40 hover:shadow-lg hover:shadow-secondary/5 transition-all duration-300">
+        <Card className={`group h-full border-border/50 hover:border-secondary/40 hover:shadow-lg hover:shadow-secondary/5 transition-all duration-300 ${done ? "ring-2 ring-green-500/40 bg-green-50/30" : ""}`}>
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <span className="text-3xl">{categoryIcons[topic.category] || "📋"}</span>
-              <CategoryBadge category={topic.category} />
+              <div className="flex items-center gap-2">
+                {done && <CheckCircle2 className="w-5 h-5 text-green-600" />}
+                <CategoryBadge category={topic.category} />
+              </div>
             </div>
             <h3 className="font-semibold text-foreground text-lg mb-1 group-hover:text-primary transition-colors">
               {topic.title}
