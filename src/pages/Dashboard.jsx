@@ -23,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import EmptyState from "../components/shared/EmptyState";
+import SkillBreakdown from "../components/dashboard/SkillBreakdown";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -508,6 +509,8 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
               )}
+
+              <SkillBreakdown languageResults={languageResults} />
 
               {sfiBreakdown.length > 0 && (
                 <Card className="border-border/50">
