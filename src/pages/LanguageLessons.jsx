@@ -33,16 +33,27 @@ export default function LanguageLessons() {
   const [activeCourse, setActiveCourse] = useState(null);
   const [skillFilter, setSkillFilter] = useState("all");
 
-  const { data: lessons = [], isLoading } = useQuery({
-    queryKey: ["lessons"],
+  // Lightweight counts for the course overview cards (one tiny query, not full lessons)
+  const { data: courseCounts = {} } = useQuery({
+    queryKey: ["lesson-course-counts"],
     queryFn: async () => {
-      const all = [];
+      const counts = {};
       for (const course of ["A", "B", "C", "D"]) {
         const batch = await base44.entities.Lesson.filter({ sfi_course: course }, "order", 500);
-        all.push(...batch);
+        counts[course] = batch.length;
       }
-      return all;
+      return counts;
     },
+  });
+
+  // Only load lessons for the active course (lazy)
+  const { data: lessons = [], isLoading } = useQuery({
+    queryKey: ["lessons", activeCourse],
+    queryFn: async () =>
+      activeCourse
+        ? base44.entities.Lesson.filter({ sfi_course: activeCourse }, "order", 500)
+        : [],
+    enabled: !!activeCourse,
   });
 
   const { data: completedIds = new Set() } = useQuery({
@@ -53,12 +64,11 @@ export default function LanguageLessons() {
     },
   });
 
-  const countByCourse = (courseId) => lessons.filter((l) => l.sfi_course === courseId).length;
+  const countByCourse = (courseId) => courseCounts[courseId] || 0;
 
   const filteredLessons = lessons.filter((l) => {
-    const courseMatch = !activeCourse || l.sfi_course === activeCourse;
     const skillMatch = skillFilter === "all" || l.skill === skillFilter || l.category === skillFilter;
-    return courseMatch && skillMatch;
+    return skillMatch;
   });
 
   const activeCourseData = SFI_COURSES.find((c) => c.id === activeCourse);
@@ -141,21 +151,23 @@ export default function LanguageLessons() {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 pb-2 border-b border-border/50">
-            {SKILL_FILTERS.map((s) => (
-              <button
-                key={s.key}
-                onClick={() => setSkillFilter(s.key)}
-                className={`px-4 py-3 md:py-2 rounded-xl text-sm font-semibold transition-all min-h-10 ${
-                  skillFilter === s.key 
-                  ? "bg-primary text-white shadow-md" 
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                }`}
-              >
-                {s.emoji} {s.label}
-              </button>
-            ))}
+          {/* Filters — horizontal scroll on mobile, wraps on desktop */}
+          <div className="-mx-4 sm:mx-0 pb-2 border-b border-border/50">
+            <div className="flex sm:flex-wrap gap-2 sm:gap-3 px-4 sm:px-0 overflow-x-auto scrollbar-none snap-x snap-mandatory">
+              {SKILL_FILTERS.map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => setSkillFilter(s.key)}
+                  className={`shrink-0 snap-start px-4 py-3 md:py-2 rounded-xl text-sm font-semibold transition-all min-h-10 whitespace-nowrap ${
+                    skillFilter === s.key
+                      ? "bg-primary text-white shadow-md"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {s.emoji} {s.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {isLoading ? (
