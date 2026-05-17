@@ -94,8 +94,8 @@ export default function FillInBlanks({ exercises, onComplete }) {
                 {parts[0]}
                 <span className={`inline-block px-3 py-0.5 rounded-lg border-2 mx-1 font-bold transition-colors ${
                   !answered ? "border-dashed border-primary/40 text-primary/40 min-w-[80px] text-center" :
-                  isCorrect ? "border-green-400 bg-green-50 text-green-700" :
-                  "border-red-400 bg-red-50 text-red-700 line-through"
+                  isCorrect ? "border-green-500 bg-green-50 text-green-800" :
+                  "border-red-500 bg-red-100 text-red-800 line-through"
                 }`}>
                   {answered ? selected : "___"}
                 </span>
@@ -114,8 +114,8 @@ export default function FillInBlanks({ exercises, onComplete }) {
               {ex.options.map((opt) => {
                 let style = "border-border/50 hover:border-primary/40 hover:bg-muted/50";
                 if (answered) {
-                  if (opt === ex.answer) style = "border-green-400 bg-green-50";
-                  else if (opt === selected) style = "border-red-400 bg-red-50 opacity-80";
+                  if (opt === ex.answer) style = "border-green-500 bg-green-50 text-green-900";
+                  else if (opt === selected) style = "border-red-500 bg-red-100 text-red-900";
                   else style = "border-border/30 opacity-40";
                 }
                 return (
