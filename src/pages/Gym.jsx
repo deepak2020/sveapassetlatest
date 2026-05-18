@@ -29,14 +29,15 @@ export default function Gym() {
     },
   });
 
-  const { data: srsCards = [] } = useQuery({
-    queryKey: ["srs-cards"],
-    queryFn: () => base44.entities.UserSRSCard.list(),
-  });
-
   const { data: user } = useQuery({
     queryKey: ["me"],
     queryFn: () => base44.auth.me(),
+  });
+
+  const { data: srsCards = [] } = useQuery({
+    queryKey: ["srs-cards", user?.email],
+    queryFn: () => base44.entities.UserSRSCard.list(),
+    enabled: !!user,
   });
 
   const today = new Date().toISOString().split("T")[0];
