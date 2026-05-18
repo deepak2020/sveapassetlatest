@@ -10,8 +10,21 @@ const SKILLS = [
 ];
 
 export default function SkillBreakdown({ languageResults = [] }) {
+  // Dedupe: keep only the most recent result per (source_id, skill).
+  // languageResults is already sorted by -created_date upstream, so the first
+  // occurrence of each key is the latest attempt.
+  const seen = new Set();
+  const deduped = [];
+  for (const r of languageResults) {
+    if (!r.skill) continue;
+    const key = `${r.source_id || r.source_title || ""}::${r.skill}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(r);
+  }
+
   const breakdown = SKILLS.map((s) => {
-    const items = languageResults.filter((r) => r.skill === s.key);
+    const items = deduped.filter((r) => r.skill === s.key);
     const avg =
       items.length > 0
         ? Math.round(items.reduce((sum, r) => sum + (r.percentage || 0), 0) / items.length)
