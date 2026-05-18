@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
+// analytics: lesson tab clicks tracked via base44.analytics.track
 import confetti from "canvas-confetti";
 import { ArrowLeft, BookOpen, Pen, Mic, Trophy } from "lucide-react";
 import { useLessonCompletion, setLastLesson } from "@/hooks/useLessonProgress";
@@ -168,7 +169,22 @@ export default function LessonDetail() {
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue={hasVocab ? "learn" : hasBlanks ? "practice" : "content"} className="space-y-6">
+      <Tabs
+        defaultValue={hasVocab ? "learn" : hasBlanks ? "practice" : "content"}
+        onValueChange={(tab) => {
+          base44.analytics.track({
+            eventName: "lesson_tab_clicked",
+            properties: {
+              tab,
+              lesson_id: lesson.id,
+              lesson_title: lesson.title,
+              sfi_course: lesson.sfi_course || null,
+              topic: lesson.topic || null,
+            },
+          });
+        }}
+        className="space-y-6"
+      >
         <TabsList className="flex w-full max-w-full overflow-x-auto sm:flex-wrap h-auto gap-1 justify-start sm:justify-center scrollbar-none bg-muted/50 p-1 rounded-xl">
           <TabsTrigger value="content" className="shrink-0 gap-1.5 text-sm data-[state=active]:bg-background">
             <BookOpen className="w-3.5 h-3.5" /> Lesson
