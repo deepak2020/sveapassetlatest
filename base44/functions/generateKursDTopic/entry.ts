@@ -42,7 +42,11 @@ Deno.serve(async (req) => {
         });
 
         let result = raw;
-        if (result && result.response && typeof result.response === 'object') result = result.response;
+        if (result && typeof result.response === 'string') {
+          try { result = JSON.parse(result.response); } catch (_) {}
+        } else if (result && result.response && typeof result.response === 'object') {
+          result = result.response;
+        }
         if (result && result.type === 'object' && result.properties) result = result.properties;
 
         if (!result?.title) {
