@@ -1,6 +1,6 @@
 -- ============================================================
 -- Supabase schema for SFI Swedish Learning app
--- Run this in the Supabase SQL editor (Settings → SQL Editor)
+-- Safe to re-run — drops existing policies before recreating
 -- ============================================================
 
 -- ── Profiles (extends auth.users) ────────────────────────────
@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Auto-create profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
@@ -35,17 +34,13 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "profiles_select_own" ON public.profiles
-  FOR SELECT USING (auth.uid() = id);
-
-CREATE POLICY "profiles_update_own" ON public.profiles
-  FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "profiles_insert_own" ON public.profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
+CREATE POLICY "profiles_select_own" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "profiles_insert_own" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- ── Lessons ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.lessons (
@@ -72,30 +67,22 @@ CREATE TABLE IF NOT EXISTS public.lessons (
 );
 
 ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "lessons_select_all"   ON public.lessons;
+DROP POLICY IF EXISTS "lessons_insert_admin" ON public.lessons;
+DROP POLICY IF EXISTS "lessons_update_admin" ON public.lessons;
+DROP POLICY IF EXISTS "lessons_delete_admin" ON public.lessons;
+CREATE POLICY "lessons_select_all" ON public.lessons FOR SELECT USING (TRUE);
+CREATE POLICY "lessons_insert_admin" ON public.lessons FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "lessons_update_admin" ON public.lessons FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "lessons_delete_admin" ON public.lessons FOR DELETE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Public read
-CREATE POLICY "lessons_select_all" ON public.lessons
-  FOR SELECT USING (TRUE);
-
--- Admin write
-CREATE POLICY "lessons_insert_admin" ON public.lessons
-  FOR INSERT WITH CHECK (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "lessons_update_admin" ON public.lessons
-  FOR UPDATE USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "lessons_delete_admin" ON public.lessons
-  FOR DELETE USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE INDEX IF NOT EXISTS lessons_sfi_course_idx ON public.lessons(sfi_course);
-CREATE INDEX IF NOT EXISTS lessons_topic_idx ON public.lessons(topic);
-CREATE INDEX IF NOT EXISTS lessons_order_idx ON public.lessons("order");
+CREATE INDEX IF NOT EXISTS lessons_sfi_course_idx       ON public.lessons(sfi_course);
+CREATE INDEX IF NOT EXISTS lessons_topic_idx            ON public.lessons(topic);
+CREATE INDEX IF NOT EXISTS lessons_order_idx            ON public.lessons("order");
+CREATE INDEX IF NOT EXISTS lessons_sfi_course_order_idx ON public.lessons(sfi_course, "order");
 
 -- ── Civic Topics ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.civic_topics (
@@ -113,24 +100,17 @@ CREATE TABLE IF NOT EXISTS public.civic_topics (
 );
 
 ALTER TABLE public.civic_topics ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "civic_topics_select_all" ON public.civic_topics
-  FOR SELECT USING (TRUE);
-
-CREATE POLICY "civic_topics_insert_admin" ON public.civic_topics
-  FOR INSERT WITH CHECK (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "civic_topics_update_admin" ON public.civic_topics
-  FOR UPDATE USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "civic_topics_delete_admin" ON public.civic_topics
-  FOR DELETE USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
+DROP POLICY IF EXISTS "civic_topics_select_all"   ON public.civic_topics;
+DROP POLICY IF EXISTS "civic_topics_insert_admin" ON public.civic_topics;
+DROP POLICY IF EXISTS "civic_topics_update_admin" ON public.civic_topics;
+DROP POLICY IF EXISTS "civic_topics_delete_admin" ON public.civic_topics;
+CREATE POLICY "civic_topics_select_all" ON public.civic_topics FOR SELECT USING (TRUE);
+CREATE POLICY "civic_topics_insert_admin" ON public.civic_topics FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "civic_topics_update_admin" ON public.civic_topics FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "civic_topics_delete_admin" ON public.civic_topics FOR DELETE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- ── Quiz Results ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.quiz_results (
@@ -149,25 +129,20 @@ CREATE TABLE IF NOT EXISTS public.quiz_results (
 );
 
 ALTER TABLE public.quiz_results ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "quiz_results_select" ON public.quiz_results;
+DROP POLICY IF EXISTS "quiz_results_insert" ON public.quiz_results;
+DROP POLICY IF EXISTS "quiz_results_delete" ON public.quiz_results;
+CREATE POLICY "quiz_results_select" ON public.quiz_results FOR SELECT USING (
+  auth.uid() = user_id OR
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "quiz_results_insert" ON public.quiz_results FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "quiz_results_delete" ON public.quiz_results FOR DELETE USING (
+  auth.uid() = user_id OR
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Users see only their own results; admins see all
-CREATE POLICY "quiz_results_select" ON public.quiz_results
-  FOR SELECT USING (
-    auth.uid() = user_id OR
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "quiz_results_insert" ON public.quiz_results
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "quiz_results_delete" ON public.quiz_results
-  FOR DELETE USING (
-    auth.uid() = user_id OR
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE INDEX IF NOT EXISTS quiz_results_user_idx ON public.quiz_results(user_id);
+CREATE INDEX IF NOT EXISTS quiz_results_user_idx       ON public.quiz_results(user_id);
 CREATE INDEX IF NOT EXISTS quiz_results_created_at_idx ON public.quiz_results(created_at DESC);
+CREATE INDEX IF NOT EXISTS quiz_results_quiz_type_idx  ON public.quiz_results(quiz_type);
 
 -- ── User Vocabulary ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.user_vocabulary (
@@ -183,10 +158,9 @@ CREATE TABLE IF NOT EXISTS public.user_vocabulary (
 );
 
 ALTER TABLE public.user_vocabulary ENABLE ROW LEVEL SECURITY;
-
+DROP POLICY IF EXISTS "user_vocabulary_own" ON public.user_vocabulary;
 CREATE POLICY "user_vocabulary_own" ON public.user_vocabulary
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 CREATE INDEX IF NOT EXISTS user_vocabulary_user_idx ON public.user_vocabulary(user_id);
 
@@ -210,12 +184,11 @@ CREATE TABLE IF NOT EXISTS public.user_srs_cards (
 );
 
 ALTER TABLE public.user_srs_cards ENABLE ROW LEVEL SECURITY;
-
+DROP POLICY IF EXISTS "user_srs_cards_own" ON public.user_srs_cards;
 CREATE POLICY "user_srs_cards_own" ON public.user_srs_cards
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
-CREATE INDEX IF NOT EXISTS user_srs_cards_user_idx ON public.user_srs_cards(user_id);
+CREATE INDEX IF NOT EXISTS user_srs_cards_user_idx     ON public.user_srs_cards(user_id);
 CREATE INDEX IF NOT EXISTS user_srs_cards_due_date_idx ON public.user_srs_cards(due_date);
 
 -- ── Cloze Sentences ───────────────────────────────────────────
@@ -236,14 +209,11 @@ CREATE TABLE IF NOT EXISTS public.cloze_sentences (
 );
 
 ALTER TABLE public.cloze_sentences ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "cloze_sentences_select_all" ON public.cloze_sentences
-  FOR SELECT USING (TRUE);
-
-CREATE POLICY "cloze_sentences_write_admin" ON public.cloze_sentences
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
+DROP POLICY IF EXISTS "cloze_sentences_select_all"  ON public.cloze_sentences;
+DROP POLICY IF EXISTS "cloze_sentences_write_admin" ON public.cloze_sentences;
+CREATE POLICY "cloze_sentences_select_all" ON public.cloze_sentences FOR SELECT USING (TRUE);
+CREATE POLICY "cloze_sentences_write_admin" ON public.cloze_sentences FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
 
 CREATE INDEX IF NOT EXISTS cloze_sentences_sfi_level_idx ON public.cloze_sentences(sfi_level);
 
@@ -260,16 +230,6 @@ CREATE TABLE IF NOT EXISTS public.generation_jobs (
 );
 
 ALTER TABLE public.generation_jobs ENABLE ROW LEVEL SECURITY;
-
+DROP POLICY IF EXISTS "generation_jobs_admin" ON public.generation_jobs;
 CREATE POLICY "generation_jobs_admin" ON public.generation_jobs
-  USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
--- ── Helper: ensure user_id is set automatically on insert ─────
--- For tables with user_id, we set it via RLS + a default trigger.
--- The client must pass user_id: supabase.auth.getUser().id
-
--- ── Indexes for common filter patterns ───────────────────────
-CREATE INDEX IF NOT EXISTS lessons_sfi_course_order_idx ON public.lessons(sfi_course, "order");
-CREATE INDEX IF NOT EXISTS quiz_results_quiz_type_idx ON public.quiz_results(quiz_type);
+  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
