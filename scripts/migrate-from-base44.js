@@ -36,17 +36,20 @@ const BASE44_HEADERS = {
 
 const SUPABASE_URL = 'https://zpuaksuhvgwvnvopjaov.supabase.co';
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const DRY_RUN      = process.env.DRY_RUN === 'true';
 
-if (!SERVICE_KEY) {
+if (!SERVICE_KEY && !DRY_RUN) {
   console.error('ERROR: Set SUPABASE_SERVICE_ROLE_KEY before running.');
   console.error('  export SUPABASE_SERVICE_ROLE_KEY=<your-key>');
   console.error('  node scripts/migrate-from-base44.js');
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
+if (DRY_RUN) console.log('DRY RUN — Supabase inserts will be skipped.\n');
+
+const supabase = SERVICE_KEY ? createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { persistSession: false },
-});
+}) : null;
 
 // ── ID mapping (Base44 string id → deterministic UUID for idempotency) ────────
 const idMap = {};
@@ -93,6 +96,7 @@ async function fetchAll(entity, transform) {
 
 async function upsert(table, rows) {
   if (rows.length === 0) { console.log(`  ✓ ${table}: 0 rows (nothing to insert)`); return; }
+  if (DRY_RUN) { console.log(`  [dry-run] ${table}: would insert ${rows.length} rows`); return; }
   const CHUNK = 50;
   for (let i = 0; i < rows.length; i += CHUNK) {
     const chunk = rows.slice(i, i + CHUNK);
