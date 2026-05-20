@@ -161,7 +161,7 @@ function json(body, status = 200) {
 }
 
 async function sendWelcomeEmail(to, fullName) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) return; // silently skip if not configured
 
   const firstName = fullName?.split(' ')[0] || 'there';
@@ -247,17 +247,14 @@ async function sendWelcomeEmail(to, fullName) {
 </body>
 </html>`;
 
-  await fetch('https://api.resend.com/emails', {
+  await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
-    headers: {
-      Authorization:  `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from:    'Sveapasset <hello@sveapasset.se>',
-      to:      [to],
-      subject: `Välkommen till Sveapasset, ${firstName}! 🇸🇪`,
-      html,
+      sender:      { name: 'Sveapasset', email: 'hello@sveapasset.se' },
+      to:          [{ email: to, name: fullName || '' }],
+      subject:     `Välkommen till Sveapasset, ${firstName}! 🇸🇪`,
+      htmlContent: html,
     }),
   });
 }
