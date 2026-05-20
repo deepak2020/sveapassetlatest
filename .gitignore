@@ -29,3 +29,6 @@ dist-ssr
 
 .env
 .vite
+
+# Migration export — contains user PII, never commit
+scripts/base44-export/
