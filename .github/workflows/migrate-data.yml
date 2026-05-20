@@ -1,0 +1,40 @@
+name: Migrate Base44 → Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (fetch from Base44 but skip Supabase insert)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/migrate-base44-free-infra-x7YJm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run migration
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node scripts/migrate-from-base44.js
+
+      - name: Upload user data export
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: base44-export
+          path: scripts/base44-export/
+          retention-days: 30
