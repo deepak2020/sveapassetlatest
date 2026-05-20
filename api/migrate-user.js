@@ -140,6 +140,9 @@ export default async function handler(req) {
     await supa(SUPABASE_URL, SERVICE_KEY, 'POST', 'user_srs_cards', validSRS);
   }
 
+  // Send welcome email (fire-and-forget — never block the response)
+  sendWelcomeEmail(email, b44User.full_name).catch(() => {});
+
   return json({
     status:      'imported',
     quiz_results: myQR.length,
@@ -154,6 +157,108 @@ function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+async function sendWelcomeEmail(to, fullName) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return; // silently skip if not configured
+
+  const firstName = fullName?.split(' ')[0] || 'there';
+  const siteUrl   = 'https://sveapassetlatest.vercel.app';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:40px 16px">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+
+        <!-- Header -->
+        <tr><td style="background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);padding:40px 48px;text-align:center">
+          <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px">🇸🇪 Sveapasset</h1>
+          <p style="margin:8px 0 0;color:#bfdbfe;font-size:15px">Your Swedish Learning Journey</p>
+        </td></tr>
+
+        <!-- Body -->
+        <tr><td style="padding:40px 48px">
+          <p style="margin:0 0 20px;font-size:17px;color:#1e293b">Hej ${firstName}! 👋</p>
+          <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.7">
+            Welcome to <strong>Sveapasset</strong> — your personal Swedish learning platform built for SFI students.
+            Your account is ready and your progress has been restored.
+          </p>
+
+          <!-- Feature tiles -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0">
+            <tr>
+              <td width="48%" style="background:#eff6ff;border-radius:8px;padding:20px;vertical-align:top">
+                <div style="font-size:24px;margin-bottom:8px">📚</div>
+                <div style="font-weight:600;color:#1e3a5f;margin-bottom:4px">Lessons</div>
+                <div style="font-size:13px;color:#64748b">Vocabulary, grammar, reading and listening — structured by SFI level</div>
+              </td>
+              <td width="4%"></td>
+              <td width="48%" style="background:#f0fdf4;border-radius:8px;padding:20px;vertical-align:top">
+                <div style="font-size:24px;margin-bottom:8px">🧠</div>
+                <div style="font-weight:600;color:#14532d;margin-bottom:4px">Smart Review</div>
+                <div style="font-size:13px;color:#64748b">Spaced repetition cards that adapt to what you need to practice</div>
+              </td>
+            </tr>
+            <tr><td colspan="3" style="padding-top:12px"></td></tr>
+            <tr>
+              <td width="48%" style="background:#fdf4ff;border-radius:8px;padding:20px;vertical-align:top">
+                <div style="font-size:24px;margin-bottom:8px">🏛️</div>
+                <div style="font-weight:600;color:#581c87;margin-bottom:4px">Civic Knowledge</div>
+                <div style="font-size:13px;color:#64748b">Swedish society, history, and culture for the citizenship test</div>
+              </td>
+              <td width="4%"></td>
+              <td width="48%" style="background:#fff7ed;border-radius:8px;padding:20px;vertical-align:top">
+                <div style="font-size:24px;margin-bottom:8px">📈</div>
+                <div style="font-weight:600;color:#7c2d12;margin-bottom:4px">Track Progress</div>
+                <div style="font-size:13px;color:#64748b">Daily streaks, XP, and quiz history to keep you motivated</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- CTA -->
+          <div style="text-align:center;margin:32px 0">
+            <a href="${siteUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 36px;border-radius:8px">
+              Start Learning →
+            </a>
+          </div>
+
+          <p style="margin:0;font-size:14px;color:#94a3b8;line-height:1.6">
+            Questions? Reply to this email and we'll get back to you.<br>
+            Lycka till med din svenska! 🌟
+          </p>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="background:#f8fafc;padding:24px 48px;border-top:1px solid #e2e8f0;text-align:center">
+          <p style="margin:0;font-size:12px;color:#94a3b8">
+            © ${new Date().getFullYear()} Sveapasset &nbsp;·&nbsp;
+            <a href="${siteUrl}" style="color:#64748b;text-decoration:none">sveapasset.se</a>
+          </p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization:  `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from:    'Sveapasset <hello@sveapasset.se>',
+      to:      [to],
+      subject: `Välkommen till Sveapasset, ${firstName}! 🇸🇪`,
+      html,
+    }),
   });
 }
 
