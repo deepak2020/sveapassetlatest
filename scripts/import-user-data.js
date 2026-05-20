@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Import one user's Base44 data into Supabase after they've logged in via Google.
- * Must run AFTER migrate-from-base44.js has produced the export files.
+ * Import user data from Base44 into Supabase.
+ * Fetches directly from Base44 — no artifact file needed.
+ * Users MUST have logged in via Google at least once first.
  *
  * Prerequisites: Node 18+
  *
@@ -10,13 +11,16 @@
  *
  * Usage — all users who have already logged in:
  *   SUPABASE_SERVICE_ROLE_KEY=<key> node scripts/import-user-data.js --all
- *
- * The user MUST have logged in via Google at least once before you run this,
- * so their auth.users row exists in Supabase.
  */
 
-import { readFileSync } from 'fs';
 import { createClient } from '@supabase/supabase-js';
+
+const BASE44_APP_ID = '6a05a8cd3d89f28998abebbd';
+const BASE44_BASE   = `https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}`;
+const BASE44_HEADERS = {
+  'api_key':      '7043976fee8e434299b13b22a5ee9fa1',
+  'Content-Type': 'application/json',
+};
 
 const SUPABASE_URL = 'https://zpuaksuhvgwvnvopjaov.supabase.co';
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,92 +34,132 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { persistSession: false },
 });
 
-// ── Load export ───────────────────────────────────────────────────────────────
+// ── Base44 fetch ──────────────────────────────────────────────────────────────
 
-function loadExport() {
-  try {
-    return JSON.parse(readFileSync('scripts/base44-export/users-by-email.json', 'utf8'));
-  } catch {
-    console.error('ERROR: scripts/base44-export/users-by-email.json not found.');
-    console.error('Run migrate-from-base44.js first.');
-    process.exit(1);
+async function b44Fetch(entity) {
+  const url = `${BASE44_BASE}/entities/${entity}?limit=5000`;
+  const resp = await fetch(url, { headers: BASE44_HEADERS });
+  if (!resp.ok) throw new Error(`Base44 ${entity} → HTTP ${resp.status}`);
+  const data = await resp.json();
+  return Array.isArray(data) ? data : (data.data ?? data.results ?? []);
+}
+
+// ── Build cloze mapping: Base44 ID → Supabase UUID ────────────────────────────
+// Matches by sentence_sv + answer since we don't store Base44 IDs in Supabase.
+
+async function buildClozeMapping() {
+  process.stdout.write('  Building cloze sentence ID mapping…');
+
+  const [b44Sentences, { data: supaSentences }] = await Promise.all([
+    b44Fetch('ClozeSentence'),
+    supabase.from('cloze_sentences').select('id, sentence_sv, answer'),
+  ]);
+
+  const supaLookup = {};
+  for (const s of (supaSentences ?? [])) {
+    supaLookup[`${s.sentence_sv}|||${s.answer}`] = s.id;
   }
+
+  const mapping = {};
+  for (const s of b44Sentences) {
+    const key = `${s.sentence_sv}|||${s.answer}`;
+    if (supaLookup[key]) mapping[s.id] = supaLookup[key];
+  }
+
+  console.log(` ${Object.keys(mapping).length}/${b44Sentences.length} matched`);
+  return mapping;
 }
 
 // ── Import one user ───────────────────────────────────────────────────────────
 
-async function importUser(email, allData, supaUsers) {
-  const key      = email.toLowerCase();
-  const userData = allData[key];
-
-  if (!userData) {
-    console.log(`  ⚠  No Base44 data for ${email} — skipping`);
-    return false;
-  }
-
-  const supaUser = supaUsers.find(u => u.email?.toLowerCase() === key);
-  if (!supaUser) {
-    console.log(`  ⚠  ${email} hasn't logged in yet — skipping`);
-    return false;
-  }
-
+async function importUser(supaUser, userData, clozemap) {
   const userId = supaUser.id;
-  console.log(`  Importing ${email} (Supabase ID: ${userId})`);
+  const email  = supaUser.email;
+
+  console.log(`  ${email}`);
 
   // Profile
   const { error: profErr } = await supabase
     .from('profiles')
     .update({
-      full_name:           userData.profile.full_name,
-      sfi_level:           userData.profile.sfi_level,
-      goal:                userData.profile.goal,
-      daily_goal_minutes:  userData.profile.daily_goal_minutes,
-      xp_total:            userData.profile.xp_total,
-      streak_days:         userData.profile.streak_days,
-      last_active_date:    userData.profile.last_active_date,
-      onboarding_complete: userData.profile.onboarding_complete,
-      role:                userData.profile.role,
+      full_name:           userData.full_name           ?? null,
+      sfi_level:           userData.sfi_level           ?? null,
+      goal:                userData.goal                ?? null,
+      daily_goal_minutes:  userData.daily_goal_minutes  ?? 10,
+      xp_total:            userData.xp_total            ?? 0,
+      streak_days:         userData.streak_days         ?? 0,
+      last_active_date:    userData.last_active_date    ?? null,
+      onboarding_complete: userData.onboarding_complete ?? false,
+      role:                userData.role                || 'user',
     })
     .eq('id', userId);
-  if (profErr) throw new Error(`Profile update failed: ${profErr.message}`);
+  if (profErr) throw new Error(`Profile: ${profErr.message}`);
 
   // Quiz results
   if (userData.quiz_results.length > 0) {
-    const rows = userData.quiz_results.map(({ _base44_user_id, ...r }) => ({
-      ...r, user_id: userId,
+    const rows = userData.quiz_results.map(r => ({
+      user_id:      userId,
+      quiz_type:    r.quiz_type    || 'language',
+      source_id:    r.source_id    ?? null,
+      source_title: r.source_title ?? null,
+      sfi_course:   r.sfi_course   ?? null,
+      skill:        r.skill        ?? null,
+      score:        r.score        ?? 0,
+      total:        r.total        ?? 0,
+      percentage:   r.percentage   ?? 0,
+      description:  r.description  ?? null,
+      created_at:   r.created_date ?? new Date().toISOString(),
     }));
     const { error } = await supabase.from('quiz_results').insert(rows);
-    if (error) throw new Error(`quiz_results insert: ${error.message}`);
+    if (error) throw new Error(`quiz_results: ${error.message}`);
     console.log(`    ✓ ${rows.length} quiz results`);
   }
 
   // Vocabulary
   if (userData.vocabulary.length > 0) {
-    const rows = userData.vocabulary.map(({ _base44_user_id, ...r }) => ({
-      ...r, user_id: userId,
+    const rows = userData.vocabulary.map(r => ({
+      user_id:          userId,
+      swedish:          r.swedish,
+      english:          r.english,
+      lesson_id:        r.lesson_id        ?? null,
+      lesson_title:     r.lesson_title     ?? null,
+      example_sentence: r.example_sentence ?? null,
+      notes:            r.notes            ?? null,
+      created_at:       r.created_date     ?? new Date().toISOString(),
     }));
     const { error } = await supabase.from('user_vocabulary').insert(rows);
-    if (error) throw new Error(`user_vocabulary insert: ${error.message}`);
+    if (error) throw new Error(`user_vocabulary: ${error.message}`);
     console.log(`    ✓ ${rows.length} vocabulary entries`);
   }
 
-  // SRS cards (skip cards whose cloze_sentence_id wasn't migrated)
-  const validCards = userData.srs_cards.filter(c => c.cloze_sentence_id);
+  // SRS cards
+  const validCards = userData.srs_cards
+    .map(c => ({ ...c, supabase_cloze_id: clozemap[c.cloze_sentence_id] }))
+    .filter(c => c.supabase_cloze_id);
+
   if (validCards.length > 0) {
-    const rows = validCards.map(({ _base44_user_id, ...c }) => ({
-      ...c, user_id: userId,
+    const rows = validCards.map(c => ({
+      user_id:             userId,
+      cloze_sentence_id:   c.supabase_cloze_id,
+      interval_days:       c.interval_days       ?? 1,
+      due_date:            c.due_date            ?? null,
+      ease_factor:         c.ease_factor         ?? 2.5,
+      times_seen:          c.times_seen          ?? 0,
+      times_correct:       c.times_correct       ?? 0,
+      correct_streak:      c.correct_streak      ?? 0,
+      last_answer_correct: c.last_answer_correct ?? null,
+      mastery_percentage:  c.mastery_percentage  ?? 0,
+      status:              c.status              || 'new',
+      description:         c.description         ?? null,
+      created_at:          c.created_date        ?? new Date().toISOString(),
     }));
     const { error } = await supabase.from('user_srs_cards').insert(rows);
-    if (error) throw new Error(`user_srs_cards insert: ${error.message}`);
+    if (error) throw new Error(`user_srs_cards: ${error.message}`);
     console.log(`    ✓ ${rows.length} SRS cards`);
   }
 
   const skipped = userData.srs_cards.length - validCards.length;
-  if (skipped > 0) {
-    console.log(`    ⚠  ${skipped} SRS cards skipped (cloze_sentence_id not found)`);
-  }
-
-  return true;
+  if (skipped > 0) console.log(`    ⚠  ${skipped} SRS cards skipped (no Supabase match)`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -129,24 +173,56 @@ async function main() {
     process.exit(1);
   }
 
-  const allData = loadExport();
+  console.log('Fetching user data from Base44…');
+  const [b44Users, quizResults, vocabulary, srsCards] = await Promise.all([
+    b44Fetch('User'),
+    b44Fetch('QuizResult'),
+    b44Fetch('UserVocabulary'),
+    b44Fetch('UserSRSCard'),
+  ]);
+  console.log(`  ${b44Users.length} users, ${quizResults.length} quiz results, ${vocabulary.length} vocabulary, ${srsCards.length} SRS cards`);
 
-  // Fetch all Supabase auth users once
+  // Build per-user lookup keyed by Base44 user ID
+  const b44ById = {};
+  for (const u of b44Users) {
+    b44ById[u.id] = {
+      ...u,
+      quiz_results: quizResults.filter(r => r.user_id === u.id),
+      vocabulary:   vocabulary.filter(r => r.user_id === u.id),
+      srs_cards:    srsCards.filter(r => r.user_id === u.id),
+    };
+  }
+  const b44ByEmail = {};
+  for (const u of b44Users) {
+    if (u.email) b44ByEmail[u.email.toLowerCase()] = b44ById[u.id];
+  }
+
+  const clozemap = await buildClozeMapping();
+
+  // Fetch Supabase auth users
   const { data: { users: supaUsers }, error: listErr } = await supabase.auth.admin.listUsers();
   if (listErr) throw listErr;
 
-  if (arg === '--all') {
-    console.log(`Importing all users who have logged in (${supaUsers.length} Supabase accounts)…\n`);
-    let ok = 0, skipped = 0;
-    for (const u of supaUsers) {
-      const result = await importUser(u.email, allData, supaUsers);
-      result ? ok++ : skipped++;
-    }
-    console.log(`\n✓ Done — ${ok} imported, ${skipped} skipped`);
-  } else {
-    const ok = await importUser(arg, allData, supaUsers);
-    if (ok) console.log(`\n✓ Import complete for ${arg}`);
+  const targets = arg === '--all'
+    ? supaUsers.filter(u => u.email && b44ByEmail[u.email.toLowerCase()])
+    : supaUsers.filter(u => u.email?.toLowerCase() === arg.toLowerCase());
+
+  if (targets.length === 0) {
+    console.log(arg === '--all'
+      ? 'No Supabase users match any Base44 account. Have users log in first.'
+      : `${arg} not found in Supabase. Have them log in first.`);
+    process.exit(0);
   }
+
+  console.log(`\nImporting ${targets.length} user(s)…\n`);
+  let ok = 0;
+  for (const supaUser of targets) {
+    const userData = b44ByEmail[supaUser.email.toLowerCase()];
+    await importUser(supaUser, userData, clozemap);
+    ok++;
+  }
+
+  console.log(`\n✓ Done — ${ok} user(s) imported`);
 }
 
 main().catch(err => {
