@@ -1,0 +1,34 @@
+name: Import User Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Email to import (leave blank for all logged-in users)'
+        required: false
+        default: ''
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/migrate-base44-free-infra-x7YJm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Import user data
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -n "${{ inputs.email }}" ]; then
+            node scripts/import-user-data.js "${{ inputs.email }}"
+          else
+            node scripts/import-user-data.js --all
+          fi
