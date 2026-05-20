@@ -12,6 +12,27 @@ export const AuthProvider = ({ children }) => {
     const profile = await base44.auth.me();
     setUser(profile);
     setIsAuthenticated(!!profile);
+    return profile;
+  };
+
+  const triggerBase44Migration = async () => {
+    // Only attempt once per browser session to avoid repeated calls
+    if (sessionStorage.getItem('b44_migration_attempted')) return;
+    sessionStorage.setItem('b44_migration_attempted', '1');
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch('/api/migrate-user', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const result = await res.json();
+      // Reload profile to surface migrated data (sfi_level, xp, etc.)
+      if (result.status === 'imported') await loadProfile();
+    } catch {
+      // Silent — migration failure must never break login
+    }
   };
 
   useEffect(() => {
@@ -27,7 +48,10 @@ export const AuthProvider = ({ children }) => {
     // Keep in sync with Supabase auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        loadProfile();
+        loadProfile().then(profile => {
+          // Fresh profile (no sfi_level, no xp) → try Base44 migration
+          if (!profile?.sfi_level && !profile?.xp_total) triggerBase44Migration();
+        });
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsAuthenticated(false);
