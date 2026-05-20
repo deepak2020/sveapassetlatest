@@ -21,6 +21,7 @@ import Privacy from './pages/Privacy';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import ThemeSync from './components/ThemeSync';
+import AuthCallback from './pages/AuthCallback';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -44,6 +45,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
