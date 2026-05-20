@@ -61,17 +61,28 @@ function mapId(base44Id) {
 
 // ── Base44 helpers ────────────────────────────────────────────────────────────
 
-let _debugDone = false;
+async function b44Probe() {
+  const variants = [
+    // (url, headers)
+    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson`, BASE44_HEADERS],
+    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson?limit=5`, BASE44_HEADERS],
+    [`https://svensk-path-goal.base44.app/api/entities/Lesson`, BASE44_HEADERS],
+    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson?api_key=7043976fee8e434299b13b22a5ee9fa1`, {'Content-Type':'application/json'}],
+  ];
+  for (const [url, headers] of variants) {
+    const resp = await fetch(url, { headers });
+    const text = await resp.text();
+    console.log(`[probe] ${resp.status} ${url.replace('https://svensk-path-goal.base44.app','')}`);
+    console.log(`[probe] body: ${text.slice(0, 200)}`);
+  }
+  process.exit(0);
+}
+
 async function b44Fetch(entity, params = {}) {
   const url = new URL(`${BASE44_BASE}/entities/${entity}`);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   const resp = await fetch(url.toString(), { headers: BASE44_HEADERS });
   const text = await resp.text();
-  if (!_debugDone) {
-    _debugDone = true;
-    console.log(`[debug] GET ${url}`);
-    console.log(`[debug] HTTP ${resp.status} — first 500 chars: ${text.slice(0, 500)}`);
-  }
   if (!resp.ok) throw new Error(`Base44 ${entity} → HTTP ${resp.status}: ${text}`);
   return JSON.parse(text);
 }
@@ -224,6 +235,8 @@ async function main() {
   console.log('╔══════════════════════════════════════╗');
   console.log('║  Base44 → Supabase Migration Script  ║');
   console.log('╚══════════════════════════════════════╝\n');
+
+  await b44Probe(); // exits after probing
 
   mkdirSync('scripts/base44-export', { recursive: true });
 
