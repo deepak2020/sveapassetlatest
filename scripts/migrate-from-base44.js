@@ -27,10 +27,10 @@ import { createClient }             from '@supabase/supabase-js';
 
 // ── Config ───────────────────────────────────────────────────────────────────
 
-const BASE44_BASE   = 'https://svensk-path-goal.base44.app/api';
+const BASE44_APP_ID = '6a05a8cd3d89f28998abebbd';
+const BASE44_BASE   = `https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}`;
 const BASE44_HEADERS = {
   'api_key':      '7043976fee8e434299b13b22a5ee9fa1',
-  'app-id':       '6a05a8cd3d89f28998abebbd',
   'Content-Type': 'application/json',
 };
 
