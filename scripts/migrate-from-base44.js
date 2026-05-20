@@ -61,15 +61,19 @@ function mapId(base44Id) {
 
 // ── Base44 helpers ────────────────────────────────────────────────────────────
 
+let _debugDone = false;
 async function b44Fetch(entity, params = {}) {
   const url = new URL(`${BASE44_BASE}/entities/${entity}`);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   const resp = await fetch(url.toString(), { headers: BASE44_HEADERS });
-  if (!resp.ok) {
-    const body = await resp.text();
-    throw new Error(`Base44 ${entity} → HTTP ${resp.status}: ${body}`);
+  const text = await resp.text();
+  if (!_debugDone) {
+    _debugDone = true;
+    console.log(`[debug] GET ${url}`);
+    console.log(`[debug] HTTP ${resp.status} — first 500 chars: ${text.slice(0, 500)}`);
   }
-  return resp.json();
+  if (!resp.ok) throw new Error(`Base44 ${entity} → HTTP ${resp.status}: ${text}`);
+  return JSON.parse(text);
 }
 
 async function fetchAll(entity, transform) {
