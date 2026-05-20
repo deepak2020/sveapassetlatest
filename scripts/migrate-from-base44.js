@@ -61,23 +61,6 @@ function mapId(base44Id) {
 
 // ── Base44 helpers ────────────────────────────────────────────────────────────
 
-async function b44Probe() {
-  const variants = [
-    // (url, headers)
-    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson`, BASE44_HEADERS],
-    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson?limit=5`, BASE44_HEADERS],
-    [`https://svensk-path-goal.base44.app/api/entities/Lesson`, BASE44_HEADERS],
-    [`https://svensk-path-goal.base44.app/api/apps/${BASE44_APP_ID}/entities/Lesson?api_key=7043976fee8e434299b13b22a5ee9fa1`, {'Content-Type':'application/json'}],
-  ];
-  for (const [url, headers] of variants) {
-    const resp = await fetch(url, { headers });
-    const text = await resp.text();
-    console.log(`[probe] ${resp.status} ${url.replace('https://svensk-path-goal.base44.app','')}`);
-    console.log(`[probe] body: ${text.slice(0, 200)}`);
-  }
-  process.exit(0);
-}
-
 async function b44Fetch(entity, params = {}) {
   const url = new URL(`${BASE44_BASE}/entities/${entity}`);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
@@ -88,23 +71,13 @@ async function b44Fetch(entity, params = {}) {
 }
 
 async function fetchAll(entity, transform) {
-  const rows   = [];
-  let   offset = 0;
-  const limit  = 100;
-
-  while (true) {
-    process.stdout.write(`  Fetching ${entity} (offset=${offset})…\r`);
-    const page = await b44Fetch(entity, { limit, offset });
-    const batch = Array.isArray(page) ? page : (page.data ?? page.results ?? []);
-    if (batch.length === 0) break;
-    rows.push(...(transform ? batch.map(transform) : batch));
-    if (batch.length < limit) break;
-    offset += limit;
-    await new Promise(r => setTimeout(r, 250)); // avoid hammering the API
-  }
-
-  process.stdout.write(`\r\x1B[K`); // clear line
-  return rows;
+  // Base44 ignores/breaks on offset=0 — fetch all in one shot with a high limit.
+  // SFI app content is small enough that a single 2000-row request is fine.
+  process.stdout.write(`  Fetching ${entity}…\r`);
+  const page  = await b44Fetch(entity, { limit: 2000 });
+  const batch = Array.isArray(page) ? page : (page.data ?? page.results ?? []);
+  process.stdout.write(`\r\x1B[K`);
+  return transform ? batch.map(transform) : batch;
 }
 
 // ── Supabase upsert (in chunks to stay within request limits) ─────────────────
@@ -235,8 +208,6 @@ async function main() {
   console.log('╔══════════════════════════════════════╗');
   console.log('║  Base44 → Supabase Migration Script  ║');
   console.log('╚══════════════════════════════════════╝\n');
-
-  await b44Probe(); // exits after probing
 
   mkdirSync('scripts/base44-export', { recursive: true });
 
