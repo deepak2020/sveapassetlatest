@@ -74,7 +74,7 @@ async function fetchAll(entity, transform) {
   // Base44 ignores/breaks on offset=0 — fetch all in one shot with a high limit.
   // SFI app content is small enough that a single 2000-row request is fine.
   process.stdout.write(`  Fetching ${entity}…\r`);
-  const page  = await b44Fetch(entity, { limit: 2000 });
+  const page  = await b44Fetch(entity, { limit: 5000 });
   const batch = Array.isArray(page) ? page : (page.data ?? page.results ?? []);
   process.stdout.write(`\r\x1B[K`);
   return transform ? batch.map(transform) : batch;
