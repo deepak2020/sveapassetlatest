@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,8 +11,7 @@ import CivicQuizRunner from "../components/civic/CivicQuizRunner";
 import ReactMarkdown from "react-markdown";
 
 export default function TopicDetail() {
-  const pathParts = window.location.pathname.split("/");
-  const topicId = pathParts[pathParts.length - 1];
+  const { id: topicId } = useParams();
 
   const { data: topic, isLoading } = useQuery({
     queryKey: ["civicTopic", topicId],

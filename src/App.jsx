@@ -1,11 +1,32 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { Component } from 'react';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
+
+class ErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  render() {
+    if (!this.state.hasError) return this.props.children;
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <h2 style={{ color: '#dc2626' }}>Something went wrong</h2>
+        <p style={{ color: '#64748b', marginTop: '8px' }}>{this.state.error?.message}</p>
+        <button
+          onClick={() => { this.setState({ hasError: false }); window.location.reload(); }}
+          style={{ marginTop: '16px', padding: '8px 20px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Reload page
+        </button>
+      </div>
+    );
+  }
+}
 import Home from './pages/Home';
 import LanguageLessons from './pages/LanguageLessons';
 import LessonDetail from './pages/LessonDetail';
@@ -58,6 +79,7 @@ const AuthenticatedApp = () => {
         <Route path="/civic/:id" element={<TopicDetail />} />
         <Route path="/language-test" element={<LanguageTest />} />
         <Route path="/gym" element={<Gym />} />
+        <Route path="/srs-review" element={<Navigate to="/gym" replace />} />
         <Route path="/citizenship-test" element={<CitizenshipTest />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<About />} />
@@ -70,17 +92,18 @@ const AuthenticatedApp = () => {
 
 
 function App() {
-
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <ThemeSync />
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <ThemeSync />
+          <Router>
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

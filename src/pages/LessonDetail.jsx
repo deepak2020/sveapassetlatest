@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 // analytics: lesson tab clicks tracked via base44.analytics.track
 import confetti from "canvas-confetti";
 import { ArrowLeft, BookOpen, Pen, Mic, Trophy } from "lucide-react";
@@ -21,8 +21,7 @@ import LessonBottomNav from "../components/lesson/LessonBottomNav";
 import ReactMarkdown from "react-markdown";
 
 export default function LessonDetail() {
-  const pathParts = window.location.pathname.split("/");
-  const lessonId = pathParts[pathParts.length - 1];
+  const { id: lessonId } = useParams();
   const { completed, scores, markComplete } = useLessonCompletion(lessonId);
   const confettiFired = useRef(false);
 

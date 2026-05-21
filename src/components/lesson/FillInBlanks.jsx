@@ -63,8 +63,8 @@ export default function FillInBlanks({ exercises, onComplete }) {
     );
   }
 
-  // Replace ___ with blank display in sentence
-  const parts = ex.sentence_sv.split("___");
+  const sentenceSv = ex.sentence_sv ?? '';
+  const parts = sentenceSv.split("___");
 
   return (
     <Card className="border-border/50">
@@ -111,7 +111,7 @@ export default function FillInBlanks({ exercises, onComplete }) {
 
             {/* Options */}
             <div className="grid grid-cols-2 gap-3">
-              {ex.options.map((opt) => {
+              {(ex.options ?? []).map((opt) => {
                 let style = "border-border/50 hover:border-primary/40 hover:bg-muted/50";
                 if (answered) {
                   if (opt === ex.answer) style = "border-green-500 bg-green-50 text-green-900";

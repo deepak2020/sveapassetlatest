@@ -152,7 +152,7 @@ async function sendDailyEmail(apiKey, user, topic) {
   const dueMsg = user.due > 0
     ? `<tr><td style="padding:12px 16px;background:#fef3c7;border-radius:8px;margin-bottom:16px">
         <strong>🗂 ${user.due} review card${user.due > 1 ? 's' : ''} due today</strong> —
-        <a href="${SITE_URL}/srs-review" style="color:#b45309">Review now →</a>
+        <a href="${SITE_URL}/gym" style="color:#b45309">Review now →</a>
        </td></tr>`
     : '';
 
