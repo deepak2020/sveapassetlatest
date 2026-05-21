@@ -12,16 +12,6 @@ export default function CivicQuizRunner({ questions, quizType, sourceId, sourceT
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [showResults, setShowResults] = useState(false);
 
-  if (!questions || questions.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground">No quiz questions available yet.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   const currentQuestion = questions[currentIndex];
 
   const handleAnswer = async (optionIndex) => {
@@ -120,7 +110,7 @@ export default function CivicQuizRunner({ questions, quizType, sourceId, sourceT
           </div>
 
           <div className="space-y-3 mb-6">
-            {(currentQuestion.options ?? []).map((option, idx) => {
+            {currentQuestion.options.map((option, idx) => {
               const isSelected = idx === selectedIndex;
               const isCorrect = idx === currentQuestion.correct_index;
               const showCorrect = answered && isCorrect;

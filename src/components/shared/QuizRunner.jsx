@@ -138,7 +138,7 @@ export default function QuizRunner({ questions, quizType, sourceId, sourceTitle,
               )}
             </div>
             <div className="space-y-3">
-              {(question.options ?? []).map((option, index) => {
+              {question.options.map((option, index) => {
                 let optionStyle = "border-border/50 hover:border-primary/30 hover:bg-muted/50";
                 if (answered) {
                   if (index === question.correct_index) {
