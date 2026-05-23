@@ -1,0 +1,16 @@
+{
+  "name": "Sveapasset – Learn Swedish",
+  "short_name": "Sveapasset",
+  "description": "Learn Swedish for SFI courses A–D and prepare for the Swedish citizenship test.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#006AA7",
+  "theme_color": "#006AA7",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23006AA7'/><rect y='35' width='100' height='20' fill='%23FECC02'/><rect x='30' width='20' height='100' fill='%23FECC02'/></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
